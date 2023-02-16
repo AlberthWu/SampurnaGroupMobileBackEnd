@@ -46,7 +46,6 @@ class deliveryListModel {
   });
 
   factory deliveryListModel.fromJson(Map<String, dynamic> item) {
-    print(item['reference_no']);
     var urgent = item['schedule_id']['urgent'] == 1 ? "Urgent" : "Reguler";
     var image_data = item['employee_id']['image_data'];
     var image = '';

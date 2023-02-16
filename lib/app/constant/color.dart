@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const sgBaseURL = "https://api.sampurna-group.com/v1/";
+
 final appWhite = Colors.white;
 final appBlack = Colors.black;
 final appText = Color(0xFF0D0E0F);
