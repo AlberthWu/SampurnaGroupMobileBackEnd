@@ -1,0 +1,422 @@
+import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/controllers/schedule/schedule_detail.dart';
+import 'package:asm/app/models/api_response.dart';
+import 'package:asm/app/models/orders/schedule/list.dart';
+import 'package:asm/app/models/orders/surat_jalan/list.dart';
+import 'package:asm/app/service/orders/delivery.dart';
+import 'package:asm/app/service/orders/schedule.dart';
+import 'package:asm/app/views/cards/delivery_card_widget.dart';
+import 'package:asm/app/views/cards/order_card_widget.dart';
+import 'package:asm/app/views/cards/schedule_card_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:asm/app/views/components/date_utils.dart' as date_utils;
+import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
+
+class ScheduleHome extends StatefulWidget {
+  const ScheduleHome({super.key});
+
+  @override
+  State<ScheduleHome> createState() => _ScheduleHomeState();
+}
+
+class _ScheduleHomeState extends State<ScheduleHome> {
+  scheduleService get serviceSchedule => GetIt.I<scheduleService>();
+  deliveryService get serviceDelivery => GetIt.I<deliveryService>();
+
+  late APIResponse<List<scheduleListModel>> _apiSchedule;
+  List<scheduleListModel> _modelsSchedule = [];
+
+  late APIResponse<List<deliveryListModel>> _apiDelivery;
+  List<deliveryListModel> _modelsDelivery = [];
+
+  // DateTime currentDateTime = DateTime.now();
+  DateTime currentDateTime = new DateTime(2023, 1, 30, 0, 0, 0);
+  late ScrollController _scrollControllerDate;
+  List<DateTime> _currentMonthList = List.empty();
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    _currentMonthList = date_utils.DateUtils.daysInMonth(currentDateTime);
+    _currentMonthList.sort((a, b) => a.day.compareTo(b.day));
+    _currentMonthList = _currentMonthList.toSet().toList();
+    _scrollControllerDate =
+        ScrollController(initialScrollOffset: 47.5 * currentDateTime.day);
+    _getDataSchedule(currentDateTime);
+    _getDataDelivery(currentDateTime);
+    super.initState();
+  }
+
+  Widget bottomWidget(scheduleListModel data) {
+    print(data.orders!.length);
+    return Stack(
+      alignment: AlignmentDirectional.topCenter,
+      clipBehavior: Clip.none,
+      children: [
+        Positioned(
+          top: -15,
+          child: Container(
+            width: 60,
+            height: 7,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: appWhite,
+            ),
+          ),
+        ),
+        Expanded(
+          child: data.orders!.length > 0
+              ? ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  itemCount: data.orders!.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ScheduleDetail(
+                              id: data.orders![index].id,
+                            ),
+                          ),
+                        );
+                      },
+                      child: OrderCardWidget(model: data.orders![index]),
+                    );
+                  },
+                )
+              : Center(
+                  child: Container(
+                    height: 200,
+                    width: double.infinity,
+                    child: Center(
+                      child: Text('Data not found'),
+                    ),
+                  ),
+                ),
+        ),
+      ],
+    );
+  }
+
+  void _showModal(BuildContext context, scheduleListModel data) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(30),
+        ),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.4,
+        maxChildSize: 0.9,
+        minChildSize: 0.32,
+        expand: false,
+        builder: (context, scrollController) => SingleChildScrollView(
+          controller: scrollController,
+          child: bottomWidget(data),
+        ),
+      ),
+    );
+  }
+
+  Widget DateViewWidget(int index) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(6, 12, 1, 15),
+      child: GestureDetector(
+        onTap: () {
+          _getDataSchedule(_currentMonthList[index]);
+          _getDataDelivery(_currentMonthList[index]);
+          setState(() {
+            currentDateTime = _currentMonthList[index];
+          });
+        },
+        child: Container(
+          width: 45,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: (_currentMonthList[index].day != currentDateTime.day)
+                  ? [
+                      appWhite.withOpacity(0.8),
+                      appWhite.withOpacity(0.8),
+                      appWhite.withOpacity(0.8),
+                    ]
+                  : [
+                      sgRed,
+                      sgRed,
+                      sgRed,
+                    ],
+              begin: const FractionalOffset(0.0, 0.0),
+              end: const FractionalOffset(0.0, 1.0),
+              stops: const [0.0, 0.5, 1.0],
+              tileMode: TileMode.clamp,
+            ),
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(4, 4),
+                blurRadius: 2,
+                spreadRadius: 1,
+                color: sgBlackLight,
+              )
+            ],
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  _currentMonthList[index].day.toString(),
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Nexa',
+                      color:
+                          (_currentMonthList[index].day != currentDateTime.day)
+                              ? appBlack
+                              : appWhite),
+                ),
+                Text(
+                  date_utils
+                      .DateUtils.weekdays[_currentMonthList[index].weekday - 1],
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Nexa',
+                    color: (_currentMonthList[index].day != currentDateTime.day)
+                        ? sgGold
+                        : appWhite,
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget TabDateViewWidget() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: SizedBox(
+        width: double.infinity,
+        height: 80,
+        child: ListView.builder(
+          controller: _scrollControllerDate,
+          scrollDirection: Axis.horizontal,
+          physics: const ClampingScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: _currentMonthList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return DateViewWidget(index);
+          },
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: sgRed,
+          title: Text(
+            "Surat Jalan",
+            style: TextStyle(
+              color: sgWhite,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Nexa',
+            ),
+          ),
+          iconTheme: IconThemeData(
+            color: sgWhite,
+          ),
+          // actions: <Widget>[
+          //   IconButton(
+          //     icon: Icon(
+          //       Icons.save_outlined,
+          //       color: sgWhite,
+          //     ),
+          //     onPressed: () {},
+          //   ),
+          // ],
+        ),
+        body: SafeArea(
+          child: Container(
+            color: sgWhite,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 8,
+                    left: 8,
+                    right: 8,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        date_utils.DateUtils.months[currentDateTime.month - 1] +
+                            ' ' +
+                            currentDateTime.year.toString(),
+                        style: TextStyle(
+                          color: appBlack,
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Nexa',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                TabDateViewWidget(),
+                TabBar(
+                  isScrollable: true,
+                  labelColor: sgBlack,
+                  labelStyle: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Nexa',
+                  ),
+                  tabs: [
+                    Tab(
+                      text: "SJ Berjalan",
+                    ),
+                    Tab(
+                      text: "Seluruh SJ",
+                    ),
+                    Tab(
+                      text: "Daftar Jadwal",
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      Container(
+                        width: size.width,
+                        height: size.height * .7,
+                        child: _modelsDelivery.length > 0
+                            ? ListView.builder(
+                                shrinkWrap: true,
+                                physics: BouncingScrollPhysics(),
+                                itemCount: _modelsDelivery.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => ScheduleDetail(
+                                            id: _modelsDelivery[index].id,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: DeliveryCardWidget(
+                                      model: _modelsDelivery[index],
+                                    ),
+                                  );
+                                },
+                              )
+                            : Center(
+                                child: Text('Data not found'),
+                              ),
+                      ),
+                      Container(
+                        width: size.width,
+                        height: size.height * .7,
+                        child: _modelsDelivery.length > 0
+                            ? ListView.builder(
+                                shrinkWrap: true,
+                                physics: BouncingScrollPhysics(),
+                                itemCount: _modelsDelivery.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => ScheduleDetail(
+                                            id: _modelsDelivery[index].id,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: DeliveryCardWidget(
+                                      model: _modelsDelivery[index],
+                                    ),
+                                  );
+                                },
+                              )
+                            : Center(
+                                child: Text('Data not found'),
+                              ),
+                      ),
+                      Container(
+                        width: size.width,
+                        height: size.height * .7,
+                        child: _modelsSchedule.length > 0
+                            ? ListView.builder(
+                                shrinkWrap: true,
+                                physics: BouncingScrollPhysics(),
+                                itemCount: _modelsSchedule.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return ScheduleCardWidget(
+                                    model: _modelsSchedule[index],
+                                    openBottom: (context, data) =>
+                                        _showModal(context, data),
+                                  );
+                                },
+                              )
+                            : Center(
+                                child: Text('Data not found'),
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _getDataSchedule(date) async {
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final String formatted = formatter.format(date);
+
+    _apiSchedule = await serviceSchedule.GetList(formatted, 1, "");
+
+    _modelsSchedule.clear();
+    setState(() {
+      for (var i = 0; i < _apiSchedule.data.length; i++) {
+        _modelsSchedule.add(_apiSchedule.data[i]);
+      }
+    });
+  }
+
+  Future<void> _getDataDelivery(date) async {
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final String formatted = formatter.format(date);
+
+    _apiDelivery = await serviceDelivery.GetList(formatted, 1, "");
+
+    _modelsDelivery.clear();
+    setState(() {
+      for (var i = 0; i < _apiDelivery.data.length; i++) {
+        _modelsDelivery.add(_apiDelivery.data[i]);
+      }
+    });
+  }
+}
