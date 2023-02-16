@@ -8,6 +8,7 @@ import 'package:asm/app/service/orders/schedule.dart';
 import 'package:asm/app/views/cards/delivery_card_widget.dart';
 import 'package:asm/app/views/cards/order_card_widget.dart';
 import 'package:asm/app/views/cards/schedule_card_widget.dart';
+import 'package:asm/app/views/widgets/date_scroll_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:asm/app/views/components/date_utils.dart' as date_utils;
 import 'package:get_it/get_it.dart';
@@ -38,11 +39,6 @@ class _ScheduleHomeState extends State<ScheduleHome> {
 
   @override
   void initState() {
-    _currentMonthList = date_utils.DateUtils.daysInMonth(currentDateTime);
-    _currentMonthList.sort((a, b) => a.day.compareTo(b.day));
-    _currentMonthList = _currentMonthList.toSet().toList();
-    _scrollControllerDate =
-        ScrollController(initialScrollOffset: 47.5 * currentDateTime.day);
     _getDataSchedule(currentDateTime);
     _getDataDelivery(currentDateTime);
     super.initState();
@@ -123,100 +119,9 @@ class _ScheduleHomeState extends State<ScheduleHome> {
     );
   }
 
-  Widget DateViewWidget(int index) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(6, 12, 1, 15),
-      child: GestureDetector(
-        onTap: () {
-          _getDataSchedule(_currentMonthList[index]);
-          _getDataDelivery(_currentMonthList[index]);
-          setState(() {
-            currentDateTime = _currentMonthList[index];
-          });
-        },
-        child: Container(
-          width: 45,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: (_currentMonthList[index].day != currentDateTime.day)
-                  ? [
-                      appWhite.withOpacity(0.8),
-                      appWhite.withOpacity(0.8),
-                      appWhite.withOpacity(0.8),
-                    ]
-                  : [
-                      sgRed,
-                      sgRed,
-                      sgRed,
-                    ],
-              begin: const FractionalOffset(0.0, 0.0),
-              end: const FractionalOffset(0.0, 1.0),
-              stops: const [0.0, 0.5, 1.0],
-              tileMode: TileMode.clamp,
-            ),
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(4, 4),
-                blurRadius: 2,
-                spreadRadius: 1,
-                color: sgBlackLight,
-              )
-            ],
-          ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  _currentMonthList[index].day.toString(),
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Nexa',
-                      color:
-                          (_currentMonthList[index].day != currentDateTime.day)
-                              ? appBlack
-                              : appWhite),
-                ),
-                Text(
-                  date_utils
-                      .DateUtils.weekdays[_currentMonthList[index].weekday - 1],
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Nexa',
-                    color: (_currentMonthList[index].day != currentDateTime.day)
-                        ? sgGold
-                        : appWhite,
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget TabDateViewWidget() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      child: SizedBox(
-        width: double.infinity,
-        height: 80,
-        child: ListView.builder(
-          controller: _scrollControllerDate,
-          scrollDirection: Axis.horizontal,
-          physics: const ClampingScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: _currentMonthList.length,
-          itemBuilder: (BuildContext context, int index) {
-            return DateViewWidget(index);
-          },
-        ),
-      ),
-    );
+  _retriveData(DateTime date) {
+    _getDataSchedule(date);
+    _getDataDelivery(date);
   }
 
   @override
@@ -256,30 +161,10 @@ class _ScheduleHomeState extends State<ScheduleHome> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: 8,
-                    left: 8,
-                    right: 8,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        date_utils.DateUtils.months[currentDateTime.month - 1] +
-                            ' ' +
-                            currentDateTime.year.toString(),
-                        style: TextStyle(
-                          color: appBlack,
-                          fontSize: 14.0,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Nexa',
-                        ),
-                      ),
-                    ],
-                  ),
+                DateScrollWidget(
+                  date: currentDateTime,
+                  setDate: (date) => _retriveData(date),
                 ),
-                TabDateViewWidget(),
                 TabBar(
                   isScrollable: true,
                   labelColor: sgBlack,

@@ -9,7 +9,6 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/constant/theme_constant.dart';
 import 'package:asm/app/constant/theme_manager.dart';
 import 'package:asm/app/controllers/bank/bank_list.dart';
 

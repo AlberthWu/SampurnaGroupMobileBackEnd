@@ -1,11 +1,12 @@
 import 'dart:convert';
+import 'package:asm/app/constant/color.dart';
 import 'package:http/http.dart' as http;
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/employee/get.dart';
 import 'package:asm/app/models/employee/list.dart';
 
 class employeeService {
-  static const API = "https://api.sampurna-group.com/v1/";
+  static const API = sgBaseURL;
   static const headers = {
     'Content-Type': 'application/json',
   };

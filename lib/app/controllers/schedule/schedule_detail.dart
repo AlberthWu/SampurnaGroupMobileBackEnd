@@ -192,6 +192,18 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            ExpansionTile(
+                              title: Text("Data"),
+                              children: [
+                                Text('data'),
+                                ListTile(
+                                  title: Text('Data'),
+                                ),
+                                ListTile(
+                                  title: Text('Data'),
+                                ),
+                              ],
+                            ),
                             SizedBox(
                               height: 5,
                             ),
@@ -330,8 +342,10 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
                                                       BouncingScrollPhysics(),
                                                   gridDelegate:
                                                       const SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 3,
+                                                    crossAxisCount: 1,
                                                   ),
+                                                  scrollDirection:
+                                                      Axis.horizontal,
                                                   itemCount: _imageList.length,
                                                   itemBuilder:
                                                       (BuildContext context,
@@ -388,18 +402,6 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
                                                   ),
                                                 ),
                                         ),
-                                        // image != null
-                                        //     ? Image.file(
-                                        //         image!,
-                                        //         height: size.height * 0.3,
-                                        //       )
-                                        //     : const Text(
-                                        //         'No image selected',
-                                        //         textAlign: TextAlign.center,
-                                        //         style: TextStyle(
-                                        //           fontFamily: 'Nexa',
-                                        //         ),
-                                        //       ),
                                         const SizedBox(
                                           height: 20,
                                         ),

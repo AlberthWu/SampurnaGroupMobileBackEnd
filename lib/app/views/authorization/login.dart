@@ -50,11 +50,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      child: const ScheduleHome(),
-                      type: PageTransitionType.bottomToTop,
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (_) => ScheduleHome(),
                     ),
                   );
                 },
