@@ -1,7 +1,7 @@
 import 'package:asm/app/constant/color.dart';
 import 'package:flutter/material.dart';
 import 'package:asm/app/views/components/date_utils.dart' as date_utils;
-import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 
 class DateScrollWidget extends StatefulWidget {
   final DateTime date;
@@ -20,6 +20,7 @@ class DateScrollWidget extends StatefulWidget {
 class _DateScrollWidgetState extends State<DateScrollWidget> {
   late ScrollController _scrollControllerDate;
   late DateTime _currentDateTime;
+  DateTime? _selected;
 
   List<DateTime> _currentMonthList = List.empty();
 
@@ -131,27 +132,7 @@ class _DateScrollWidgetState extends State<DateScrollWidget> {
                 ),
               ),
               IconButton(
-                onPressed: () {
-                  showMonthPicker(
-                    context: context,
-                    firstDate: DateTime(DateTime.now().year - 1, 5),
-                    lastDate: DateTime(DateTime.now().year + 1, 9),
-                    initialDate: _currentDateTime,
-                    locale: Locale("en"),
-                  ).then((date) {
-                    if (date != null) {
-                      setState(() {
-                        _currentDateTime = date;
-                        _currentMonthList =
-                            date_utils.DateUtils.daysInMonth(_currentDateTime);
-                        _currentMonthList
-                            .sort((a, b) => a.day.compareTo(b.day));
-                        _currentMonthList = _currentMonthList.toSet().toList();
-                      });
-                      widget.setDate(date);
-                    }
-                  });
-                },
+                onPressed: () => _onPressed(context: context),
                 icon: Icon(
                   Icons.calendar_month_outlined,
                 ),
@@ -176,5 +157,26 @@ class _DateScrollWidgetState extends State<DateScrollWidget> {
         ),
       ],
     );
+  }
+
+  Future<void> _onPressed({
+    required BuildContext context,
+  }) async {
+    final selected = await showMonthYearPicker(
+      context: context,
+      initialDate: _currentDateTime ?? DateTime.now(),
+      firstDate: DateTime(2019),
+      lastDate: DateTime(2100),
+      locale: Locale('en'),
+    );
+
+    if (selected != null) {
+      setState(() {
+        _currentDateTime = selected;
+        _currentMonthList = date_utils.DateUtils.daysInMonth(_currentDateTime);
+        _currentMonthList.sort((a, b) => a.day.compareTo(b.day));
+        _currentMonthList = _currentMonthList.toSet().toList();
+      });
+    }
   }
 }

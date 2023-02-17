@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:asm/app/constant/color.dart';
 import 'package:asm/app/constant/theme_manager.dart';
 import 'package:asm/app/controllers/bank/bank_list.dart';
+import 'package:month_year_picker/month_year_picker.dart';
 
 void setupLocator() {
   GetIt.I.registerLazySingleton(() => autoCompleteService());
@@ -72,6 +73,7 @@ class _MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
+        MonthYearPickerLocalizations.delegate,
       ],
       supportedLocales: [const Locale('en', 'US')],
       title: "Sampurna Group",

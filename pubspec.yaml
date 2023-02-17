@@ -55,7 +55,8 @@ dependencies:
   dropdown_search: ^5.0.5
   auto_complete_search: ^0.0.4
   animated_bottom_navigation_bar: ^1.1.0+1
-  month_picker_dialog: ^0.4.0
+  month_year_picker: ^0.2.0+2
+
   
 dev_dependencies:
   flutter_test:
