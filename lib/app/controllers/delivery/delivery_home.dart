@@ -42,6 +42,8 @@ class _DeliveryHomeState extends State<DeliveryHome> {
   _initialData() {
     _getDataSchedule(currentDateTime);
     _getDataDelivery(currentDateTime);
+
+    setState(() {});
   }
 
   Widget bottomWidget(scheduleListModel data) {
