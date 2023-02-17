@@ -1,5 +1,5 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/schedule/schedule_detail.dart';
+import 'package:asm/app/controllers/delivery/delivery_detail.dart';
 import 'package:asm/app/models/orders/schedule/order.dart';
 import 'package:flutter/material.dart';
 

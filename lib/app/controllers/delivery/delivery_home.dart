@@ -1,5 +1,6 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/schedule/schedule_detail.dart';
+import 'package:asm/app/controllers/delivery/delivery_detail.dart';
+import 'package:asm/app/controllers/delivery/delivery_modify.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/orders/schedule/list.dart';
 import 'package:asm/app/models/orders/surat_jalan/list.dart';
@@ -10,18 +11,17 @@ import 'package:asm/app/views/cards/order_card_widget.dart';
 import 'package:asm/app/views/cards/schedule_card_widget.dart';
 import 'package:asm/app/views/widgets/date_scroll_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:asm/app/views/components/date_utils.dart' as date_utils;
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 
-class ScheduleHome extends StatefulWidget {
-  const ScheduleHome({super.key});
+class DeliveryHome extends StatefulWidget {
+  const DeliveryHome({super.key});
 
   @override
-  State<ScheduleHome> createState() => _ScheduleHomeState();
+  State<DeliveryHome> createState() => _DeliveryHomeState();
 }
 
-class _ScheduleHomeState extends State<ScheduleHome> {
+class _DeliveryHomeState extends State<DeliveryHome> {
   scheduleService get serviceSchedule => GetIt.I<scheduleService>();
   deliveryService get serviceDelivery => GetIt.I<deliveryService>();
 
@@ -31,17 +31,17 @@ class _ScheduleHomeState extends State<ScheduleHome> {
   late APIResponse<List<deliveryListModel>> _apiDelivery;
   List<deliveryListModel> _modelsDelivery = [];
 
-  // DateTime currentDateTime = DateTime.now();
-  DateTime currentDateTime = new DateTime(2023, 1, 30, 0, 0, 0);
-  late ScrollController _scrollControllerDate;
-  List<DateTime> _currentMonthList = List.empty();
-  bool _isLoading = false;
+  DateTime currentDateTime = DateTime.now();
 
   @override
   void initState() {
+    super.initState();
+    _initialData();
+  }
+
+  _initialData() {
     _getDataSchedule(currentDateTime);
     _getDataDelivery(currentDateTime);
-    super.initState();
   }
 
   Widget bottomWidget(scheduleListModel data) {
@@ -71,13 +71,15 @@ class _ScheduleHomeState extends State<ScheduleHome> {
                   itemBuilder: (BuildContext context, int index) {
                     return GestureDetector(
                       onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => ScheduleDetail(
-                              id: data.orders![index].id,
-                            ),
-                          ),
-                        );
+                        Navigator.of(context)
+                            .push(
+                              MaterialPageRoute(
+                                builder: (_) => DeliveryModify(
+                                  delivery_id: data.orders![index].id,
+                                ),
+                              ),
+                            )
+                            .then((value) => _initialData());
                       },
                       child: OrderCardWidget(model: data.orders![index]),
                     );
@@ -145,15 +147,6 @@ class _ScheduleHomeState extends State<ScheduleHome> {
           iconTheme: IconThemeData(
             color: sgWhite,
           ),
-          // actions: <Widget>[
-          //   IconButton(
-          //     icon: Icon(
-          //       Icons.save_outlined,
-          //       color: sgWhite,
-          //     ),
-          //     onPressed: () {},
-          //   ),
-          // ],
         ),
         body: SafeArea(
           child: Container(
@@ -166,19 +159,21 @@ class _ScheduleHomeState extends State<ScheduleHome> {
                   setDate: (date) => _retriveData(date),
                 ),
                 TabBar(
-                  isScrollable: true,
-                  labelColor: sgBlack,
+                  indicatorColor: sgBrownLight,
+                  unselectedLabelColor: appBlack,
+                  labelColor: sgGold,
                   labelStyle: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     fontFamily: 'Nexa',
                   ),
+                  isScrollable: true,
                   tabs: [
                     Tab(
                       text: "SJ Berjalan",
                     ),
                     Tab(
-                      text: "Seluruh SJ",
+                      text: "SJ Per Hari",
                     ),
                     Tab(
                       text: "Daftar Jadwal",
@@ -199,13 +194,15 @@ class _ScheduleHomeState extends State<ScheduleHome> {
                                 itemBuilder: (BuildContext context, int index) {
                                   return GestureDetector(
                                     onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => ScheduleDetail(
-                                            id: _modelsDelivery[index].id,
-                                          ),
-                                        ),
-                                      );
+                                      Navigator.of(context)
+                                          .push(
+                                            MaterialPageRoute(
+                                              builder: (_) => DeliveryDetail(
+                                                id: _modelsDelivery[index].id,
+                                              ),
+                                            ),
+                                          )
+                                          .then((value) => _initialData());
                                     },
                                     child: DeliveryCardWidget(
                                       model: _modelsDelivery[index],
@@ -228,13 +225,15 @@ class _ScheduleHomeState extends State<ScheduleHome> {
                                 itemBuilder: (BuildContext context, int index) {
                                   return GestureDetector(
                                     onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (_) => ScheduleDetail(
-                                            id: _modelsDelivery[index].id,
-                                          ),
-                                        ),
-                                      );
+                                      Navigator.of(context)
+                                          .push(
+                                            MaterialPageRoute(
+                                              builder: (_) => DeliveryDetail(
+                                                id: _modelsDelivery[index].id,
+                                              ),
+                                            ),
+                                          )
+                                          .then((value) => _initialData());
                                     },
                                     child: DeliveryCardWidget(
                                       model: _modelsDelivery[index],

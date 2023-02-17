@@ -1,48 +1,80 @@
+import 'package:asm/app/models/employee/get.dart';
+
 class deliveryGetModel {
   final int id;
+  final int company_id;
   final String company_name;
-  final String bisnis_unit;
+  final int bisnis_id;
+  final String bisnis_name;
   final String schedule_no;
   final String schedule_date;
-  final int? urgent;
-  final String urgent_name;
   final String delivery_no;
   final String delivery_date;
-  final String jenis_transaksi;
+  final int order_type_id;
+  final String order_type_name;
+  final int customer_id;
+  final String customer_name;
+  final int origin_id;
   final String origin_name;
+  final int plant_id;
   final String plant_name;
+  final int fleet_type_id;
   final String fleet_type_name;
-  final String product_name;
+  final int fleet_id;
   final String plate_no;
+  final int multi_product;
+  final int product_id;
+  final String product_name;
+  final int employee_id;
   final String employee_name;
   final String rekening_no;
   final String nama_rekening;
   final String image;
   final bool assign;
+  final int? urgent;
+  final String urgent_name;
+  final int ujt_id;
   final int ujt;
+  final employeeGetModel? primary_driver;
+  final employeeGetModel? secondary_driver;
 
   deliveryGetModel({
     this.id = 0,
+    this.company_id = 0,
     this.company_name = "",
-    this.bisnis_unit = "",
+    this.bisnis_id = 0,
+    this.bisnis_name = "",
     this.schedule_no = "",
     this.schedule_date = "",
-    this.urgent = 0,
-    this.urgent_name = "",
     this.delivery_no = "",
     this.delivery_date = "",
-    this.jenis_transaksi = "",
+    this.order_type_id = 0,
+    this.order_type_name = "",
+    this.customer_id = 0,
+    this.customer_name = "",
+    this.origin_id = 0,
     this.origin_name = "",
+    this.plant_id = 0,
     this.plant_name = "",
+    this.fleet_type_id = 0,
     this.fleet_type_name = "",
+    this.multi_product = 0,
+    this.product_id = 0,
     this.product_name = "",
+    this.fleet_id = 0,
     this.plate_no = "",
+    this.urgent = 0,
+    this.urgent_name = "",
+    this.employee_id = 0,
     this.employee_name = "",
     this.rekening_no = "",
     this.nama_rekening = "",
     this.image = "",
     this.assign = false,
+    this.ujt_id = 0,
     this.ujt = 0,
+    this.primary_driver,
+    this.secondary_driver,
   });
 
   factory deliveryGetModel.fromJson(Map<String, dynamic> item) {
@@ -58,28 +90,60 @@ class deliveryGetModel {
       }
     }
 
+    var _employeePrimary;
+    var primary = item['primary_driver'];
+
+    if (primary != null) {
+      _employeePrimary = employeeGetModel.fromJson(primary);
+    } else {
+      _employeePrimary = new employeeGetModel();
+    }
+
+    var _employeeSecondary;
+    var secondary = item['secondary_driver'];
+
+    if (secondary != null) {
+      _employeeSecondary = employeeGetModel.fromJson(secondary);
+    } else {
+      _employeeSecondary = new employeeGetModel();
+    }
+
     return deliveryGetModel(
       id: item['id'],
+      company_id: item['company_id']['id'],
       company_name: item['company_id']['name'],
-      bisnis_unit: item['sales_type_id']['name'],
+      bisnis_id: item['sales_type_id']['id'],
+      bisnis_name: item['sales_type_id']['name'],
       schedule_no: item['schedule_id']['schedule_no'],
       schedule_date: item['schedule_id']['issue_date'],
-      urgent: item['schedule_id']['urgent'],
-      urgent_name: urgent,
       delivery_no: item['reference_no'] == null ? "" : item['reference_no'],
       delivery_date: item['issue_date'] == null ? "" : item['issue_date'],
-      jenis_transaksi: item['order_type_id']['name'],
+      order_type_id: item['order_type_id']['id'],
+      order_type_name: item['order_type_id']['name'],
+      customer_id: item['customer_id']['id'],
+      customer_name: item['customer_id']['name'],
+      origin_id: item['origin_id']['id'],
       origin_name: item['origin_id']['name'],
+      plant_id: item['plant_id']['id'],
       plant_name: item['plant_id']['full_name'],
+      fleet_type_id: item['fleet_type_id']['id'],
       fleet_type_name: item['fleet_type_id']['name'],
+      multi_product: item['multi_product'],
+      product_id: item['product_id']['id'],
       product_name: item['product_id']['name'],
+      fleet_id: item['fleet_id']['id'],
       plate_no: item['fleet_id']['plate_no'],
       employee_name: item['employee_id']['name'],
       rekening_no: item['employee_id']['bank_no'],
       nama_rekening: item['employee_id']['bank_account_name'],
       image: image_data == null ? '' : image,
       assign: item['confirm_ujt'] == 1 ? true : false,
+      urgent: item['schedule_id']['urgent'],
+      urgent_name: urgent,
+      ujt_id: item['ujt_id'],
       ujt: item['ujt'],
+      primary_driver: _employeePrimary,
+      secondary_driver: _employeeSecondary,
     );
   }
 }

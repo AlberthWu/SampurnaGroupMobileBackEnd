@@ -15,6 +15,7 @@ final sgBlueMuda = Color(0xFFf5f9fc);
 final sgBlueBlue = Color(0xFFdeebf6);
 // final sgRed = Color(0xFFED151F);
 
+final sgBrownLight = Color(0XFFAB987C);
 final sgGreen = Color.fromARGB(1000, 66, 181, 73);
 final sgWhite = Color.fromARGB(255, 255, 255, 255);
 final sgBlack = Colors.black54;

@@ -10,17 +10,22 @@ class SGAutoCompleteWidget extends StatefulWidget {
   final Function getData;
   final int id;
   final String name;
+  final bool dataKey;
+  final Function? setData;
 
-  const SGAutoCompleteWidget({
-    Key? key,
-    required this.controller,
-    required this.title,
-    required this.getData,
-    required this.id,
-    required this.name,
-    this.enabled = true,
-    // this.icon,
-  }) : super(key: key);
+  const SGAutoCompleteWidget(
+      {Key? key,
+      required this.controller,
+      required this.title,
+      required this.getData,
+      required this.id,
+      required this.name,
+      this.enabled = true,
+      this.dataKey = true,
+      this.setData
+      // this.icon,
+      })
+      : super(key: key);
 
   @override
   State<SGAutoCompleteWidget> createState() => _SGAutoCompleteWidgetState();
@@ -42,7 +47,14 @@ class _SGAutoCompleteWidgetState extends State<SGAutoCompleteWidget> {
   _changeValue(value) {
     _id = value.getID();
     _name = value.getName();
-    widget.controller.text = value.getIDString();
+
+    if (widget.dataKey) {
+      widget.controller.text = value.getIDString();
+    } else {
+      widget.controller.text = value.getName();
+    }
+
+    setState(() {});
   }
 
   @override
@@ -55,7 +67,10 @@ class _SGAutoCompleteWidgetState extends State<SGAutoCompleteWidget> {
       asyncItems: (filter) => widget.getData(filter),
       compareFn: (item, selectedItem) => item.id == selectedItem.id,
       itemAsString: (autocompleteListModel u) => u.showAsString(),
-      onChanged: (val) => _changeValue(val!),
+      onChanged: (val) {
+        widget.setData!(val);
+        _changeValue(val!);
+      },
       selectedItem: autocompleteListModel(id: _id, name: _name),
       popupProps: PopupPropsMultiSelection.modalBottomSheet(
         isFilterOnline: true,

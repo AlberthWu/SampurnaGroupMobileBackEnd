@@ -1,5 +1,5 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/schedule/schedule_detail.dart';
+import 'package:asm/app/controllers/delivery/delivery_create.dart';
 import 'package:asm/app/models/orders/schedule/list.dart';
 import 'package:flutter/material.dart';
 
@@ -129,28 +129,7 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Container(
-                    height: 37,
-                    width: 100,
-                    decoration: BoxDecoration(
-                      color: widget.model.urgent == 1 ? sgRed : sgGray,
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    alignment: Alignment(0, 0),
-                    child: Text(
-                      widget.model.urgent_name,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                        color: widget.model.urgent == 1 ? appWhite : appBlack,
-                        fontFamily: 'Nexa',
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 6,
-                  ),
-                  Container(
-                    height: 37,
+                    height: 30,
                     width: 100,
                     decoration: BoxDecoration(
                       color: sgGrey,
@@ -196,7 +175,32 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                       ),
                     ),
                   ),
+                  SizedBox(
+                    height: 6,
+                  ),
                   Container(
+                    height: 30,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: widget.model.urgent == 1 ? sgRed : sgGray,
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    alignment: Alignment(0, 0),
+                    child: Text(
+                      widget.model.urgent_name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                        color: widget.model.urgent == 1 ? appWhite : appBlack,
+                        fontFamily: 'Nexa',
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 6,
+                  ),
+                  Container(
+                    height: 30,
                     width: 100,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -205,8 +209,8 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (_) => ScheduleDetail(
-                              id: widget.model.id,
+                            builder: (_) => DeliveryCreate(
+                              schedule_id: widget.model.id,
                             ),
                           ),
                         );

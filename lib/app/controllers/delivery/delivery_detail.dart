@@ -3,25 +3,26 @@ import 'dart:io';
 import 'package:asm/app/constant/color.dart';
 import 'package:asm/app/models/orders/surat_jalan/get.dart';
 import 'package:asm/app/service/orders/delivery.dart';
+import 'package:asm/app/views/widgets/information_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-class ScheduleDetail extends StatefulWidget {
+class DeliveryDetail extends StatefulWidget {
   final int id;
 
-  const ScheduleDetail({
+  const DeliveryDetail({
     Key? key,
     required this.id,
   }) : super(key: key);
 
   @override
-  State<ScheduleDetail> createState() => _ScheduleDetailState();
+  State<DeliveryDetail> createState() => _DeliveryDetailState();
 }
 
-class _ScheduleDetailState extends State<ScheduleDetail> {
+class _DeliveryDetailState extends State<DeliveryDetail> {
   deliveryService get service => GetIt.I<deliveryService>();
   final currencyFormatter = NumberFormat('#,##0', 'ID');
   final ImagePicker _picker = ImagePicker();
@@ -110,7 +111,7 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
     final result = await service.PostConfirm(id);
 
     final title = 'Information';
-    final text = result.status ? (result.message) : 'Your unit was updated';
+    final text = result.message;
 
     showDialog(
       context: context,
@@ -131,31 +132,6 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
         _getData();
       }
     });
-  }
-
-  Widget ScheduleFeature(String title, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            color: appBlack,
-            fontSize: 14.0,
-            fontFamily: 'Nexa',
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            color: sgRed,
-            fontSize: 14.0,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Nexa',
-          ),
-        ),
-      ],
-    );
   }
 
   @override
@@ -192,26 +168,14 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ExpansionTile(
-                              title: Text("Data"),
-                              children: [
-                                Text('data'),
-                                ListTile(
-                                  title: Text('Data'),
-                                ),
-                                ListTile(
-                                  title: Text('Data'),
-                                ),
-                              ],
-                            ),
                             SizedBox(
                               height: 5,
                             ),
                             Container(
                               width: size.width,
-                              child: ScheduleFeature(
-                                'Grup Perusahaan',
-                                _model.company_name,
+                              child: InfoWidget(
+                                field: 'Grup Perusahaan',
+                                value: _model.company_name,
                               ),
                             ),
                             sgSizedBoxHeight,
@@ -224,33 +188,33 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
                                     children: [
                                       Container(
                                         width: size.width * 0.5,
-                                        child: ScheduleFeature(
-                                          'Nomor Jadwal',
-                                          _model.delivery_no,
+                                        child: InfoWidget(
+                                          field: 'Nomor SJ',
+                                          value: _model.delivery_no,
                                         ),
                                       ),
                                       sgSizedBoxHeight,
                                       Container(
                                         width: size.width * 0.5,
-                                        child: ScheduleFeature(
-                                          'Nomor Polisi',
-                                          _model.plate_no,
+                                        child: InfoWidget(
+                                          field: 'Nomor Polisi',
+                                          value: _model.plate_no,
                                         ),
                                       ),
                                       sgSizedBoxHeight,
                                       Container(
                                         width: size.width * 0.5,
-                                        child: ScheduleFeature(
-                                          'Nomor Rekening',
-                                          _model.rekening_no,
+                                        child: InfoWidget(
+                                          field: 'Nomor Rekening',
+                                          value: _model.rekening_no,
                                         ),
                                       ),
                                       sgSizedBoxHeight,
                                       Container(
                                         width: size.width * 0.5,
-                                        child: ScheduleFeature(
-                                          'Driver',
-                                          _model.employee_name,
+                                        child: InfoWidget(
+                                          field: 'Driver',
+                                          value: _model.employee_name,
                                         ),
                                       ),
                                     ],
@@ -260,33 +224,34 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
                                   children: [
                                     Container(
                                       width: size.width * 0.5,
-                                      child: ScheduleFeature(
-                                        'Tanggal Jadwal',
-                                        _model.delivery_date,
+                                      child: InfoWidget(
+                                        field: 'Tanggal SJ',
+                                        value: _model.delivery_date,
                                       ),
                                     ),
                                     sgSizedBoxHeight,
                                     Container(
                                       width: size.width * 0.5,
-                                      child: ScheduleFeature(
-                                        'Jenis',
-                                        _model.fleet_type_name,
+                                      child: InfoWidget(
+                                        field: 'Jenis',
+                                        value: _model.fleet_type_name,
                                       ),
                                     ),
                                     sgSizedBoxHeight,
                                     Container(
                                       width: size.width * 0.5,
-                                      child: ScheduleFeature(
-                                        'Nama Rekening',
-                                        _model.nama_rekening,
+                                      child: InfoWidget(
+                                        field: 'Nama Rekening',
+                                        value: _model.nama_rekening,
                                       ),
                                     ),
                                     sgSizedBoxHeight,
                                     Container(
                                       width: size.width * 0.5,
-                                      child: ScheduleFeature(
-                                        'UJT',
-                                        currencyFormatter.format(_model.ujt),
+                                      child: InfoWidget(
+                                        field: 'UJT',
+                                        value: currencyFormatter
+                                            .format(_model.ujt),
                                       ),
                                     ),
                                   ],
@@ -296,32 +261,32 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
                             sgSizedBoxHeight,
                             Container(
                               width: size.width,
-                              child: ScheduleFeature(
-                                'Asal',
-                                _model.origin_name,
+                              child: InfoWidget(
+                                field: 'Asal',
+                                value: _model.origin_name,
                               ),
                             ),
                             sgSizedBoxHeight,
                             Container(
                               width: size.width,
-                              child: ScheduleFeature(
-                                'Tujuan',
-                                _model.plant_name,
+                              child: InfoWidget(
+                                field: 'Tujuan',
+                                value: _model.plant_name,
                               ),
                             ),
                             sgSizedBoxHeight,
                             Container(
                               width: size.width,
-                              child: ScheduleFeature(
-                                'Material',
-                                _model.product_name,
+                              child: InfoWidget(
+                                field: 'Material',
+                                value: _model.product_name,
                               ),
                             ),
                             sgSizedBoxHeight,
                             _model.assign
                                 ? Container(
                                     width: size.width,
-                                    height: size.height * 0.42,
+                                    height: size.height * 0.28,
                                     child: Column(
                                       children: [
                                         Text(
@@ -351,26 +316,30 @@ class _ScheduleDetailState extends State<ScheduleDetail> {
                                                       (BuildContext context,
                                                           index) {
                                                     return Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              2.0),
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 5.0),
                                                       child: Stack(
                                                         fit: StackFit.expand,
                                                         children: [
-                                                          Image.file(
-                                                            File(
-                                                              _imageList[index]
-                                                                  .path,
+                                                          ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20.0),
+                                                            child: Image.file(
+                                                              File(
+                                                                _imageList[
+                                                                        index]
+                                                                    .path,
+                                                              ),
+                                                              fit: BoxFit.cover,
                                                             ),
-                                                            fit: BoxFit.cover,
                                                           ),
                                                           Positioned(
                                                             top: 4,
                                                             right: 4,
                                                             child: Container(
-                                                              color: sgGray
-                                                                  .withOpacity(
-                                                                      0.7),
                                                               child: IconButton(
                                                                 onPressed: () {
                                                                   _imageList

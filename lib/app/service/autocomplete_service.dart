@@ -20,7 +20,7 @@ class autoCompleteService {
         if (data.statusCode == 200) {
           final jsonData = json.decode(data.body)['data']['list'];
           for (var item in jsonData) {
-            models.add(autocompleteListModel.fromJson(item));
+            models.add(autocompleteListModel.fromJson(item, "name"));
           }
           return APIResponse<List<autocompleteListModel>>(data: models);
         }
@@ -50,7 +50,7 @@ class autoCompleteService {
         if (data.statusCode == 200) {
           final jsonData = json.decode(data.body)['data'];
           for (var item in jsonData) {
-            models.add(autocompleteListModel.fromJson(item));
+            models.add(autocompleteListModel.fromJson(item, "name"));
           }
           return APIResponse<List<autocompleteListModel>>(data: models);
         }
@@ -80,7 +80,7 @@ class autoCompleteService {
         if (data.statusCode == 200) {
           final jsonData = json.decode(data.body)['data'];
           for (var item in jsonData) {
-            models.add(autocompleteListModel.fromJson(item));
+            models.add(autocompleteListModel.fromJson(item, "name"));
           }
           return APIResponse<List<autocompleteListModel>>(data: models);
         }
@@ -110,7 +110,7 @@ class autoCompleteService {
         if (data.statusCode == 200) {
           final jsonData = json.decode(data.body)['data'];
           for (var item in jsonData) {
-            models.add(autocompleteListModel.fromJson(item));
+            models.add(autocompleteListModel.fromJson(item, "name"));
           }
           return APIResponse<List<autocompleteListModel>>(data: models);
         }
@@ -139,7 +139,7 @@ class autoCompleteService {
         if (data.statusCode == 200) {
           final jsonData = json.decode(data.body)['data'];
           for (var item in jsonData) {
-            models.add(autocompleteListModel.fromJson(item));
+            models.add(autocompleteListModel.fromJson(item, "name"));
           }
           return APIResponse<List<autocompleteListModel>>(data: models);
         }
@@ -165,7 +165,38 @@ class autoCompleteService {
         if (data.statusCode == 200) {
           final jsonData = json.decode(data.body)['data']['list'];
           for (var item in jsonData) {
-            models.add(autocompleteListModel.fromJson(item));
+            models.add(autocompleteListModel.fromJson(item, "name"));
+          }
+          return APIResponse<List<autocompleteListModel>>(data: models);
+        }
+        return APIResponse<List<autocompleteListModel>>(
+          status: false,
+          message: message,
+          data: models,
+        );
+      },
+    ).catchError(
+      (_) => APIResponse<List<autocompleteListModel>>(
+        status: false,
+        message: 'An error occured!',
+        data: models,
+      ),
+    );
+  }
+
+  Future<APIResponse<List<autocompleteListModel>>> GetFleetList(
+      business_id, keyword) {
+    final models = <autocompleteListModel>[];
+    return http
+        .get(Uri.parse(API + '/fleet/list/$business_id?keyword=$keyword'),
+            headers: headers)
+        .then(
+      (data) {
+        final message = json.decode(data.body)['errmsg'];
+        if (data.statusCode == 200) {
+          final jsonData = json.decode(data.body)['data'];
+          for (var item in jsonData) {
+            models.add(autocompleteListModel.fromJson(item, 'plate_no'));
           }
           return APIResponse<List<autocompleteListModel>>(data: models);
         }

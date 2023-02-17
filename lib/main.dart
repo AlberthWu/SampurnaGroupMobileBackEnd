@@ -1,7 +1,9 @@
 import 'package:asm/app/service/autocomplete_service.dart';
+import 'package:asm/app/service/driver.dart';
 import 'package:asm/app/service/employee.dart';
 import 'package:asm/app/service/orders/delivery.dart';
 import 'package:asm/app/service/orders/schedule.dart';
+import 'package:asm/app/service/orders/ujt.dart';
 import 'package:asm/app/views/splash/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -17,6 +19,8 @@ void setupLocator() {
   GetIt.I.registerLazySingleton(() => employeeService());
   GetIt.I.registerLazySingleton(() => scheduleService());
   GetIt.I.registerLazySingleton(() => deliveryService());
+  GetIt.I.registerLazySingleton(() => ujtService());
+  GetIt.I.registerLazySingleton(() => driverService());
 }
 
 void main() {
