@@ -1,4 +1,5 @@
 import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/controllers/dashboard.dart';
 import 'package:asm/app/controllers/delivery/delivery_home.dart';
 import 'package:asm/app/views/authorization/forgot_password.dart';
 import 'package:asm/app/views/widgets/textfield_widget.dart';
@@ -52,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onTap: () {
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
-                      builder: (_) => DeliveryHome(),
+                      builder: (_) => DashboardPage(),
                     ),
                     ((route) => false),
                   );

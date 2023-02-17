@@ -711,8 +711,10 @@ class _EmployeeModifyState extends State<EmployeeModify> {
                         model: _model,
                       ),
                       TabBar(
+                        indicatorColor: sgBrownLight,
+                        unselectedLabelColor: appBlack,
+                        labelColor: sgGold,
                         isScrollable: true,
-                        labelColor: sgBlack,
                         labelStyle: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,

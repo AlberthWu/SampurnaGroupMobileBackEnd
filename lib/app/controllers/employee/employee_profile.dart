@@ -49,7 +49,7 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
                           child: InkWell(
@@ -66,6 +66,7 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
                                 ? Hero(
                                     tag: 'picture',
                                     child: CircleAvatar(
+                                      backgroundColor: appWhite,
                                       maxRadius: size.height * 0.09,
                                       backgroundImage: MemoryImage(
                                         base64Decode(dbImage.value),
@@ -75,6 +76,7 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
                                 : Hero(
                                     tag: 'picture',
                                     child: CircleAvatar(
+                                      backgroundColor: appWhite,
                                       maxRadius: size.height * 0.09,
                                       backgroundImage:
                                           AssetImage("assets/images/user.png"),
@@ -82,67 +84,75 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
                                   ),
                           ),
                         ),
-                        sgSizedBoxWidth,
-                        Expanded(
-                          child: Container(
-                            width: size.width * 0.7,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // FittedBox(
-                                //   child: Text(
-                                //     widget.model.company_name!,
-                                //     style: TextStyle(
-                                //       color: sgBlack,
-                                //       fontSize: 20,
-                                //       fontWeight: FontWeight.bold,
-                                //     ),
-                                //   ),
-                                // ),
-                                // SizedBox(
-                                //   height: 5,
-                                // ),
-                                // FittedBox(
-                                //   child: Text(
-                                //     widget.model.name!,
-                                //     style: TextStyle(
-                                //       color: sgBlack,
-                                //       fontSize: 16,
-                                //       fontWeight: FontWeight.bold,
-                                //     ),
-                                //   ),
-                                // ),
-                                // SizedBox(
-                                //   height: 5,
-                                // ),
-                                // FittedBox(
-                                //   child: Text(
-                                //     widget.model.nik!,
-                                //     style: TextStyle(
-                                //       color: sgBlack,
-                                //       fontSize: 14,
-                                //       fontWeight: FontWeight.bold,
-                                //     ),
-                                //   ),
-                                // ),
-                                // SizedBox(
-                                //   height: 5,
-                                // ),
-                                // FittedBox(
-                                //   child: Text(
-                                //     widget.model.alias!,
-                                //     style: TextStyle(
-                                //       color: sgBlack,
-                                //       fontSize: 14,
-                                //       fontWeight: FontWeight.bold,
-                                //     ),
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        // sgSizedBoxWidth,
+                        // Expanded(
+                        //   child: Container(
+                        //     width: size.width * 0.7,
+                        //     child: Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       mainAxisAlignment: MainAxisAlignment.center,
+                        // children: [
+                        //   FittedBox(
+                        //     child: Text(
+                        //       widget.model == null
+                        //           ? ""
+                        //           : widget.model.company_name!,
+                        //       style: TextStyle(
+                        //         color: sgBlack,
+                        //         fontSize: 20,
+                        //         fontWeight: FontWeight.bold,
+                        //       ),
+                        //     ),
+                        //   ),
+                        //   SizedBox(
+                        //     height: 5,
+                        //   ),
+                        //   FittedBox(
+                        //     child: Text(
+                        //       widget.model == null
+                        //           ? ""
+                        //           : widget.model.name!,
+                        //       style: TextStyle(
+                        //         color: sgBlack,
+                        //         fontSize: 16,
+                        //         fontWeight: FontWeight.bold,
+                        //       ),
+                        //     ),
+                        //   ),
+                        //   SizedBox(
+                        //     height: 5,
+                        //   ),
+                        //   FittedBox(
+                        //     child: Text(
+                        //       widget.model == null
+                        //           ? ""
+                        //           : widget.model.nik!,
+                        //       style: TextStyle(
+                        //         color: sgBlack,
+                        //         fontSize: 14,
+                        //         fontWeight: FontWeight.bold,
+                        //       ),
+                        //     ),
+                        //   ),
+                        //   SizedBox(
+                        //     height: 5,
+                        //   ),
+                        //   FittedBox(
+                        //     child: Text(
+                        //       widget.model == null
+                        //           ? ""
+                        //           : widget.model.alias!,
+                        //       style: TextStyle(
+                        //         color: sgBlack,
+                        //         fontSize: 14,
+                        //         fontWeight: FontWeight.bold,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ],
+                        // ),
+                        // ),
+                        // ),
                       ],
                     ),
                   ),

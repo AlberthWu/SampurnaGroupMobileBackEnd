@@ -108,6 +108,7 @@ class _ListOfEmployeeState extends State<ListOfEmployee> {
             _fetchBack();
           });
         },
+        backgroundColor: sgRed,
         child: Icon(Icons.add),
       ),
       body: SingleChildScrollView(

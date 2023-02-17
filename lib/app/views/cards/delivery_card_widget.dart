@@ -133,6 +133,7 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
                                 : Hero(
                                     tag: 'picture',
                                     child: CircleAvatar(
+                                      backgroundColor: appWhite,
                                       maxRadius: size.height * 0.09,
                                       backgroundImage:
                                           AssetImage("assets/images/user.png"),
