@@ -39,7 +39,7 @@ class _DeliveryHomeState extends State<DeliveryHome> {
     _initialData();
   }
 
-  _initialData() {
+  void _initialData() {
     _getDataSchedule(currentDateTime);
     _getDataDelivery(currentDateTime);
 
@@ -81,7 +81,7 @@ class _DeliveryHomeState extends State<DeliveryHome> {
                                 ),
                               ),
                             )
-                            .then((value) => _initialData());
+                            .then((_) => _initialData);
                       },
                       child: OrderCardWidget(model: data.orders![index]),
                     );
@@ -204,7 +204,7 @@ class _DeliveryHomeState extends State<DeliveryHome> {
                                               ),
                                             ),
                                           )
-                                          .then((value) => _initialData());
+                                          .then((_) => _initialData);
                                     },
                                     child: DeliveryCardWidget(
                                       model: _modelsDelivery[index],
@@ -235,7 +235,7 @@ class _DeliveryHomeState extends State<DeliveryHome> {
                                               ),
                                             ),
                                           )
-                                          .then((value) => _initialData());
+                                          .then((_) => _initialData);
                                     },
                                     child: DeliveryCardWidget(
                                       model: _modelsDelivery[index],
