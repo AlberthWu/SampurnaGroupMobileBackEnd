@@ -39,32 +39,64 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
       child: Stack(
         children: [
           Positioned(
-            left: size.width * .75,
+            top: 5,
+            left: size.width * .1,
             right: 20,
-            child: Container(
-              height: 25,
-              decoration: BoxDecoration(
-                color: sgGray,
-                border: Border.all(
-                  width: 1,
-                  color: sgGold,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  height: 25,
+                  decoration: BoxDecoration(
+                    color: sgWhite,
+                    border: Border.all(
+                      width: 1,
+                      color: sgGreen,
+                    ),
+                  ),
+                  alignment: Alignment(0, 0),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: Text(
+                      widget.model.confirm_status!,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: appBlack,
+                        fontFamily: 'Nexa',
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              alignment: Alignment(0, 0),
-              child: Text(
-                widget.model.urgent_name!,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                  color: widget.model.urgent == 1 ? sgRed : appBlack,
-                  fontFamily: 'Nexa',
+                Container(
+                  height: 25,
+                  decoration: BoxDecoration(
+                    color: sgGray,
+                    border: Border.all(
+                      width: 1,
+                      color: sgGold,
+                    ),
+                  ),
+                  alignment: Alignment(0, 0),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                    child: Text(
+                      widget.model.urgent_name!,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: widget.model.urgent == 1 ? sgRed : appBlack,
+                        fontFamily: 'Nexa',
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
           Padding(
             padding: EdgeInsets.only(
-              top: 6.0,
+              top: 10.0,
             ),
             child: Container(
               decoration: BoxDecoration(

@@ -13,36 +13,34 @@ class InfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: sgWhite,
-      width: double.infinity,
-      margin: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        bottom: 10,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            field,
-            style: TextStyle(
-              color: appBlack,
-              fontSize: 11.0,
-              fontFamily: 'Nexa',
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          field,
+          style: TextStyle(
+            color: sgGold,
+            fontSize: 14.0,
+            fontFamily: 'Nexa',
+            fontWeight: FontWeight.w600,
           ),
-          Text(
-            value,
-            style: TextStyle(
-              color: sgRed,
-              fontSize: 14.0,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Nexa',
-            ),
+        ),
+        SizedBox(
+          height: 5.0,
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            color: appBlack,
+            fontSize: 14.0,
+            fontWeight: FontWeight.w500,
+            fontFamily: 'Nexa',
           ),
-        ],
-      ),
+        ),
+        Divider(
+          thickness: 1,
+        ),
+      ],
     );
   }
 }

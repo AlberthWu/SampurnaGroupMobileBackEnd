@@ -7,10 +7,11 @@ class autocompleteListModel {
     this.name = "",
   });
 
-  factory autocompleteListModel.fromJson(Map<String, dynamic> item) {
+  factory autocompleteListModel.fromJson(
+      Map<String, dynamic> item, String name) {
     return autocompleteListModel(
       id: item['id'],
-      name: item['name'],
+      name: item[name],
     );
   }
 

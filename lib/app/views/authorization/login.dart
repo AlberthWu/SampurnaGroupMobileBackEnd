@@ -1,5 +1,5 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/schedule/schedule_home.dart';
+import 'package:asm/app/controllers/delivery/delivery_home.dart';
 import 'package:asm/app/views/authorization/forgot_password.dart';
 import 'package:asm/app/views/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
@@ -50,10 +50,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context).pushReplacement(
+                  Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
-                      builder: (_) => ScheduleHome(),
+                      builder: (_) => DeliveryHome(),
                     ),
+                    ((route) => false),
                   );
                 },
                 child: Container(

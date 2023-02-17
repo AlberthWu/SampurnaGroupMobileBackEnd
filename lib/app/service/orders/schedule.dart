@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/models/orders/schedule/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/orders/schedule/list.dart';
@@ -36,6 +37,36 @@ class scheduleService {
     ).catchError(
       (_) => APIResponse<List<scheduleListModel>>(
           status: true, message: 'An error occured!', data: models),
+    );
+  }
+
+  Future<APIResponse<scheduleGetModel>> GetSchedule(int id) {
+    final model = scheduleGetModel();
+    return http
+        .get(Uri.parse(API + '/order/schedule/' + id.toString()),
+            headers: headers)
+        .then(
+      (data) {
+        final message = json.decode(data.body)['errmsg'];
+        if (data.statusCode == 200) {
+          final jsonData = json.decode(data.body)['data'];
+
+          return APIResponse<scheduleGetModel>(
+            data: scheduleGetModel.fromJson(jsonData),
+          );
+        }
+        return APIResponse<scheduleGetModel>(
+          status: true,
+          message: message,
+          data: model,
+        );
+      },
+    ).catchError(
+      (_) => APIResponse<scheduleGetModel>(
+        status: true,
+        message: 'An error occured!',
+        data: model,
+      ),
     );
   }
 }

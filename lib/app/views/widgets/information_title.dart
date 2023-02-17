@@ -28,10 +28,6 @@ class InfoTitleWidget extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          // Divider(
-          //   color: sgGrayLight,
-          //   thickness: 1,
-          // ),
         ],
       ),
     );

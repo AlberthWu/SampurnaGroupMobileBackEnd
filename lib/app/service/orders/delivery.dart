@@ -16,7 +16,7 @@ class deliveryService {
     return http
         .get(
             Uri.parse(API +
-                '/order/cargo/detail?pagesize=20&page=$page&keyword=$keyword'),
+                '/order/cargo/detail?issue_date=$date&pagesize=20&page=$page&keyword=$keyword'),
             headers: headers)
         .then(
       (data) {
@@ -81,15 +81,82 @@ class deliveryService {
     http.Response response =
         await http.Response.fromStream(await request.send());
 
+    final message = json.decode(response.body)['errmsg'];
+
+    print(json.decode(response.body));
     if (response.statusCode == 200) {
-      return APIResponse<bool>(data: true);
+      return APIResponse<bool>(
+        data: true,
+        message: message,
+      );
     }
 
-    final message = json.decode(response.body)['errmsg'];
     return APIResponse<bool>(
       status: true,
       message: message,
       data: false,
+    );
+  }
+
+  Future<APIResponse<deliveryGetModel>> PostDelivery(
+      Map<String, String> form) async {
+    final model = deliveryGetModel();
+    var request = new http.MultipartRequest(
+        "POST", Uri.parse(API + '/order/cargo/detail'));
+
+    request.headers.addAll(headers);
+    request.fields.addAll(form);
+
+    http.Response response =
+        await http.Response.fromStream(await request.send());
+
+    final message = json.decode(response.body)['errmsg'];
+    final data = json.decode(response.body)['data'];
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(data.body)['data'];
+
+      return APIResponse<deliveryGetModel>(
+        data: deliveryGetModel.fromJson(jsonData),
+        message: message,
+      );
+    }
+
+    return APIResponse<deliveryGetModel>(
+      status: true,
+      message: message,
+      data: model,
+    );
+  }
+
+  Future<APIResponse<deliveryGetModel>> PutDelivery(
+      int id, Map<String, String> form) async {
+    final model = deliveryGetModel();
+    var request = new http.MultipartRequest(
+        "PUT", Uri.parse(API + '/order/cargo/detail/' + id.toString()));
+
+    request.headers.addAll(headers);
+    request.fields.addAll(form);
+
+    http.Response response =
+        await http.Response.fromStream(await request.send());
+
+    final message = json.decode(response.body)['errmsg'];
+    final data = json.decode(response.body)['data'];
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(data.body)['data'];
+
+      return APIResponse<deliveryGetModel>(
+        data: deliveryGetModel.fromJson(jsonData),
+        message: message,
+      );
+    }
+
+    return APIResponse<deliveryGetModel>(
+      status: true,
+      message: message,
+      data: model,
     );
   }
 }
