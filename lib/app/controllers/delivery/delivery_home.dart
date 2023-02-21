@@ -21,7 +21,9 @@ class DeliveryHome extends StatefulWidget {
   State<DeliveryHome> createState() => _DeliveryHomeState();
 }
 
-class _DeliveryHomeState extends State<DeliveryHome> {
+class _DeliveryHomeState extends State<DeliveryHome>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   scheduleService get serviceSchedule => GetIt.I<scheduleService>();
   deliveryService get serviceDelivery => GetIt.I<deliveryService>();
 
@@ -40,64 +42,49 @@ class _DeliveryHomeState extends State<DeliveryHome> {
   }
 
   void _initialData() {
+    setState(() {});
     _getDataSchedule(currentDateTime);
     _getDataDelivery(currentDateTime);
-
-    setState(() {});
+    _tabController = TabController(vsync: this, length: 3);
   }
 
   Widget bottomWidget(scheduleListModel data) {
-    print(data.orders!.length);
-    return Stack(
-      alignment: AlignmentDirectional.topCenter,
-      clipBehavior: Clip.none,
-      children: [
-        Positioned(
-          top: -15,
-          child: Container(
-            width: 60,
-            height: 7,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: appWhite,
-            ),
-          ),
-        ),
-        Expanded(
-          child: data.orders!.length > 0
-              ? ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  physics: BouncingScrollPhysics(),
-                  itemCount: data.orders!.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(
-                              MaterialPageRoute(
-                                builder: (_) => DeliveryModify(
-                                  delivery_id: data.orders![index].id,
-                                ),
-                              ),
-                            )
-                            .then((_) => _initialData);
-                      },
-                      child: OrderCardWidget(model: data.orders![index]),
-                    );
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      color: appWhite,
+      child: data.orders!.length > 0
+          ? ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: BouncingScrollPhysics(),
+              itemCount: data.orders!.length,
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                            builder: (_) => DeliveryModify(
+                              delivery_id: data.orders![index].id,
+                            ),
+                          ),
+                        )
+                        .then((_) => _initialData);
                   },
-                )
-              : Center(
-                  child: Container(
-                    height: 200,
-                    width: double.infinity,
-                    child: Center(
-                      child: Text('Data not found'),
-                    ),
-                  ),
+                  child: OrderCardWidget(model: data.orders![index]),
+                );
+              },
+            )
+          : Center(
+              child: Container(
+                height: 200,
+                width: double.infinity,
+                child: Center(
+                  child: Text('Data not found'),
                 ),
-        ),
-      ],
+              ),
+            ),
     );
   }
 
@@ -132,62 +119,65 @@ class _DeliveryHomeState extends State<DeliveryHome> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: sgRed,
-          title: Text(
-            "Surat Jalan",
-            style: TextStyle(
-              color: sgWhite,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Nexa',
-            ),
-          ),
-          iconTheme: IconThemeData(
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: sgRed,
+        title: Text(
+          "Surat Jalan",
+          style: TextStyle(
             color: sgWhite,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Nexa',
           ),
         ),
-        body: SafeArea(
-          child: Container(
-            color: sgWhite,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                DateScrollWidget(
-                  date: currentDateTime,
-                  setDate: (date) => _retriveData(date),
+        iconTheme: IconThemeData(
+          color: sgWhite,
+        ),
+      ),
+      body: SafeArea(
+        child: Container(
+          color: sgWhite,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              DateScrollWidget(
+                date: currentDateTime,
+                setDate: (date) => _retriveData(date),
+              ),
+              TabBar(
+                controller: _tabController,
+                indicatorColor: sgBrownLight,
+                unselectedLabelColor: appBlack,
+                labelColor: sgGold,
+                labelStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Nexa',
                 ),
-                TabBar(
-                  indicatorColor: sgBrownLight,
-                  unselectedLabelColor: appBlack,
-                  labelColor: sgGold,
-                  labelStyle: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Nexa',
+                isScrollable: true,
+                tabs: [
+                  Tab(
+                    text: "SJ Berjalan",
                   ),
-                  isScrollable: true,
-                  tabs: [
-                    Tab(
-                      text: "SJ Berjalan",
-                    ),
-                    Tab(
-                      text: "SJ Per Hari",
-                    ),
-                    Tab(
-                      text: "Daftar Jadwal",
-                    ),
-                  ],
-                ),
-                Expanded(
+                  Tab(
+                    text: "SJ Per Hari",
+                  ),
+                  Tab(
+                    text: "Daftar Jadwal",
+                  ),
+                ],
+              ),
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 5),
                   child: TabBarView(
+                    controller: _tabController,
                     children: [
                       Container(
                         width: size.width,
-                        height: size.height * .7,
+                        height: size.height,
+                        color: appWhite,
                         child: _modelsDelivery.length > 0
                             ? ListView.builder(
                                 shrinkWrap: true,
@@ -218,7 +208,8 @@ class _DeliveryHomeState extends State<DeliveryHome> {
                       ),
                       Container(
                         width: size.width,
-                        height: size.height * .7,
+                        height: size.height,
+                        color: appWhite,
                         child: _modelsDelivery.length > 0
                             ? ListView.builder(
                                 shrinkWrap: true,
@@ -249,7 +240,8 @@ class _DeliveryHomeState extends State<DeliveryHome> {
                       ),
                       Container(
                         width: size.width,
-                        height: size.height * .7,
+                        height: size.height,
+                        color: appWhite,
                         child: _modelsSchedule.length > 0
                             ? ListView.builder(
                                 shrinkWrap: true,
@@ -270,8 +262,8 @@ class _DeliveryHomeState extends State<DeliveryHome> {
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

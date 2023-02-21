@@ -20,7 +20,6 @@ class DateScrollWidget extends StatefulWidget {
 class _DateScrollWidgetState extends State<DateScrollWidget> {
   late ScrollController _scrollControllerDate;
   late DateTime _currentDateTime;
-  DateTime? _selected;
 
   List<DateTime> _currentMonthList = List.empty();
 
@@ -164,7 +163,7 @@ class _DateScrollWidgetState extends State<DateScrollWidget> {
   }) async {
     final selected = await showMonthYearPicker(
       context: context,
-      initialDate: _currentDateTime ?? DateTime.now(),
+      initialDate: _currentDateTime,
       firstDate: DateTime(2019),
       lastDate: DateTime(2100),
       locale: Locale('en'),

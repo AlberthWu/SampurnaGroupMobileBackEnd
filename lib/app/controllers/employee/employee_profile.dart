@@ -43,13 +43,12 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
               // borderRadius: kBottomBorderRadius,
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
                           child: InkWell(
@@ -84,75 +83,65 @@ class _EmployeeProfileState extends State<EmployeeProfile> {
                                   ),
                           ),
                         ),
-                        // sgSizedBoxWidth,
-                        // Expanded(
-                        //   child: Container(
-                        //     width: size.width * 0.7,
-                        //     child: Column(
-                        //       crossAxisAlignment: CrossAxisAlignment.start,
-                        //       mainAxisAlignment: MainAxisAlignment.center,
-                        // children: [
-                        //   FittedBox(
-                        //     child: Text(
-                        //       widget.model == null
-                        //           ? ""
-                        //           : widget.model.company_name!,
-                        //       style: TextStyle(
-                        //         color: sgBlack,
-                        //         fontSize: 20,
-                        //         fontWeight: FontWeight.bold,
-                        //       ),
-                        //     ),
-                        //   ),
-                        //   SizedBox(
-                        //     height: 5,
-                        //   ),
-                        //   FittedBox(
-                        //     child: Text(
-                        //       widget.model == null
-                        //           ? ""
-                        //           : widget.model.name!,
-                        //       style: TextStyle(
-                        //         color: sgBlack,
-                        //         fontSize: 16,
-                        //         fontWeight: FontWeight.bold,
-                        //       ),
-                        //     ),
-                        //   ),
-                        //   SizedBox(
-                        //     height: 5,
-                        //   ),
-                        //   FittedBox(
-                        //     child: Text(
-                        //       widget.model == null
-                        //           ? ""
-                        //           : widget.model.nik!,
-                        //       style: TextStyle(
-                        //         color: sgBlack,
-                        //         fontSize: 14,
-                        //         fontWeight: FontWeight.bold,
-                        //       ),
-                        //     ),
-                        //   ),
-                        //   SizedBox(
-                        //     height: 5,
-                        //   ),
-                        //   FittedBox(
-                        //     child: Text(
-                        //       widget.model == null
-                        //           ? ""
-                        //           : widget.model.alias!,
-                        //       style: TextStyle(
-                        //         color: sgBlack,
-                        //         fontSize: 14,
-                        //         fontWeight: FontWeight.bold,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ],
-                        // ),
-                        // ),
-                        // ),
+                        sgSizedBoxWidth,
+                        Expanded(
+                          child: Container(
+                            width: size.width * 0.7,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  widget.model.company_name!.isEmpty
+                                      ? ""
+                                      : widget.model.company_name!,
+                                  style: TextStyle(
+                                    color: sgBlack,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  widget.model == null
+                                      ? ""
+                                      : widget.model.name!,
+                                  style: TextStyle(
+                                    color: sgBlack,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  widget.model == null ? "" : widget.model.nik!,
+                                  style: TextStyle(
+                                    color: sgBlack,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  widget.model == null
+                                      ? ""
+                                      : widget.model.alias!,
+                                  style: TextStyle(
+                                    color: sgBlack,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

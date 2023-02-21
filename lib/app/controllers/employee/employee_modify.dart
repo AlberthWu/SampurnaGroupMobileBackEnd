@@ -1,5 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/employee/employee_profile.dart';
+import 'package:asm/app/controllers/employee/employee_image.dart';
 import 'package:asm/app/controllers/employee/employee_skorsing.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/autocomplete_model.dart';
@@ -11,9 +14,12 @@ import 'package:asm/app/views/widgets/dropdownlist_widget.dart';
 import 'package:asm/app/views/widgets/information_title.dart';
 import 'package:asm/app/views/widgets/textformfield_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:asm/app/service/employee.dart';
 import 'package:asm/app/models/employee/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class EmployeeModify extends StatefulWidget {
   final int id;
@@ -27,17 +33,21 @@ class EmployeeModify extends StatefulWidget {
   State<EmployeeModify> createState() => _EmployeeModifyState();
 }
 
-class _EmployeeModifyState extends State<EmployeeModify> {
+class _EmployeeModifyState extends State<EmployeeModify>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   employeeService get service => GetIt.I<employeeService>();
   bool get isEditing => widget.id != 0;
 
   autoCompleteService get serviceAutoComplete => GetIt.I<autoCompleteService>();
   late APIResponse<List<autocompleteListModel>> _apiResponse;
 
-  late employeeGetModel _model;
+  late employeeGetModel _model = new employeeGetModel();
   bool _isLoading = false;
   late String errorMessage = "";
   bool _isEdit = true;
+
+  late File? _image;
 
   TextEditingController _companyController = TextEditingController();
   TextEditingController _nikController = TextEditingController();
@@ -81,6 +91,7 @@ class _EmployeeModifyState extends State<EmployeeModify> {
   TextEditingController _livingAddressController = TextEditingController();
   TextEditingController _ktpAddressController = TextEditingController();
   TextEditingController _bankController = TextEditingController();
+  TextEditingController _bankNameController = TextEditingController();
 
   TextEditingController _licenseCityController = TextEditingController();
   TextEditingController _licenseTypeController = TextEditingController();
@@ -93,8 +104,34 @@ class _EmployeeModifyState extends State<EmployeeModify> {
 
   @override
   void initState() {
-    _getData();
     super.initState();
+    if (widget.id > 0) {
+      _getData();
+    }
+    _tabController = TabController(vsync: this, length: 4);
+  }
+
+  _setBank(value) async {
+    setState(() {});
+
+    _bankNameController.text = value.name;
+  }
+
+  void writeFile() async {
+    if (_model.image!.isNotEmpty) {
+      final decodedBytes = base64Decode(_model.image!);
+      final directory = await getApplicationDocumentsDirectory();
+      final imageName = _model.name.toString() + ".png";
+      _image = File('${directory.path}/${imageName}');
+      _image!.writeAsBytesSync(List.from(decodedBytes));
+    } else {
+      var bytes = await rootBundle.load('assets/images/user.png');
+      final directory = await getApplicationDocumentsDirectory();
+      File file = File('${directory.path}/user.png');
+      await file.writeAsBytes(
+          bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+      _image = file;
+    }
   }
 
   _getData() async {
@@ -109,6 +146,8 @@ class _EmployeeModifyState extends State<EmployeeModify> {
           _model = employeeGetModel();
         } else {
           _model = response.data;
+
+          writeFile();
         }
       },
     );
@@ -123,14 +162,14 @@ class _EmployeeModifyState extends State<EmployeeModify> {
   }
 
   _setDataCompany() {
-    _companyController.text = _model.company_name!;
+    _companyController.text = _model.company_id!.toString();
     _nikController.text = _model.nik!;
     _nameController.text = _model.name!;
     _aliasController.text = _model.alias!;
-    _departmentController.text = _model.department_name!;
-    _divisionController.text = _model.division_name!;
-    _occupationController.text = _model.occupation_name!;
-    _departmentController.text = _model.department_name!;
+    _departmentController.text = _model.department_id!.toString();
+    _divisionController.text = _model.division_id!.toString();
+    _occupationController.text = _model.occupation_id!.toString();
+    _departmentController.text = _model.department_id!.toString();
     _statusController.text = _model.status_employee!;
     _joinDateController.text = _model.join_date!;
     _resignDateController.text = _model.resign_date!;
@@ -164,14 +203,15 @@ class _EmployeeModifyState extends State<EmployeeModify> {
     _religionController.text = _model.religion!.toString();
     _npwpStatusController.text = _model.npwp_status!.toString();
     _sexController.text = _model.sex!.toString();
-    _cityController.text = _model.city_name!.toString();
+    _cityController.text = _model.city_id!.toString();
     _livingAddressController.text = _model.living_address!.toString();
     _ktpAddressController.text = _model.ktp_address!.toString();
-    _bankController.text = _model.bank_name!.toString();
+    _bankController.text = _model.bank_id!.toString();
+    _bankNameController.text = _model.bank_name!.toString();
   }
 
   _setDataSim() {
-    _licenseCityController.text = _model.license_city_name!;
+    _licenseCityController.text = _model.license_city_id!.toString();
     _licenseTypeController.text = _model.license_type!;
     _licenseNoController.text = _model.license_no!;
     _licenseIssueController.text = _model.license_issue_date!;
@@ -186,7 +226,7 @@ class _EmployeeModifyState extends State<EmployeeModify> {
       _isLoading = true;
     });
 
-    var form = new Map<String, dynamic>();
+    var form = new Map<String, String>();
 
     form['company_id'] = _companyController.text;
     form['nik'] = _nikController.text;
@@ -217,6 +257,7 @@ class _EmployeeModifyState extends State<EmployeeModify> {
     form['bpjs_tk'] = _bpjsTkController.text;
     form['bank_id'] = _bankController.text;
     form['bank_no'] = _accountNoController.text;
+    form['bank_name'] = _bankNameController.text;
     form['bank_account_name'] = _accountNameController.text;
     form['marriage'] = _marriageController.text;
     form['husband_wife_name'] = _wifeNameController.text;
@@ -239,12 +280,10 @@ class _EmployeeModifyState extends State<EmployeeModify> {
     form['license_handover_date'] = _licenseHandOverController.text;
 
     if (isEditing) {
-      final result = await service.PutEmployee(widget.id, form);
+      final result = await service.PutEmployee(widget.id, form, _image!);
 
       final title = 'Information';
-      final text = result.status
-          ? (result.message ?? 'An error occurred')
-          : 'Your unit was updated';
+      final text = result.message;
 
       showDialog(
         context: context,
@@ -260,18 +299,16 @@ class _EmployeeModifyState extends State<EmployeeModify> {
             )
           ],
         ),
-      ).then((data) {
-        if (result.data) {
+      ).then((res) {
+        if (res) {
           Navigator.of(context).pop();
         }
       });
     } else {
-      final result = await service.PostEmployee(form);
+      final result = await service.PostEmployee(form, _image!);
 
       final title = 'Information';
-      final text = result.status
-          ? (result.message ?? 'An error occurred')
-          : 'Your unit was created';
+      final text = result.message;
 
       showDialog(
         context: context,
@@ -287,8 +324,8 @@ class _EmployeeModifyState extends State<EmployeeModify> {
             )
           ],
         ),
-      ).then((data) {
-        if (result.data) {
+      ).then((res) {
+        if (res) {
           Navigator.of(context).pop();
         }
       });
@@ -299,8 +336,174 @@ class _EmployeeModifyState extends State<EmployeeModify> {
     });
   }
 
+  Widget _profile(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return Container(
+      child: Column(
+        children: [
+          Container(
+            width: size.width,
+            height: size.height * 0.25,
+            decoration: BoxDecoration(
+              color: sgWhite,
+            ),
+            child: Column(
+              children: [
+                sgSizedBoxHeight,
+                Text(
+                  _model.company_name!.isEmpty ? "" : _model.company_name!,
+                  style: TextStyle(
+                    color: appBlack,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => EmployeeImage(
+                                    image: _image!,
+                                  ),
+                                ),
+                              );
+                            },
+                            child: _model.image!.isNotEmpty
+                                ? Hero(
+                                    tag: 'picture',
+                                    child: CircleAvatar(
+                                      backgroundColor: appWhite,
+                                      maxRadius: size.height * 0.09,
+                                      backgroundImage: FileImage(_image!),
+                                      // backgroundImage: MemoryImage(
+                                      //   base64Decode(dbImage.value),
+                                      // ),
+                                    ),
+                                  )
+                                : Hero(
+                                    tag: 'picture',
+                                    child: CircleAvatar(
+                                      backgroundColor: appWhite,
+                                      maxRadius: size.height * 0.09,
+                                      backgroundImage:
+                                          AssetImage("assets/images/user.png"),
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10.0,
+                        ),
+                        Expanded(
+                          child: Container(
+                            width: size.width * 0.7,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  _model == null ? "" : _model.name!,
+                                  style: TextStyle(
+                                    color: appBlack,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  _model == null ? "" : _model.nik!,
+                                  style: TextStyle(
+                                    color: appBlack,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  _model == null ? "" : _model.alias!,
+                                  style: TextStyle(
+                                    color: appBlack,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                sgSizedBoxHeight,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    MaterialButton(
+                                      color: sgRed,
+                                      child: Text(
+                                        "Gallery",
+                                        style: TextStyle(
+                                          color: sgWhite,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Nexa',
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        pickImageGallery();
+                                      },
+                                    ),
+                                    MaterialButton(
+                                      color: sgRed,
+                                      child: Text(
+                                        "Camera",
+                                        style: TextStyle(
+                                          color: sgWhite,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Nexa',
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        pickImageCamera();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Divider(
+                  color: sgGrey,
+                  thickness: 1,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _company(BuildContext context) {
-    return Expanded(
+    Size size = MediaQuery.of(context).size;
+
+    return Container(
+      width: size.width,
+      height: size.height * 0.9,
       child: ListView(
         padding: EdgeInsets.symmetric(
           horizontal: 10,
@@ -393,7 +596,11 @@ class _EmployeeModifyState extends State<EmployeeModify> {
   }
 
   Widget _employee(BuildContext context) {
-    return Expanded(
+    Size size = MediaQuery.of(context).size;
+
+    return Container(
+      width: size.width,
+      height: size.height * 0.9,
       child: ListView(
         padding: EdgeInsets.symmetric(
           horizontal: 10,
@@ -505,6 +712,7 @@ class _EmployeeModifyState extends State<EmployeeModify> {
             controller: _bankController,
             enabled: this._isEdit,
             title: 'Bank',
+            setData: _setBank,
             getData: _bankData,
             id: _model.bank_id!,
             name: _model.bank_name!,
@@ -595,7 +803,11 @@ class _EmployeeModifyState extends State<EmployeeModify> {
   }
 
   Widget _sim(BuildContext context) {
-    return Expanded(
+    Size size = MediaQuery.of(context).size;
+
+    return Container(
+      width: size.width,
+      height: size.height * 0.9,
       child: ListView(
         padding: EdgeInsets.symmetric(
           horizontal: 10,
@@ -673,43 +885,41 @@ class _EmployeeModifyState extends State<EmployeeModify> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: DefaultTabController(
-        length: 4,
-        child: Scaffold(
-          appBar: AppBar(
-            elevation: 0,
-            backgroundColor: sgRed,
-            title: Text(
-              "Informasi Karyawan",
-              style: TextStyle(
-                color: sgWhite,
-                fontFamily: 'Nexa',
-              ),
-            ),
-            iconTheme: IconThemeData(
-              color: sgWhite, //change your color here
-            ),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.save_outlined,
-                  color: sgWhite,
-                ),
-                onPressed: () => _save(),
-              ),
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: sgRed,
+        title: Text(
+          "Informasi Karyawan",
+          style: TextStyle(
+            color: sgWhite,
+            fontFamily: 'Nexa',
           ),
-          body: _isLoading
+        ),
+        iconTheme: IconThemeData(
+          color: sgWhite, //change your color here
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.save_outlined,
+              color: sgWhite,
+            ),
+            onPressed: () => _save(),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: Container(
+          color: sgWhite,
+          child: _isLoading
               ? Center(child: CircularProgressIndicator())
               : Container(
                   color: sgWhite,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      EmployeeProfile(
-                        model: _model,
-                      ),
+                      _profile(context),
                       TabBar(
                         indicatorColor: sgBrownLight,
                         unselectedLabelColor: appBlack,
@@ -757,6 +967,36 @@ class _EmployeeModifyState extends State<EmployeeModify> {
         ),
       ),
     );
+  }
+
+  Future pickImageGallery() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+      if (image == null) return;
+
+      final imageTemp = File(image.path);
+
+      _image = imageTemp;
+      setState(() {});
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
+  }
+
+  Future pickImageCamera() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.camera);
+
+      if (image == null) return;
+
+      final imageTemp = File(image.path);
+
+      _image = imageTemp;
+      setState(() {});
+    } on PlatformException catch (e) {
+      print('Failed to pick image: $e');
+    }
   }
 
   Future<List<autocompleteListModel>> _companyData(keyword) async {

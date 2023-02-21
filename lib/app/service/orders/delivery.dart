@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:asm/app/constant/color.dart';
 import 'package:asm/app/models/orders/surat_jalan/get.dart';
 import 'package:asm/app/models/orders/surat_jalan/list.dart';
 import 'package:http/http.dart' as http;
 import 'package:asm/app/models/api_response.dart';
+import 'package:path/path.dart';
 
 class deliveryService {
   static const API = sgBaseURL;
@@ -43,7 +46,7 @@ class deliveryService {
   Future<APIResponse<deliveryGetModel>> GetDelivery(int id) {
     final model = deliveryGetModel();
     return http
-        .get(Uri.parse(API + '/order/cargo/detail/' + id.toString()),
+        .get(Uri.parse(API + 'order/cargo/detail/' + id.toString()),
             headers: headers)
         .then(
       (data) {
@@ -72,7 +75,7 @@ class deliveryService {
 
   Future<APIResponse<bool>> PostConfirm(int id) async {
     var request = new http.MultipartRequest(
-        "POST", Uri.parse(API + '/order/cargo/confirm/' + id.toString()));
+        "POST", Uri.parse(API + 'order/cargo/confirm/' + id.toString()));
 
     request.headers.addAll(headers);
 
@@ -83,7 +86,6 @@ class deliveryService {
 
     final message = json.decode(response.body)['errmsg'];
 
-    print(json.decode(response.body));
     if (response.statusCode == 200) {
       return APIResponse<bool>(
         data: true,
@@ -102,7 +104,7 @@ class deliveryService {
       Map<String, String> form) async {
     final model = deliveryGetModel();
     var request = new http.MultipartRequest(
-        "POST", Uri.parse(API + '/order/cargo/detail'));
+        "POST", Uri.parse(API + 'order/cargo/detail'));
 
     request.headers.addAll(headers);
     request.fields.addAll(form);
@@ -133,7 +135,7 @@ class deliveryService {
       int id, Map<String, String> form) async {
     final model = deliveryGetModel();
     var request = new http.MultipartRequest(
-        "PUT", Uri.parse(API + '/order/cargo/detail/' + id.toString()));
+        "PUT", Uri.parse(API + 'order/cargo/detail/' + id.toString()));
 
     request.headers.addAll(headers);
     request.fields.addAll(form);
@@ -157,6 +159,52 @@ class deliveryService {
       status: true,
       message: message,
       data: model,
+    );
+  }
+
+  Future<APIResponse<bool>> UploadImage(int id, List<File> files) async {
+    var request = new http.MultipartRequest(
+        "POST", Uri.parse(API + 'order/cargo/image/' + id.toString()));
+
+    request.headers.addAll(headers);
+
+    for (var file in files) {
+      var bytes = new File(file.path).readAsBytesSync();
+
+      var picture = http.MultipartFile.fromBytes(
+        'file',
+        bytes,
+        filename: basename(file.path),
+      );
+
+      request.files.addAll([picture]);
+    }
+
+    // for (var file in files) {
+    //   request.files.addAll([
+    //     http.MultipartFile.fromBytes(
+    //       'file',
+    //       File(file.path).readAsBytesSync(),
+    //       filename: basename(file.path),
+    //     ),
+    //   ]);
+    // }
+
+    http.Response response =
+        await http.Response.fromStream(await request.send());
+
+    final message = json.decode(response.body)['errmsg'];
+
+    if (response.statusCode == 200) {
+      return APIResponse<bool>(
+        data: true,
+      );
+    }
+
+    return APIResponse<bool>(
+      status: true,
+      message: message,
+      data: false,
     );
   }
 }

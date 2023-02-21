@@ -16,7 +16,7 @@ class scheduleService {
     return http
         .get(
             Uri.parse(API +
-                '/order/schedule?issue_date=$date&pagesize=20&page=$page&keyword=$keyword'),
+                'order/schedule?issue_date=$date&pagesize=20&page=$page&keyword=$keyword'),
             headers: headers)
         .then(
       (data) {
@@ -43,7 +43,7 @@ class scheduleService {
   Future<APIResponse<scheduleGetModel>> GetSchedule(int id) {
     final model = scheduleGetModel();
     return http
-        .get(Uri.parse(API + '/order/schedule/' + id.toString()),
+        .get(Uri.parse(API + 'order/schedule/' + id.toString()),
             headers: headers)
         .then(
       (data) {

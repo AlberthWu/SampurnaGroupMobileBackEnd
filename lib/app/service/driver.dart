@@ -17,7 +17,7 @@ class driverService {
     return http
         .get(
             Uri.parse(API +
-                '/fleetformation/driver?issue_date=$issueDate&plate_no=$plateNo'),
+                'fleetformation/driver?issue_date=$issueDate&plate_no=$plateNo'),
             headers: headers)
         .then(
       (data) {

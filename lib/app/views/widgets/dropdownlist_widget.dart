@@ -189,7 +189,7 @@ class _SGDropDownListWidgetState extends State<SGDropDownListWidget> {
       child: ListTile(
         selected: isSelected,
         title: Text(
-          item ?? '',
+          item,
           style: TextStyle(
             color: sgBlack,
             fontFamily: "Nexa",
