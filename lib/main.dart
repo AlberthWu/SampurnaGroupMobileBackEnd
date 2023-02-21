@@ -1,19 +1,20 @@
+import 'package:asm/app/constant/theme_constant.dart';
 import 'package:asm/app/service/autocomplete_service.dart';
 import 'package:asm/app/service/driver.dart';
 import 'package:asm/app/service/employee.dart';
 import 'package:asm/app/service/orders/delivery.dart';
 import 'package:asm/app/service/orders/schedule.dart';
 import 'package:asm/app/service/orders/ujt.dart';
+import 'package:asm/app/views/authorization/login.dart';
 import 'package:asm/app/views/splash/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:asm/app/constant/color.dart';
 import 'package:asm/app/constant/theme_manager.dart';
-import 'package:asm/app/controllers/bank/bank_list.dart';
 import 'package:month_year_picker/month_year_picker.dart';
+import 'package:workmanager/workmanager.dart';
 
 void setupLocator() {
   GetIt.I.registerLazySingleton(() => autoCompleteService());
@@ -24,8 +25,29 @@ void setupLocator() {
   GetIt.I.registerLazySingleton(() => driverService());
 }
 
-void main() {
+getData() {
+  print("get data from api");
+}
+
+const taskName = 'notification';
+
+void callbackDispacther() {
+  Workmanager().executeTask((taskName, inputData) {
+    switch (taskName) {
+      case 'notification':
+        getData();
+        break;
+      default:
+    }
+    return Future.value(true);
+  });
+}
+
+void main() async {
   setupLocator();
+  WidgetsFlutterBinding.ensureInitialized();
+  await Workmanager().initialize(callbackDispacther, isInDebugMode: true);
+
   runApp(const MyApp());
 }
 
@@ -45,8 +67,22 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
+  backgroundProcess() {
+    var uniqueID = DateTime.now().second.toString();
+
+    Workmanager().registerPeriodicTask(
+      uniqueID,
+      taskName,
+      initialDelay: Duration(
+        seconds: 15,
+      ),
+      constraints: Constraints(networkType: NetworkType.connected),
+    );
+  }
+
   @override
   void initState() {
+    // backgroundProcess();
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.immersiveSticky,
     );
@@ -66,9 +102,9 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       color: appWhite,
-      // theme: lightTheme,
-      // darkTheme: darkTheme,
-      // themeMode: _themeManager.themeMode,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+      themeMode: _themeManager.themeMode,
       localizationsDelegates: [
         GlobalWidgetsLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -78,82 +114,6 @@ class _MyAppState extends State<MyApp> {
       supportedLocales: [const Locale('en', 'US')],
       title: "Sampurna Group",
       home: SplashScreen(),
-    );
-  }
-}
-
-class MyHomeScreen extends StatefulWidget {
-  const MyHomeScreen({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  State<MyHomeScreen> createState() => _MyHomeScreenState();
-}
-
-class _MyHomeScreenState extends State<MyHomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    TextTheme _textTheme = Theme.of(context).textTheme;
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/logo.png',
-              fit: BoxFit.fitWidth,
-              height: Get.height * 0.1,
-              width: Get.width * 0.1,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(
-                top: 5,
-                left: 10,
-              ),
-              child: Text(
-                "Sampurna Group",
-                style: _textTheme.headline4?.copyWith(
-                  color: isDark ? appWhite : sgBlueDark,
-                  fontFamily: "Nexa",
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          Switch(
-            value: _themeManager.themeMode == ThemeMode.dark,
-            onChanged: (newValue) {
-              _themeManager.toggleTheme(newValue);
-            },
-          ),
-        ],
-      ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: isDark ? sgBlueDark.withOpacity(0.5) : appWhite,
-        child: Expanded(
-          child: BankList(),
-        ),
-      ),
-      floatingActionButton: Theme(
-        data: Theme.of(context).copyWith(splashColor: sgBlue),
-        child: FloatingActionButton(
-          onPressed: () {},
-          child: Icon(Icons.add),
-        ),
-      ),
     );
   }
 }

@@ -1,11 +1,10 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:asm/app/constant/color.dart';
 import 'package:flutter/material.dart';
-import 'package:get/state_manager.dart';
 
 class EmployeeImage extends StatefulWidget {
-  final String image;
+  final File? image;
 
   EmployeeImage({
     Key? key,
@@ -17,16 +16,15 @@ class EmployeeImage extends StatefulWidget {
 }
 
 class _EmployeeImageState extends State<EmployeeImage> {
-  final Rx<String> dbImage = ''.obs;
-
   @override
   void initState() {
-    dbImage.value = widget.image;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -45,15 +43,14 @@ class _EmployeeImageState extends State<EmployeeImage> {
       body: Container(
         padding: EdgeInsets.all(5),
         child: Hero(
-          tag: "picture",
-          child: Image.memory(
-            base64Decode(dbImage.value),
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            alignment: Alignment.center,
-            fit: BoxFit.cover,
-          ),
-        ),
+            tag: "picture",
+            child: Image.file(
+              widget.image!,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              alignment: Alignment.center,
+              fit: BoxFit.cover,
+            )),
       ),
     );
   }

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/employee/employee_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/state_manager.dart';
@@ -26,7 +25,7 @@ class _EmployeeCameraState extends State<EmployeeCamera> {
 
   @override
   void initState() {
-    if (widget.image != null) {
+    if (widget.image.isNotEmpty) {
       dbImage.value = widget.image;
     }
     super.initState();
@@ -69,13 +68,13 @@ class _EmployeeCameraState extends State<EmployeeCamera> {
               sgSizedBoxHeight,
               InkWell(
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => EmployeeImage(
-                        image: widget.image,
-                      ),
-                    ),
-                  );
+                  // Navigator.of(context).push(
+                  // MaterialPageRoute(
+                  // builder: (_) => EmployeeImage(
+                  //   image: widget.image,
+                  // ),
+                  // ),
+                  // );
                 },
                 child: dbImage.isNotEmpty
                     ? Hero(

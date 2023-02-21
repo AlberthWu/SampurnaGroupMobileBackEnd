@@ -112,8 +112,6 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
   }
 
   _getDriver(value) async {
-    setState(() {});
-
     autocompleteListModel data = value;
 
     var plateNo = data.getName();

@@ -13,7 +13,7 @@ class autoCompleteService {
   Future<APIResponse<List<autocompleteListModel>>> GetCompanyList(keyword) {
     final models = <autocompleteListModel>[];
     return http
-        .get(Uri.parse(API + '/internal?keyword=$keyword'), headers: headers)
+        .get(Uri.parse(API + 'internal?keyword=$keyword'), headers: headers)
         .then(
       (data) {
         final message = json.decode(data.body)['errmsg'];
@@ -42,7 +42,7 @@ class autoCompleteService {
   Future<APIResponse<List<autocompleteListModel>>> GetDepartmentList(keyword) {
     final models = <autocompleteListModel>[];
     return http
-        .get(Uri.parse(API + '/department/list?keyword=$keyword'),
+        .get(Uri.parse(API + 'department/list?keyword=$keyword'),
             headers: headers)
         .then(
       (data) {
@@ -72,7 +72,7 @@ class autoCompleteService {
   Future<APIResponse<List<autocompleteListModel>>> GetDivisionList(keyword) {
     final models = <autocompleteListModel>[];
     return http
-        .get(Uri.parse(API + '/division/list?keyword=$keyword'),
+        .get(Uri.parse(API + 'division/list?keyword=$keyword'),
             headers: headers)
         .then(
       (data) {
@@ -102,7 +102,7 @@ class autoCompleteService {
   Future<APIResponse<List<autocompleteListModel>>> GetOccupationList(keyword) {
     final models = <autocompleteListModel>[];
     return http
-        .get(Uri.parse(API + '/occupation/list?keyword=$keyword'),
+        .get(Uri.parse(API + 'occupation/list?keyword=$keyword'),
             headers: headers)
         .then(
       (data) {
@@ -132,7 +132,7 @@ class autoCompleteService {
   Future<APIResponse<List<autocompleteListModel>>> GetCityList(keyword) {
     final models = <autocompleteListModel>[];
     return http
-        .get(Uri.parse(API + '/city/list?keyword=$keyword'), headers: headers)
+        .get(Uri.parse(API + 'city/list?keyword=$keyword'), headers: headers)
         .then(
       (data) {
         final message = json.decode(data.body)['errmsg'];
@@ -158,7 +158,7 @@ class autoCompleteService {
   Future<APIResponse<List<autocompleteListModel>>> GetBankList(keyword) {
     final models = <autocompleteListModel>[];
     return http
-        .get(Uri.parse(API + '/bank?keyword=$keyword'), headers: headers)
+        .get(Uri.parse(API + 'bank?keyword=$keyword'), headers: headers)
         .then(
       (data) {
         final message = json.decode(data.body)['errmsg'];
@@ -188,7 +188,7 @@ class autoCompleteService {
       business_id, keyword) {
     final models = <autocompleteListModel>[];
     return http
-        .get(Uri.parse(API + '/fleet/list/$business_id?keyword=$keyword'),
+        .get(Uri.parse(API + 'fleet/list/$business_id?keyword=$keyword'),
             headers: headers)
         .then(
       (data) {

@@ -146,6 +146,7 @@ class employeeGetModel {
       company_name: item['company_id']['name'],
       department_name: item['department_id']['name'],
       department_id: item['department_id']['id'],
+      division_id: item['division_id']['id'],
       division_name: item['division_id']['name'],
       occupation_id: item['occupation_id']['id'],
       occupation_name: item['occupation_id']['name'],

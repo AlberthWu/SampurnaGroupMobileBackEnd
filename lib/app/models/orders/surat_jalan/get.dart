@@ -37,6 +37,7 @@ class deliveryGetModel {
   final int ujt;
   final employeeGetModel? primary_driver;
   final employeeGetModel? secondary_driver;
+  final List<String>? order_image;
 
   deliveryGetModel({
     this.id = 0,
@@ -75,6 +76,7 @@ class deliveryGetModel {
     this.ujt = 0,
     this.primary_driver,
     this.secondary_driver,
+    this.order_image,
   });
 
   factory deliveryGetModel.fromJson(Map<String, dynamic> item) {
@@ -106,6 +108,22 @@ class deliveryGetModel {
       _employeeSecondary = employeeGetModel.fromJson(secondary);
     } else {
       _employeeSecondary = new employeeGetModel();
+    }
+
+    var order_image_data = item['image_data'];
+
+    List<String> _imageOrder = [];
+    if (order_image_data != null) {
+      order_image_data.forEach((v) {
+        var imageString = v['image_data'];
+        var image = "";
+        if (imageString.toString().contains("jpeg")) {
+          image = imageString.substring(23, imageString.length);
+        } else {
+          image = imageString.substring(22, imageString.length);
+        }
+        _imageOrder.add(image);
+      });
     }
 
     return deliveryGetModel(
@@ -144,6 +162,7 @@ class deliveryGetModel {
       ujt: item['ujt'],
       primary_driver: _employeePrimary,
       secondary_driver: _employeeSecondary,
+      order_image: _imageOrder,
     );
   }
 }

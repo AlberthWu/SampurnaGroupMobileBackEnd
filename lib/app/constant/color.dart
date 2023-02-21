@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const sgBaseURL = "https://api.sampurna-group.com/v1/";
+// const sgBaseURL = "http://10.2.2.206:9080/v1/";
 
 final appWhite = Colors.white;
 final appBlack = Colors.black;
