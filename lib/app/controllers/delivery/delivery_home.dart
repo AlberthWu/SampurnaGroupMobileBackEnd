@@ -13,6 +13,7 @@ import 'package:asm/app/views/widgets/date_scroll_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 
 class DeliveryHome extends StatefulWidget {
   const DeliveryHome({super.key});
@@ -34,6 +35,7 @@ class _DeliveryHomeState extends State<DeliveryHome>
   List<deliveryListModel> _modelsDelivery = [];
 
   DateTime currentDateTime = DateTime.now();
+  late bool _isLoading = false;
 
   @override
   void initState() {
@@ -43,18 +45,16 @@ class _DeliveryHomeState extends State<DeliveryHome>
 
   void _initialData() {
     setState(() {});
-    _getDataSchedule(currentDateTime);
-    _getDataDelivery(currentDateTime);
     _tabController = TabController(vsync: this, length: 3);
+    _retriveData();
   }
 
   Widget bottomWidget(scheduleListModel data) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      color: appWhite,
-      child: data.orders!.length > 0
-          ? ListView.builder(
+    return data.orders!.length > 0
+        ? Container(
+            color: appWhite,
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: ListView.builder(
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               physics: BouncingScrollPhysics(),
@@ -75,26 +75,29 @@ class _DeliveryHomeState extends State<DeliveryHome>
                   child: OrderCardWidget(model: data.orders![index]),
                 );
               },
-            )
-          : Center(
-              child: Container(
-                height: 200,
-                width: double.infinity,
-                child: Center(
-                  child: Text('Data not found'),
-                ),
+            ),
+          )
+        : Center(
+            child: Container(
+              height: 200,
+              width: double.infinity,
+              child: Center(
+                child: Text('Data not found'),
               ),
             ),
-    );
+          );
   }
 
   void _showModal(BuildContext context, scheduleListModel data) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: appWhite,
       isScrollControlled: true,
+      enableDrag: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(30),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
         ),
       ),
       builder: (context) => DraggableScrollableSheet(
@@ -104,166 +107,211 @@ class _DeliveryHomeState extends State<DeliveryHome>
         expand: false,
         builder: (context, scrollController) => SingleChildScrollView(
           controller: scrollController,
-          child: bottomWidget(data),
+          child: Container(
+            color: appWhite,
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(top: 8.0),
+                  height: 4,
+                  width: 36,
+                  decoration: BoxDecoration(
+                    color: sgRed,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(2.0),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                bottomWidget(data),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  _retriveData(DateTime date) {
-    _getDataSchedule(date);
-    _getDataDelivery(date);
+  Future _retriveData() async {
+    setState(() {
+      _isLoading = true;
+    });
+    await _getDataDelivery(currentDateTime);
+    await _getDataSchedule(currentDateTime);
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: sgRed,
-        title: Text(
-          "Surat Jalan",
-          style: TextStyle(
+    return OverlayLoaderWithAppIcon(
+      isLoading: _isLoading,
+      overlayBackgroundColor: sgGrey,
+      circularProgressColor: sgGold,
+      appIcon: Image.asset(
+        'assets/logo/logo.png',
+      ),
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: sgRed,
+          title: Text(
+            "Surat Jalan",
+            style: TextStyle(
+              color: sgWhite,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Nexa',
+            ),
+          ),
+          iconTheme: IconThemeData(
             color: sgWhite,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Nexa',
           ),
         ),
-        iconTheme: IconThemeData(
-          color: sgWhite,
-        ),
-      ),
-      body: SafeArea(
-        child: Container(
-          color: sgWhite,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DateScrollWidget(
-                date: currentDateTime,
-                setDate: (date) => _retriveData(date),
-              ),
-              TabBar(
-                controller: _tabController,
-                indicatorColor: sgBrownLight,
-                unselectedLabelColor: appBlack,
-                labelColor: sgGold,
-                labelStyle: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'Nexa',
+        body: SafeArea(
+          child: Container(
+            color: sgWhite,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DateScrollWidget(
+                  date: currentDateTime,
+                  setDate: (date) {
+                    currentDateTime = date;
+                    setState(() {});
+                    _retriveData();
+                    setState(() {});
+                  },
                 ),
-                isScrollable: true,
-                tabs: [
-                  Tab(
-                    text: "SJ Berjalan",
+                TabBar(
+                  controller: _tabController,
+                  indicatorColor: sgBrownLight,
+                  unselectedLabelColor: appBlack,
+                  labelColor: sgGold,
+                  labelStyle: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Nexa',
                   ),
-                  Tab(
-                    text: "SJ Per Hari",
-                  ),
-                  Tab(
-                    text: "Daftar Jadwal",
-                  ),
-                ],
-              ),
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(0, 0, 0, 5),
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      Container(
-                        width: size.width,
-                        height: size.height,
-                        color: appWhite,
-                        child: _modelsDelivery.length > 0
-                            ? ListView.builder(
-                                shrinkWrap: true,
-                                physics: BouncingScrollPhysics(),
-                                itemCount: _modelsDelivery.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .push(
-                                            MaterialPageRoute(
-                                              builder: (_) => DeliveryDetail(
-                                                id: _modelsDelivery[index].id,
+                  isScrollable: true,
+                  tabs: [
+                    Tab(
+                      text: "SJ Berjalan",
+                    ),
+                    Tab(
+                      text: "SJ Per Hari",
+                    ),
+                    Tab(
+                      text: "Daftar Jadwal",
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(0, 0, 0, 5),
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        Container(
+                          width: size.width,
+                          height: size.height,
+                          color: appWhite,
+                          child: _modelsDelivery.length > 0
+                              ? ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: BouncingScrollPhysics(),
+                                  itemCount: _modelsDelivery.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .push(
+                                              MaterialPageRoute(
+                                                builder: (_) => DeliveryModify(
+                                                  delivery_id:
+                                                      _modelsDelivery[index].id,
+                                                ),
                                               ),
-                                            ),
-                                          )
-                                          .then((_) => _initialData);
-                                    },
-                                    child: DeliveryCardWidget(
-                                      model: _modelsDelivery[index],
-                                    ),
-                                  );
-                                },
-                              )
-                            : Center(
-                                child: Text('Data not found'),
-                              ),
-                      ),
-                      Container(
-                        width: size.width,
-                        height: size.height,
-                        color: appWhite,
-                        child: _modelsDelivery.length > 0
-                            ? ListView.builder(
-                                shrinkWrap: true,
-                                physics: BouncingScrollPhysics(),
-                                itemCount: _modelsDelivery.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .push(
-                                            MaterialPageRoute(
-                                              builder: (_) => DeliveryDetail(
-                                                id: _modelsDelivery[index].id,
+                                            )
+                                            .then((_) => _initialData);
+                                      },
+                                      child: DeliveryCardWidget(
+                                        model: _modelsDelivery[index],
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Center(
+                                  child: Text('Data not found'),
+                                ),
+                        ),
+                        Container(
+                          width: size.width,
+                          height: size.height,
+                          color: appWhite,
+                          child: _modelsDelivery.length > 0
+                              ? ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: BouncingScrollPhysics(),
+                                  itemCount: _modelsDelivery.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .push(
+                                              MaterialPageRoute(
+                                                builder: (_) => DeliveryModify(
+                                                  delivery_id:
+                                                      _modelsDelivery[index].id,
+                                                ),
                                               ),
-                                            ),
-                                          )
-                                          .then((_) => _initialData);
-                                    },
-                                    child: DeliveryCardWidget(
-                                      model: _modelsDelivery[index],
-                                    ),
-                                  );
-                                },
-                              )
-                            : Center(
-                                child: Text('Data not found'),
-                              ),
-                      ),
-                      Container(
-                        width: size.width,
-                        height: size.height,
-                        color: appWhite,
-                        child: _modelsSchedule.length > 0
-                            ? ListView.builder(
-                                shrinkWrap: true,
-                                physics: BouncingScrollPhysics(),
-                                itemCount: _modelsSchedule.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return ScheduleCardWidget(
-                                    model: _modelsSchedule[index],
-                                    openBottom: (context, data) =>
-                                        _showModal(context, data),
-                                  );
-                                },
-                              )
-                            : Center(
-                                child: Text('Data not found'),
-                              ),
-                      ),
-                    ],
+                                            )
+                                            .then((_) => _initialData);
+                                      },
+                                      child: DeliveryCardWidget(
+                                        model: _modelsDelivery[index],
+                                      ),
+                                    );
+                                  },
+                                )
+                              : Center(
+                                  child: Text('Data not found'),
+                                ),
+                        ),
+                        Container(
+                          width: size.width,
+                          height: size.height,
+                          color: appWhite,
+                          child: _modelsSchedule.length > 0
+                              ? ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: BouncingScrollPhysics(),
+                                  itemCount: _modelsSchedule.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return ScheduleCardWidget(
+                                      model: _modelsSchedule[index],
+                                      openBottom: (context, data) =>
+                                          _showModal(context, data),
+                                    );
+                                  },
+                                )
+                              : Center(
+                                  child: Text('Data not found'),
+                                ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -276,8 +324,8 @@ class _DeliveryHomeState extends State<DeliveryHome>
 
     _apiSchedule = await serviceSchedule.GetList(formatted, 1, "");
 
-    _modelsSchedule.clear();
     setState(() {
+      _modelsSchedule.clear();
       for (var i = 0; i < _apiSchedule.data.length; i++) {
         _modelsSchedule.add(_apiSchedule.data[i]);
       }
@@ -290,8 +338,8 @@ class _DeliveryHomeState extends State<DeliveryHome>
 
     _apiDelivery = await serviceDelivery.GetList(formatted, 1, "");
 
-    _modelsDelivery.clear();
     setState(() {
+      _modelsDelivery.clear();
       for (var i = 0; i < _apiDelivery.data.length; i++) {
         _modelsDelivery.add(_apiDelivery.data[i]);
       }

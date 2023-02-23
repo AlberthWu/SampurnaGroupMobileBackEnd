@@ -58,7 +58,8 @@ dependencies:
   animated_bottom_navigation_bar: ^1.1.0+1
   month_year_picker: ^0.2.0+2
   path_provider: ^2.0.12
-  
+  overlay_loader_with_app_icon: ^0.0.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

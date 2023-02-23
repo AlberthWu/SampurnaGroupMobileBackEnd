@@ -47,8 +47,6 @@ class deliveryListModel {
 
   factory deliveryListModel.fromJson(Map<String, dynamic> item) {
     var urgent = item['schedule_id']['urgent'] == 1 ? "Urgent" : "Reguler";
-    var image_data = item['employee_id']['image_data'];
-    var image = '';
     var confirmUjt = item['confirm_ujt'];
 
     var status = "";
@@ -105,6 +103,8 @@ class deliveryListModel {
       default:
     }
 
+    var image_data = item['employee_id']['image_data'];
+    var image = '';
     if (image_data != null) {
       if (image_data.toString().contains("jpeg")) {
         image = image_data.substring(23, image_data.length);

@@ -25,7 +25,7 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
     super.initState();
 
     setState(() {
-      if (widget.model.image != null) {
+      if (widget.model.image!.isNotEmpty) {
         dbImage.value = widget.model.image!;
       }
     });

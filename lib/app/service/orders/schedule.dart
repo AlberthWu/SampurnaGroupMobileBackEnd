@@ -16,7 +16,7 @@ class scheduleService {
     return http
         .get(
             Uri.parse(API +
-                'order/schedule?issue_date=$date&pagesize=20&page=$page&keyword=$keyword'),
+                'order/schedule?issue_date=$date&pagesize=50&page=$page&keyword=$keyword'),
             headers: headers)
         .then(
       (data) {
