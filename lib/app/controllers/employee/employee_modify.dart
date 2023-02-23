@@ -19,6 +19,7 @@ import 'package:get_it/get_it.dart';
 import 'package:asm/app/service/employee.dart';
 import 'package:asm/app/models/employee/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:path_provider/path_provider.dart';
 
 class EmployeeModify extends StatefulWidget {
@@ -105,10 +106,10 @@ class _EmployeeModifyState extends State<EmployeeModify>
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(vsync: this, length: 4);
     if (widget.id > 0) {
       _getData();
     }
-    _tabController = TabController(vsync: this, length: 4);
   }
 
   _setBank(value) async {
@@ -124,17 +125,10 @@ class _EmployeeModifyState extends State<EmployeeModify>
       final imageName = _model.name.toString() + ".png";
       _image = File('${directory.path}/${imageName}');
       _image!.writeAsBytesSync(List.from(decodedBytes));
-    } else {
-      var bytes = await rootBundle.load('assets/images/user.png');
-      final directory = await getApplicationDocumentsDirectory();
-      File file = File('${directory.path}/user.png');
-      await file.writeAsBytes(
-          bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
-      _image = file;
     }
   }
 
-  _getData() async {
+  Future _getData() async {
     setState(() {
       _isLoading = true;
     });
@@ -148,13 +142,12 @@ class _EmployeeModifyState extends State<EmployeeModify>
           _model = response.data;
 
           writeFile();
+          _setDataCompany();
+          _setDataEmployee();
+          _setDataSim();
         }
       },
     );
-
-    _setDataCompany();
-    _setDataEmployee();
-    _setDataSim();
 
     setState(() {
       _isLoading = false;
@@ -221,7 +214,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
     _licenseHandOverController.text = _model.license_handover_date!;
   }
 
-  _save() async {
+  Future _save() async {
     setState(() {
       _isLoading = true;
     });
@@ -362,128 +355,126 @@ class _EmployeeModifyState extends State<EmployeeModify>
                 SizedBox(
                   height: 5,
                 ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => EmployeeImage(
-                                    image: _image!,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => EmployeeImage(
+                                  image: _image!,
+                                ),
+                              ),
+                            );
+                          },
+                          child: _model.image!.isNotEmpty
+                              ? Hero(
+                                  tag: 'picture',
+                                  child: CircleAvatar(
+                                    backgroundColor: appWhite,
+                                    maxRadius: size.height * 0.09,
+                                    backgroundImage: FileImage(_image!),
+                                    // backgroundImage: MemoryImage(
+                                    //   base64Decode(dbImage.value),
+                                    // ),
+                                  ),
+                                )
+                              : Hero(
+                                  tag: 'picture',
+                                  child: CircleAvatar(
+                                    backgroundColor: appWhite,
+                                    maxRadius: size.height * 0.09,
+                                    backgroundImage:
+                                        AssetImage("assets/images/user.png"),
                                   ),
                                 ),
-                              );
-                            },
-                            child: _model.image!.isNotEmpty
-                                ? Hero(
-                                    tag: 'picture',
-                                    child: CircleAvatar(
-                                      backgroundColor: appWhite,
-                                      maxRadius: size.height * 0.09,
-                                      backgroundImage: FileImage(_image!),
-                                      // backgroundImage: MemoryImage(
-                                      //   base64Decode(dbImage.value),
-                                      // ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 10.0,
+                      ),
+                      Expanded(
+                        child: Container(
+                          width: size.width * 0.7,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                _model == null ? "" : _model.name!,
+                                style: TextStyle(
+                                  color: appBlack,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                _model == null ? "" : _model.nik!,
+                                style: TextStyle(
+                                  color: appBlack,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                _model == null ? "" : _model.alias!,
+                                style: TextStyle(
+                                  color: appBlack,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              sgSizedBoxHeight,
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  MaterialButton(
+                                    color: sgRed,
+                                    child: Text(
+                                      "Gallery",
+                                      style: TextStyle(
+                                        color: sgWhite,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Nexa',
+                                      ),
                                     ),
-                                  )
-                                : Hero(
-                                    tag: 'picture',
-                                    child: CircleAvatar(
-                                      backgroundColor: appWhite,
-                                      maxRadius: size.height * 0.09,
-                                      backgroundImage:
-                                          AssetImage("assets/images/user.png"),
-                                    ),
+                                    onPressed: () {
+                                      pickImageGallery();
+                                    },
                                   ),
+                                  MaterialButton(
+                                    color: sgRed,
+                                    child: Text(
+                                      "Camera",
+                                      style: TextStyle(
+                                        color: sgWhite,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Nexa',
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      pickImageCamera();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Expanded(
-                          child: Container(
-                            width: size.width * 0.7,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  _model == null ? "" : _model.name!,
-                                  style: TextStyle(
-                                    color: appBlack,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  _model == null ? "" : _model.nik!,
-                                  style: TextStyle(
-                                    color: appBlack,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  _model == null ? "" : _model.alias!,
-                                  style: TextStyle(
-                                    color: appBlack,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                sgSizedBoxHeight,
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    MaterialButton(
-                                      color: sgRed,
-                                      child: Text(
-                                        "Gallery",
-                                        style: TextStyle(
-                                          color: sgWhite,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Nexa',
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        pickImageGallery();
-                                      },
-                                    ),
-                                    MaterialButton(
-                                      color: sgRed,
-                                      child: Text(
-                                        "Camera",
-                                        style: TextStyle(
-                                          color: sgWhite,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Nexa',
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        pickImageCamera();
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 Divider(
@@ -885,85 +876,95 @@ class _EmployeeModifyState extends State<EmployeeModify>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: sgRed,
-        title: Text(
-          "Informasi Karyawan",
-          style: TextStyle(
-            color: sgWhite,
-            fontFamily: 'Nexa',
-          ),
-        ),
-        iconTheme: IconThemeData(
-          color: sgWhite, //change your color here
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.save_outlined,
-              color: sgWhite,
-            ),
-            onPressed: () => _save(),
-          ),
-        ],
+    return OverlayLoaderWithAppIcon(
+      isLoading: _isLoading,
+      overlayBackgroundColor: sgGrey,
+      circularProgressColor: sgGold,
+      appIcon: Image.asset(
+        'assets/logo/logo.png',
       ),
-      body: SafeArea(
-        child: Container(
-          color: sgWhite,
-          child: _isLoading
-              ? Center(child: CircularProgressIndicator())
-              : Container(
-                  color: sgWhite,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _profile(context),
-                      TabBar(
-                        indicatorColor: sgBrownLight,
-                        unselectedLabelColor: appBlack,
-                        labelColor: sgGold,
-                        isScrollable: true,
-                        labelStyle: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Nexa',
-                        ),
-                        tabs: [
-                          Tab(
-                            text: "Data Karyawan",
-                          ),
-                          Tab(
-                            text: "Data Pribadi",
-                          ),
-                          Tab(
-                            text: "Data SIM",
-                          ),
-                          Tab(
-                            text: "Skorsing",
-                          ),
-                        ],
+      child: Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: sgRed,
+          title: Text(
+            "Informasi Karyawan",
+            style: TextStyle(
+              color: sgWhite,
+              fontFamily: 'Nexa',
+            ),
+          ),
+          iconTheme: IconThemeData(
+            color: sgWhite, //change your color here
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.save_outlined,
+                color: sgWhite,
+              ),
+              onPressed: () {
+                _save();
+              },
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: Container(
+            color: sgWhite,
+            child: Container(
+              color: sgWhite,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _profile(context),
+                  TabBar(
+                    controller: _tabController,
+                    indicatorColor: sgBrownLight,
+                    unselectedLabelColor: appBlack,
+                    labelColor: sgGold,
+                    isScrollable: true,
+                    labelStyle: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Nexa',
+                    ),
+                    tabs: [
+                      Tab(
+                        text: "Data Karyawan",
                       ),
-                      Expanded(
-                        child: TabBarView(
-                          children: [
-                            _company(context),
-                            _employee(context),
-                            _sim(context),
-                            widget.id > 0
-                                ? EmployeeSkorsing(
-                                    skorsing: _model.skorsing,
-                                  )
-                                : Center(
-                                    child: Text("Data not found"),
-                                  ),
-                          ],
-                        ),
+                      Tab(
+                        text: "Data Pribadi",
+                      ),
+                      Tab(
+                        text: "Data SIM",
+                      ),
+                      Tab(
+                        text: "Skorsing",
                       ),
                     ],
                   ),
-                ),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _company(context),
+                        _employee(context),
+                        _sim(context),
+                        widget.id > 0
+                            ? EmployeeSkorsing(
+                                skorsing: _model.skorsing,
+                              )
+                            : Center(
+                                child: Text("Data not found"),
+                              ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

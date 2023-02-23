@@ -35,7 +35,9 @@ class deliveryGetModel {
   final String urgent_name;
   final int ujt_id;
   final int ujt;
+  final int primary_status;
   final employeeGetModel? primary_driver;
+  final int secondary_status;
   final employeeGetModel? secondary_driver;
   final List<String>? order_image;
 
@@ -74,7 +76,9 @@ class deliveryGetModel {
     this.assign = false,
     this.ujt_id = 0,
     this.ujt = 0,
+    this.primary_status = 0,
     this.primary_driver,
+    this.secondary_status = 0,
     this.secondary_driver,
     this.order_image,
   });
@@ -160,7 +164,9 @@ class deliveryGetModel {
       urgent_name: urgent,
       ujt_id: item['ujt_id'],
       ujt: item['ujt'],
+      primary_status: item['primary_status'],
       primary_driver: _employeePrimary,
+      secondary_status: item['secondary_status'],
       secondary_driver: _employeeSecondary,
       order_image: _imageOrder,
     );

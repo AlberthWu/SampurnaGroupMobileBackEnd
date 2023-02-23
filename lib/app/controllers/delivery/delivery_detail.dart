@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:path_provider/path_provider.dart';
 
 class DeliveryDetail extends StatefulWidget {
@@ -30,18 +31,17 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
 
   List<File> _imageList = [];
 
-  late deliveryGetModel _model;
+  late deliveryGetModel _model = new deliveryGetModel();
   late String errorMessage = "";
   bool _isLoading = false;
 
   @override
   void initState() {
-    _getData();
-
     super.initState();
+    _getData();
   }
 
-  _getData() async {
+  Future _getData() async {
     setState(() {
       _isLoading = true;
     });
@@ -112,6 +112,9 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
   }
 
   void _confirmSJ(int id) async {
+    setState(() {
+      _isLoading = true;
+    });
     final result = await serviceDelivery.PostConfirm(id);
 
     final title = 'Information';
@@ -136,9 +139,15 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
         _getData();
       }
     });
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   _save() async {
+    setState(() {
+      _isLoading = true;
+    });
     final result = await serviceDelivery.UploadImage(widget.id, _imageList);
 
     final title = 'Information';
@@ -163,13 +172,22 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
         _getData();
       });
     });
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return SafeArea(
+    return OverlayLoaderWithAppIcon(
+      isLoading: _isLoading,
+      overlayBackgroundColor: sgGrey,
+      circularProgressColor: sgGold,
+      appIcon: Image.asset(
+        'assets/logo/logo.png',
+      ),
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -185,332 +203,345 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
           iconTheme: IconThemeData(
             color: sgWhite,
           ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.save_outlined,
-                color: sgWhite,
-              ),
-              onPressed: () => _save(),
-            ),
-          ],
+          // actions: <Widget>[
+          //   _model.assign
+          //       ? IconButton(
+          //           icon: Icon(
+          //             Icons.save_outlined,
+          //             color: sgWhite,
+          //           ),
+          //           onPressed: () => _save(),
+          //         )
+          //       : Text(""),
+          // ],
         ),
-        body: _isLoading
-            ? Center(child: CircularProgressIndicator())
-            : Container(
-                width: size.width,
-                height: size.height,
-                child: Container(
-                  color: appWhite,
-                  child: SingleChildScrollView(
-                    child: Container(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Container(
-                            width: size.width,
-                            child: InfoWidget(
-                              field: 'Grup Perusahaan',
-                              value: _model.company_name,
-                            ),
-                          ),
-                          sgSizedBoxHeight,
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: Container(
+          width: size.width,
+          height: size.height,
+          child: Container(
+            color: appWhite,
+            child: SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                      width: size.width,
+                      child: InfoWidget(
+                        field: 'Grup Perusahaan',
+                        value: _model.company_name,
+                      ),
+                    ),
+                    sgSizedBoxHeight,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
                             children: [
-                              Expanded(
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      width: size.width * 0.5,
-                                      child: InfoWidget(
-                                        field: 'Nomor SJ',
-                                        value: _model.delivery_no,
-                                      ),
-                                    ),
-                                    sgSizedBoxHeight,
-                                    Container(
-                                      width: size.width * 0.5,
-                                      child: InfoWidget(
-                                        field: 'Nomor Polisi',
-                                        value: _model.plate_no,
-                                      ),
-                                    ),
-                                    sgSizedBoxHeight,
-                                    Container(
-                                      width: size.width * 0.5,
-                                      child: InfoWidget(
-                                        field: 'Nomor Rekening',
-                                        value: _model.rekening_no,
-                                      ),
-                                    ),
-                                    sgSizedBoxHeight,
-                                    Container(
-                                      width: size.width * 0.5,
-                                      child: InfoWidget(
-                                        field: 'Driver',
-                                        value: _model.employee_name,
-                                      ),
-                                    ),
-                                  ],
+                              Container(
+                                width: size.width * 0.5,
+                                child: InfoWidget(
+                                  field: 'Nomor SJ',
+                                  value: _model.delivery_no,
                                 ),
                               ),
-                              Column(
-                                children: [
-                                  Container(
-                                    width: size.width * 0.5,
-                                    child: InfoWidget(
-                                      field: 'Tanggal SJ',
-                                      value: _model.delivery_date,
-                                    ),
-                                  ),
-                                  sgSizedBoxHeight,
-                                  Container(
-                                    width: size.width * 0.5,
-                                    child: InfoWidget(
-                                      field: 'Jenis',
-                                      value: _model.fleet_type_name,
-                                    ),
-                                  ),
-                                  sgSizedBoxHeight,
-                                  Container(
-                                    width: size.width * 0.5,
-                                    child: InfoWidget(
-                                      field: 'Nama Rekening',
-                                      value: _model.nama_rekening,
-                                    ),
-                                  ),
-                                  sgSizedBoxHeight,
-                                  Container(
-                                    width: size.width * 0.5,
-                                    child: InfoWidget(
-                                      field: 'UJT',
-                                      value:
-                                          currencyFormatter.format(_model.ujt),
-                                    ),
-                                  ),
-                                ],
+                              sgSizedBoxHeight,
+                              Container(
+                                width: size.width * 0.5,
+                                child: InfoWidget(
+                                  field: 'Nomor Polisi',
+                                  value: _model.plate_no,
+                                ),
+                              ),
+                              sgSizedBoxHeight,
+                              Container(
+                                width: size.width * 0.5,
+                                child: InfoWidget(
+                                  field: 'Nomor Rekening',
+                                  value: _model.rekening_no,
+                                ),
+                              ),
+                              sgSizedBoxHeight,
+                              Container(
+                                width: size.width * 0.5,
+                                child: InfoWidget(
+                                  field: 'Driver',
+                                  value: _model.employee_name,
+                                ),
                               ),
                             ],
                           ),
-                          sgSizedBoxHeight,
-                          Container(
-                            width: size.width,
-                            child: InfoWidget(
-                              field: 'Asal',
-                              value: _model.origin_name,
+                        ),
+                        Column(
+                          children: [
+                            Container(
+                              width: size.width * 0.5,
+                              child: InfoWidget(
+                                field: 'Tanggal SJ',
+                                value: _model.delivery_date,
+                              ),
                             ),
-                          ),
-                          sgSizedBoxHeight,
-                          Container(
-                            width: size.width,
-                            child: InfoWidget(
-                              field: 'Tujuan',
-                              value: _model.plant_name,
+                            sgSizedBoxHeight,
+                            Container(
+                              width: size.width * 0.5,
+                              child: InfoWidget(
+                                field: 'Jenis',
+                                value: _model.fleet_type_name,
+                              ),
                             ),
-                          ),
-                          sgSizedBoxHeight,
-                          Container(
-                            width: size.width,
-                            child: InfoWidget(
-                              field: 'Material',
-                              value: _model.product_name,
+                            sgSizedBoxHeight,
+                            Container(
+                              width: size.width * 0.5,
+                              child: InfoWidget(
+                                field: 'Nama Rekening',
+                                value: _model.nama_rekening,
+                              ),
                             ),
-                          ),
-                          sgSizedBoxHeight,
-                          _model.assign
-                              ? Container(
-                                  width: size.width,
-                                  height: size.height * 0.28,
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        'Upload Foto',
+                            sgSizedBoxHeight,
+                            Container(
+                              width: size.width * 0.5,
+                              child: InfoWidget(
+                                field: 'UJT',
+                                value: currencyFormatter.format(_model.ujt),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    sgSizedBoxHeight,
+                    Container(
+                      width: size.width,
+                      child: InfoWidget(
+                        field: 'Asal',
+                        value: _model.origin_name,
+                      ),
+                    ),
+                    sgSizedBoxHeight,
+                    Container(
+                      width: size.width,
+                      child: InfoWidget(
+                        field: 'Tujuan',
+                        value: _model.plant_name,
+                      ),
+                    ),
+                    sgSizedBoxHeight,
+                    Container(
+                      width: size.width,
+                      child: InfoWidget(
+                        field: 'Material',
+                        value: _model.product_name,
+                      ),
+                    ),
+                    sgSizedBoxHeight,
+                    _model.assign
+                        ? Container(
+                            width: size.width,
+                            height: size.height * 0.28,
+                            child: Column(
+                              children: [
+                                Text(
+                                  'Upload Foto',
+                                  style: TextStyle(
+                                    color: sgRed,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    fontFamily: 'Nexa',
+                                  ),
+                                ),
+                                sgSizedBoxHeight,
+                                Expanded(
+                                  child: _imageList.length > 0
+                                      ? GridView.builder(
+                                          shrinkWrap: true,
+                                          physics: BouncingScrollPhysics(),
+                                          gridDelegate:
+                                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 1,
+                                          ),
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: _imageList.length,
+                                          itemBuilder:
+                                              (BuildContext context, index) {
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5.0),
+                                              child: Stack(
+                                                fit: StackFit.expand,
+                                                children: [
+                                                  ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20.0),
+                                                    child: Image.file(
+                                                      File(
+                                                        _imageList[index].path,
+                                                      ),
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    top: 4,
+                                                    right: 4,
+                                                    child: Container(
+                                                      child: IconButton(
+                                                        onPressed: () {
+                                                          _imageList
+                                                              .removeAt(index);
+                                                          setState(() {});
+                                                        },
+                                                        icon: Icon(
+                                                          Icons.delete_outline,
+                                                          color: sgRed,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      : Text(
+                                          'No image selected',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: sgGold,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Nexa',
+                                          ),
+                                        ),
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    OutlinedButton(
+                                      style: ButtonStyle(
+                                        side: MaterialStateProperty.all(
+                                          BorderSide(
+                                            color: appBlack,
+                                            width: 1.0,
+                                            style: BorderStyle.solid,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        "Gallery",
                                         style: TextStyle(
-                                          color: sgRed,
+                                          color: appBlack,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 16,
                                           fontFamily: 'Nexa',
                                         ),
                                       ),
-                                      sgSizedBoxHeight,
-                                      Expanded(
-                                        child: _imageList.length > 0
-                                            ? GridView.builder(
-                                                shrinkWrap: true,
-                                                physics:
-                                                    BouncingScrollPhysics(),
-                                                gridDelegate:
-                                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                                  crossAxisCount: 1,
-                                                ),
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                itemCount: _imageList.length,
-                                                itemBuilder:
-                                                    (BuildContext context,
-                                                        index) {
-                                                  return Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 5.0),
-                                                    child: Stack(
-                                                      fit: StackFit.expand,
-                                                      children: [
-                                                        ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      20.0),
-                                                          child: Image.file(
-                                                            File(
-                                                              _imageList[index]
-                                                                  .path,
-                                                            ),
-                                                            fit: BoxFit.cover,
-                                                          ),
-                                                        ),
-                                                        Positioned(
-                                                          top: 4,
-                                                          right: 4,
-                                                          child: Container(
-                                                            child: IconButton(
-                                                              onPressed: () {
-                                                                _imageList
-                                                                    .removeAt(
-                                                                        index);
-                                                                setState(() {});
-                                                              },
-                                                              icon: Icon(
-                                                                Icons
-                                                                    .delete_outline,
-                                                                color: sgRed,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                              )
-                                            : Text(
-                                                'No image selected',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                  color: sgGold,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: 'Nexa',
-                                                ),
-                                              ),
-                                      ),
-                                      const SizedBox(
-                                        height: 20,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          OutlinedButton(
-                                            style: ButtonStyle(
-                                              side: MaterialStateProperty.all(
-                                                BorderSide(
-                                                  color: appBlack,
-                                                  width: 1.0,
-                                                  style: BorderStyle.solid,
-                                                ),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              "Gallery",
-                                              style: TextStyle(
-                                                color: appBlack,
-                                                fontWeight: FontWeight.bold,
-                                                fontFamily: 'Nexa',
-                                              ),
-                                            ),
-                                            onPressed: () {
-                                              pickImageGallery();
-                                            },
-                                          ),
-                                          OutlinedButton(
-                                            style: ButtonStyle(
-                                              side: MaterialStateProperty.all(
-                                                BorderSide(
-                                                  color: appBlack,
-                                                  width: 1.0,
-                                                  style: BorderStyle.solid,
-                                                ),
-                                              ),
-                                            ),
-                                            child: Text(
-                                              "Camera",
-                                              style: TextStyle(
-                                                color: appBlack,
-                                                fontWeight: FontWeight.bold,
-                                                fontFamily: 'Nexa',
-                                              ),
-                                            ),
-                                            onPressed: () {
-                                              pickImageCamera();
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : Container(
-                                  padding: EdgeInsets.all(10),
-                                  alignment: Alignment.bottomCenter,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: sgGreen,
-                                        ),
-                                        child: Text(
-                                          "Terima",
-                                          style: TextStyle(
-                                            color: appWhite,
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'Nexa',
+                                      onPressed: () {
+                                        pickImageGallery();
+                                      },
+                                    ),
+                                    OutlinedButton(
+                                      style: ButtonStyle(
+                                        side: MaterialStateProperty.all(
+                                          BorderSide(
+                                            color: appBlack,
+                                            width: 1.0,
+                                            style: BorderStyle.solid,
                                           ),
                                         ),
-                                        onPressed: () => _confirmSJ(_model.id),
                                       ),
-                                      ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: sgRed,
+                                      child: Text(
+                                        "Camera",
+                                        style: TextStyle(
+                                          color: appBlack,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Nexa',
                                         ),
-                                        child: Text(
-                                          "Tolak",
-                                          style: TextStyle(
-                                            color: appWhite,
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.bold,
-                                            fontFamily: 'Nexa',
+                                      ),
+                                      onPressed: () {
+                                        pickImageCamera();
+                                      },
+                                    ),
+                                    OutlinedButton(
+                                      style: ButtonStyle(
+                                        side: MaterialStateProperty.all(
+                                          BorderSide(
+                                            color: sgRed,
+                                            width: 1.0,
+                                            style: BorderStyle.solid,
                                           ),
                                         ),
-                                        onPressed: () {},
                                       ),
-                                    ],
-                                  ),
+                                      child: Text(
+                                        "Upload",
+                                        style: TextStyle(
+                                          color: sgRed,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Nexa',
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        _save();
+                                      },
+                                    ),
+                                  ],
                                 ),
-                        ],
-                      ),
-                    ),
-                  ),
+                              ],
+                            ),
+                          )
+                        : Container(
+                            padding: EdgeInsets.all(10),
+                            alignment: Alignment.bottomCenter,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: sgGreen,
+                                  ),
+                                  child: Text(
+                                    "Terima",
+                                    style: TextStyle(
+                                      color: appWhite,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Nexa',
+                                    ),
+                                  ),
+                                  onPressed: () => _confirmSJ(_model.id),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: sgRed,
+                                  ),
+                                  child: Text(
+                                    "Tolak",
+                                    style: TextStyle(
+                                      color: appWhite,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Nexa',
+                                    ),
+                                  ),
+                                  onPressed: () {},
+                                ),
+                              ],
+                            ),
+                          ),
+                  ],
                 ),
               ),
+            ),
+          ),
+        ),
       ),
     );
   }

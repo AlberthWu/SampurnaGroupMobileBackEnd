@@ -40,13 +40,20 @@ class _SGAutoCompleteWidgetState extends State<SGAutoCompleteWidget> {
   @override
   void initState() {
     super.initState();
-    _id = widget.id;
-    _name = widget.name;
+
+    setState(() {
+      _id = widget.id;
+      _name = widget.name;
+    });
+
+    setState(() {});
   }
 
   _changeValue(value) {
-    _id = value.getID();
-    _name = value.getName();
+    setState(() {
+      _id = value.getID();
+      _name = value.getName();
+    });
 
     if (widget.dataKey) {
       widget.controller.text = value.getIDString();

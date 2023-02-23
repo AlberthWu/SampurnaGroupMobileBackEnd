@@ -24,101 +24,99 @@ class _OrderCardWidgetState extends State<OrderCardWidget> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          color: sgGrey.withOpacity(.1),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
-        margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-        width: size.width,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.model.reference_no,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: appBlack,
-                      fontFamily: 'Nexa',
-                    ),
+    return Container(
+      decoration: BoxDecoration(
+        color: sgGrey.withOpacity(.1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      width: size.width,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.model.reference_no,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: appBlack,
+                    fontFamily: 'Nexa',
                   ),
-                  SizedBox(
-                    height: 10,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  widget.model.plate_no,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: appBlack,
+                    fontFamily: 'Nexa',
                   ),
-                  Text(
-                    widget.model.plate_no,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: appBlack,
-                      fontFamily: 'Nexa',
-                    ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  widget.model.fleet_type_name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    color: appBlack,
+                    fontFamily: 'Nexa',
                   ),
-                  SizedBox(
-                    height: 10,
+                ),
+              ],
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  widget.model.coor_name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: appBlack,
+                    fontFamily: 'Nexa',
                   ),
-                  Text(
-                    widget.model.fleet_type_name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      color: appBlack,
-                      fontFamily: 'Nexa',
-                    ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  widget.model.employee_name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: appBlack,
+                    fontFamily: 'Nexa',
                   ),
-                ],
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    widget.model.coor_name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: appBlack,
-                      fontFamily: 'Nexa',
-                    ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  widget.model.formation_name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    color: appBlack,
+                    fontFamily: 'Nexa',
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    widget.model.employee_name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: appBlack,
-                      fontFamily: 'Nexa',
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    widget.model.formation_name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      color: appBlack,
-                      fontFamily: 'Nexa',
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

@@ -43,185 +43,201 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
       width: size.width,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  widget.model.bisnis_unit,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: appBlack,
-                    fontFamily: 'Nexa',
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  widget.model.schedule_no + ' - ' + widget.model.schedule_date,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: appBlack,
-                    fontFamily: 'Nexa',
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  widget.model.origin_name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                    color: appBlack,
-                    fontFamily: 'Nexa',
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  widget.model.plant_name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                    color: appBlack,
-                    fontFamily: 'Nexa',
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  widget.model.fleet_type_name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                    color: appBlack,
-                    fontFamily: 'Nexa',
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  widget.model.product_name,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                    color: appBlack,
-                    fontFamily: 'Nexa',
-                  ),
-                ),
-              ],
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Container(
-                  height: 30,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    color: sgGrey,
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  child: GestureDetector(
-                    onTap: () => widget.openBottom(
-                      context,
-                      widget.model,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          widget.model.actual.toString(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: appWhite,
-                            fontFamily: 'Nexa',
-                          ),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.model.bisnis_unit,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: appBlack,
+                          fontFamily: 'Nexa',
                         ),
-                        Text(
-                          " / ",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: appWhite,
-                            fontFamily: 'Nexa',
-                          ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        widget.model.schedule_no +
+                            ' - ' +
+                            widget.model.schedule_date,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: appBlack,
+                          fontFamily: 'Nexa',
                         ),
-                        Text(
-                          widget.model.total_do.toString(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: appWhite,
-                            fontFamily: 'Nexa',
-                          ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        widget.model.origin_name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                          color: appBlack,
+                          fontFamily: 'Nexa',
                         ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        widget.model.plant_name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: appBlack,
+                          fontFamily: 'Nexa',
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        widget.model.fleet_type_name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: appBlack,
+                          fontFamily: 'Nexa',
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        widget.model.product_name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: appBlack,
+                          fontFamily: 'Nexa',
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(
-                  height: 6,
-                ),
-                Container(
-                  height: 30,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    color: widget.model.urgent == 1 ? sgRed : sgGray,
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  alignment: Alignment(0, 0),
-                  child: Text(
-                    widget.model.urgent_name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      color: widget.model.urgent == 1 ? appWhite : appBlack,
-                      fontFamily: 'Nexa',
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 6,
-                ),
-                Container(
-                  height: 30,
-                  width: 100,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: sgGreen,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => DeliveryCreate(
-                            schedule_id: widget.model.id,
-                          ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: () => widget.openBottom(
+                        context,
+                        widget.model,
+                      ),
+                      child: Container(
+                        height: 30,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          color: sgGrey,
+                          borderRadius: BorderRadius.circular(5.0),
                         ),
-                      );
-                    },
-                    child: Text(
-                      'Create SJ',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: appWhite,
-                        fontFamily: 'Nexa',
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              widget.model.actual.toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: appWhite,
+                                fontFamily: 'Nexa',
+                              ),
+                            ),
+                            Text(
+                              " / ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: appWhite,
+                                fontFamily: 'Nexa',
+                              ),
+                            ),
+                            Text(
+                              widget.model.total_do.toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: appWhite,
+                                fontFamily: 'Nexa',
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                    SizedBox(
+                      height: 6,
+                    ),
+                    Container(
+                      height: 30,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        color: widget.model.urgent == 1 ? sgRed : sgGray,
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      alignment: Alignment(0, 0),
+                      child: Text(
+                        widget.model.urgent_name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: widget.model.urgent == 1 ? appWhite : appBlack,
+                          fontFamily: 'Nexa',
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 6,
+                    ),
+                    widget.model.balance == 0
+                        ? Container(
+                            height: 30,
+                            width: 100,
+                            color: sgGrey.withOpacity(0.1),
+                          )
+                        : Container(
+                            height: 30,
+                            width: 100,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: sgGreen,
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => DeliveryCreate(
+                                      schedule_id: widget.model.id,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Create SJ',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: appWhite,
+                                  fontFamily: 'Nexa',
+                                ),
+                              ),
+                            ),
+                          ),
+                  ],
                 ),
               ],
             ),

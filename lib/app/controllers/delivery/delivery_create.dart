@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
+import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 
 enum DriverList { Batang, Serep }
 
@@ -40,7 +41,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
   final currencyFormatter = NumberFormat('#,##0', 'ID');
 
   ujtService get serviceUJT => GetIt.I<ujtService>();
-  late ujtGetModel _modelUJT;
+  late ujtGetModel _modelUJT = new ujtGetModel();
 
   driverService get serviceDriver => GetIt.I<driverService>();
   late driverGetModel _modelDriver = new driverGetModel();
@@ -50,7 +51,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
 
   late APIResponse<List<autocompleteListModel>> _apiResponseAuto;
 
-  late scheduleGetModel _model;
+  late scheduleGetModel _model = new scheduleGetModel();
   late String errorMessage = "";
   bool _isLoading = false;
 
@@ -139,6 +140,9 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
   }
 
   _save() async {
+    setState(() {
+      _isLoading = true;
+    });
     var form = new Map<String, String>();
 
     form['company_id'] = _model.company_id.toString();
@@ -185,13 +189,19 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
         ],
       ),
     ).then((res) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => DeliveryModify(
-            delivery_id: data.id,
+      print(res);
+      if (!result.status) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => DeliveryModify(
+              delivery_id: data.id,
+            ),
           ),
-        ),
-      );
+        );
+      }
+    });
+    setState(() {
+      _isLoading = false;
     });
   }
 
@@ -200,395 +210,399 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
     Size size = MediaQuery.of(context).size;
 
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: sgRed,
-          title: Text(
-            "Input Surat Jalan",
-            style: TextStyle(
-              color: sgWhite,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Nexa',
-            ),
-          ),
-          iconTheme: IconThemeData(
-            color: sgWhite,
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.save_outlined,
-                color: sgWhite,
-              ),
-              onPressed: () => _save(),
-            ),
-          ],
+      child: OverlayLoaderWithAppIcon(
+        isLoading: _isLoading,
+        overlayBackgroundColor: sgGrey,
+        circularProgressColor: sgGold,
+        appIcon: Image.asset(
+          'assets/logo/logo.png',
         ),
-        body: _isLoading
-            ? Center(child: CircularProgressIndicator())
-            : Container(
-                color: appWhite,
-                padding: EdgeInsets.symmetric(horizontal: 10.0),
-                child: ListView(
-                  shrinkWrap: true,
-                  physics: BouncingScrollPhysics(),
+        child: Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: sgRed,
+            title: Text(
+              "Input Surat Jalan",
+              style: TextStyle(
+                color: sgWhite,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Nexa',
+              ),
+            ),
+            iconTheme: IconThemeData(
+              color: sgWhite,
+            ),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.save_outlined,
+                  color: sgWhite,
+                ),
+                onPressed: () => _save(),
+              ),
+            ],
+          ),
+          body: Container(
+            color: appWhite,
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: ListView(
+              shrinkWrap: true,
+              physics: BouncingScrollPhysics(),
+              children: [
+                sgSizedBoxHeight,
+                InfoWidget(
+                  field: "Grup Perusahaan",
+                  value: _model.company_name,
+                ),
+                sgSizedBoxHeight,
+                InfoWidget(
+                  field: "Bisnis Unit",
+                  value: _model.bisnis_name,
+                ),
+                sgSizedBoxHeight,
+                InfoWidget(
+                  field: "Jenis Transaksi",
+                  value: _model.order_type_name,
+                ),
+                sgSizedBoxHeight,
+                InfoWidget(
+                  field: "Jenis Kendaraan",
+                  value: _model.fleet_type_name,
+                ),
+                sgSizedBoxHeight,
+                InfoWidget(
+                  field: "Asal",
+                  value: _model.origin_name,
+                ),
+                sgSizedBoxHeight,
+                InfoWidget(
+                  field: "Pelanggan",
+                  value: _model.customer_name,
+                ),
+                sgSizedBoxHeight,
+                InfoWidget(
+                  field: "Tujuan",
+                  value: _model.plant_name,
+                ),
+                sgSizedBoxHeight,
+                InfoWidget(
+                  field: "Material",
+                  value: _model.product_name,
+                ),
+                sgSizedBoxHeight,
+                InfoWidget(
+                  field: "UJT",
+                  value: currencyFormatter.format(_modelUJT.ujt),
+                ),
+                sgSizedBoxHeight,
+                SGAutoCompleteWidget(
+                  controller: _fleetController,
+                  title: 'Nomor Kendaraan',
+                  getData: _fleetData,
+                  setData: _getDriver,
+                  id: _model.fleet_id,
+                  name: _model.plate_no,
+                ),
+                RadioListTile<DriverList>(
+                  title: Text('Supir Batang'),
+                  value: DriverList.Batang,
+                  groupValue: _driver,
+                  onChanged: (DriverList? value) {
+                    setState(() {
+                      _driver = value;
+                    });
+                  },
+                  activeColor: sgRed,
+                ),
+                Row(
                   children: [
-                    sgSizedBoxHeight,
-                    InfoWidget(
-                      field: "Grup Perusahaan",
-                      value: _model.company_name,
-                    ),
-                    sgSizedBoxHeight,
-                    InfoWidget(
-                      field: "Bisnis Unit",
-                      value: _model.bisnis_name,
-                    ),
-                    sgSizedBoxHeight,
-                    InfoWidget(
-                      field: "Jenis Transaksi",
-                      value: _model.order_type_name,
-                    ),
-                    sgSizedBoxHeight,
-                    InfoWidget(
-                      field: "Jenis Kendaraan",
-                      value: _model.fleet_type_name,
-                    ),
-                    sgSizedBoxHeight,
-                    InfoWidget(
-                      field: "Asal",
-                      value: _model.origin_name,
-                    ),
-                    sgSizedBoxHeight,
-                    InfoWidget(
-                      field: "Pelanggan",
-                      value: _model.customer_name,
-                    ),
-                    sgSizedBoxHeight,
-                    InfoWidget(
-                      field: "Tujuan",
-                      value: _model.plant_name,
-                    ),
-                    sgSizedBoxHeight,
-                    InfoWidget(
-                      field: "Material",
-                      value: _model.product_name,
-                    ),
-                    sgSizedBoxHeight,
-                    InfoWidget(
-                      field: "UJT",
-                      value: currencyFormatter.format(_modelUJT.ujt),
-                    ),
-                    sgSizedBoxHeight,
-                    SGAutoCompleteWidget(
-                      controller: _fleetController,
-                      title: 'Nomor Kendaraan',
-                      getData: _fleetData,
-                      setData: _getDriver,
-                      id: _model.fleet_id,
-                      name: _model.plate_no,
-                    ),
-                    RadioListTile<DriverList>(
-                      title: Text('Supir Batang'),
-                      value: DriverList.Batang,
-                      groupValue: _driver,
-                      onChanged: (DriverList? value) {
-                        setState(() {
-                          _driver = value;
-                        });
-                      },
-                      activeColor: sgRed,
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 120,
-                          height: 120,
-                          child: dbImageBatang.isNotEmpty
-                              ? Hero(
-                                  tag: 'picture',
-                                  child: CircleAvatar(
-                                    maxRadius: size.height * 0.09,
-                                    backgroundImage: MemoryImage(
-                                      base64Decode(dbImageBatang.value),
-                                    ),
-                                  ),
-                                )
-                              : Hero(
-                                  tag: 'picture',
-                                  child: CircleAvatar(
-                                    backgroundColor: appWhite,
-                                    maxRadius: size.height * 0.09,
-                                    backgroundImage:
-                                        AssetImage("assets/images/user.png"),
-                                  ),
+                    SizedBox(
+                      width: 120,
+                      height: 120,
+                      child: dbImageBatang.isNotEmpty
+                          ? Hero(
+                              tag: 'picture',
+                              child: CircleAvatar(
+                                maxRadius: size.height * 0.09,
+                                backgroundImage: MemoryImage(
+                                  base64Decode(dbImageBatang.value),
                                 ),
-                        ),
-                        sgSizedBoxWidth,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _modelDriver.primary_driver == null
-                                  ? ""
-                                  : _modelDriver.primary_driver!.name!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Nexa',
+                              ),
+                            )
+                          : Hero(
+                              tag: 'picture',
+                              child: CircleAvatar(
+                                backgroundColor: appWhite,
+                                maxRadius: size.height * 0.09,
+                                backgroundImage:
+                                    AssetImage("assets/images/user.png"),
                               ),
                             ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              _modelDriver.primary_driver == null
-                                  ? ""
-                                  : _modelDriver.primary_driver!.phone!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontFamily: 'Nexa',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              _modelDriver.primary_driver == null
-                                  ? ""
-                                  : _modelDriver.primary_driver!.bank_name!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontFamily: 'Nexa',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              _modelDriver.primary_driver == null
-                                  ? ""
-                                  : _modelDriver.primary_driver!.bank_no!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontFamily: 'Nexa',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              _modelDriver.primary_driver == null
-                                  ? ""
-                                  : _modelDriver.primary_driver!.license_type!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontFamily: 'Nexa',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              _modelDriver.primary_driver == null
-                                  ? ""
-                                  : _modelDriver.primary_driver!.license_no!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontFamily: 'Nexa',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              _modelDriver.primary_driver == null
-                                  ? ""
-                                  : _modelDriver
-                                      .primary_driver!.license_exp_date!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontFamily: 'Nexa',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
                     ),
-                    Divider(
-                      thickness: 1,
-                    ),
-                    RadioListTile<DriverList>(
-                      title: Text('Supir Serep'),
-                      value: DriverList.Serep,
-                      groupValue: _driver,
-                      onChanged: (DriverList? value) {
-                        setState(() {
-                          _driver = value;
-                        });
-                      },
-                      activeColor: sgRed,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                    sgSizedBoxWidth,
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          width: 120,
-                          height: 120,
-                          child: dbImageSerep.isNotEmpty
-                              ? Hero(
-                                  tag: 'picture',
-                                  child: CircleAvatar(
-                                    maxRadius: size.height * 0.09,
-                                    backgroundImage: MemoryImage(
-                                      base64Decode(dbImageSerep.value),
-                                    ),
-                                  ),
-                                )
-                              : Hero(
-                                  tag: 'picture',
-                                  child: CircleAvatar(
-                                    backgroundColor: appWhite,
-                                    maxRadius: size.height * 0.09,
-                                    backgroundImage:
-                                        AssetImage("assets/images/user.png"),
-                                  ),
-                                ),
+                        Text(
+                          _modelDriver.primary_driver == null
+                              ? ""
+                              : _modelDriver.primary_driver!.name!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Nexa',
+                          ),
                         ),
-                        sgSizedBoxWidth,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            sgSizedBoxHeight,
-                            Text(
-                              _modelDriver.secondary_driver == null
-                                  ? ""
-                                  : _modelDriver.secondary_driver!.name!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Nexa',
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              _modelDriver.secondary_driver == null
-                                  ? ""
-                                  : _modelDriver.secondary_driver!.phone!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontFamily: 'Nexa',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              _modelDriver.secondary_driver == null
-                                  ? ""
-                                  : _modelDriver.secondary_driver!.bank_name!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontFamily: 'Nexa',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              _modelDriver.secondary_driver == null
-                                  ? ""
-                                  : _modelDriver.secondary_driver!.bank_no!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontFamily: 'Nexa',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              _modelDriver.secondary_driver == null
-                                  ? ""
-                                  : _modelDriver
-                                      .secondary_driver!.license_type!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontFamily: 'Nexa',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              _modelDriver.secondary_driver == null
-                                  ? ""
-                                  : _modelDriver.secondary_driver!.license_no!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontFamily: 'Nexa',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5.0,
-                            ),
-                            Text(
-                              _modelDriver.secondary_driver == null
-                                  ? ""
-                                  : _modelDriver
-                                      .secondary_driver!.license_exp_date!,
-                              style: TextStyle(
-                                color: appBlack,
-                                fontSize: 14.0,
-                                fontFamily: 'Nexa',
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          _modelDriver.primary_driver == null
+                              ? ""
+                              : _modelDriver.primary_driver!.phone!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontFamily: 'Nexa',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          _modelDriver.primary_driver == null
+                              ? ""
+                              : _modelDriver.primary_driver!.bank_name!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontFamily: 'Nexa',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          _modelDriver.primary_driver == null
+                              ? ""
+                              : _modelDriver.primary_driver!.bank_no!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontFamily: 'Nexa',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          _modelDriver.primary_driver == null
+                              ? ""
+                              : _modelDriver.primary_driver!.license_type!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontFamily: 'Nexa',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          _modelDriver.primary_driver == null
+                              ? ""
+                              : _modelDriver.primary_driver!.license_no!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontFamily: 'Nexa',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          _modelDriver.primary_driver == null
+                              ? ""
+                              : _modelDriver.primary_driver!.license_exp_date!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontFamily: 'Nexa',
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),
-                    Divider(
-                      thickness: 1,
-                    ),
-                    sgSizedBoxHeight,
                   ],
                 ),
-              ),
+                Divider(
+                  thickness: 1,
+                ),
+                RadioListTile<DriverList>(
+                  title: Text('Supir Serep'),
+                  value: DriverList.Serep,
+                  groupValue: _driver,
+                  onChanged: (DriverList? value) {
+                    setState(() {
+                      _driver = value;
+                    });
+                  },
+                  activeColor: sgRed,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 120,
+                      height: 120,
+                      child: dbImageSerep.isNotEmpty
+                          ? Hero(
+                              tag: 'picture',
+                              child: CircleAvatar(
+                                maxRadius: size.height * 0.09,
+                                backgroundImage: MemoryImage(
+                                  base64Decode(dbImageSerep.value),
+                                ),
+                              ),
+                            )
+                          : Hero(
+                              tag: 'picture',
+                              child: CircleAvatar(
+                                backgroundColor: appWhite,
+                                maxRadius: size.height * 0.09,
+                                backgroundImage:
+                                    AssetImage("assets/images/user.png"),
+                              ),
+                            ),
+                    ),
+                    sgSizedBoxWidth,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        sgSizedBoxHeight,
+                        Text(
+                          _modelDriver.secondary_driver == null
+                              ? ""
+                              : _modelDriver.secondary_driver!.name!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Nexa',
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          _modelDriver.secondary_driver == null
+                              ? ""
+                              : _modelDriver.secondary_driver!.phone!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontFamily: 'Nexa',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          _modelDriver.secondary_driver == null
+                              ? ""
+                              : _modelDriver.secondary_driver!.bank_name!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontFamily: 'Nexa',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          _modelDriver.secondary_driver == null
+                              ? ""
+                              : _modelDriver.secondary_driver!.bank_no!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontFamily: 'Nexa',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          _modelDriver.secondary_driver == null
+                              ? ""
+                              : _modelDriver.secondary_driver!.license_type!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontFamily: 'Nexa',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          _modelDriver.secondary_driver == null
+                              ? ""
+                              : _modelDriver.secondary_driver!.license_no!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontFamily: 'Nexa',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 5.0,
+                        ),
+                        Text(
+                          _modelDriver.secondary_driver == null
+                              ? ""
+                              : _modelDriver
+                                  .secondary_driver!.license_exp_date!,
+                          style: TextStyle(
+                            color: appBlack,
+                            fontSize: 14.0,
+                            fontFamily: 'Nexa',
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                Divider(
+                  thickness: 1,
+                ),
+                sgSizedBoxHeight,
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Future<List<autocompleteListModel>> _fleetData(keyword) async {
-    _apiResponseAuto =
-        await serviceAutoComplete.GetFleetList(_model.bisnis_id, keyword);
+    _apiResponseAuto = await serviceAutoComplete.GetFleetList(
+        _model.bisnis_id, _model.fleet_type_id, keyword);
     List<autocompleteListModel> _models = [];
 
     if (_apiResponseAuto.data.length == 0) {

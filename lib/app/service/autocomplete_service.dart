@@ -185,10 +185,12 @@ class autoCompleteService {
   }
 
   Future<APIResponse<List<autocompleteListModel>>> GetFleetList(
-      business_id, keyword) {
+      business_id, fleet_type_id, keyword) {
     final models = <autocompleteListModel>[];
     return http
-        .get(Uri.parse(API + 'fleet/list/$business_id?keyword=$keyword'),
+        .get(
+            Uri.parse(API +
+                'fleet/list/$business_id?fleet_type_id=$fleet_type_id&keyword=$keyword'),
             headers: headers)
         .then(
       (data) {

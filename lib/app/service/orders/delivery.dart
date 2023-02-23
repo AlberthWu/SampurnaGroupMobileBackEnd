@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:asm/app/constant/color.dart';
 import 'package:asm/app/models/orders/surat_jalan/get.dart';
 import 'package:asm/app/models/orders/surat_jalan/list.dart';
@@ -19,7 +18,7 @@ class deliveryService {
     return http
         .get(
             Uri.parse(API +
-                '/order/cargo/detail?issue_date=$date&pagesize=20&page=$page&keyword=$keyword'),
+                '/order/cargo/detail?issue_date=$date&pagesize=50&page=$page&keyword=$keyword'),
             headers: headers)
         .then(
       (data) {
