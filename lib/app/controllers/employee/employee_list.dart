@@ -6,6 +6,7 @@ import 'package:asm/app/service/employee.dart';
 import 'package:asm/app/views/cards/employee_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:skeleton_loader/skeleton_loader.dart';
 
 class ListOfEmployee extends StatefulWidget {
   const ListOfEmployee({super.key});
@@ -24,13 +25,26 @@ class _ListOfEmployeeState extends State<ListOfEmployee> {
 
   String _keyword = "";
   int _page = 1;
-  bool _isLoading = false;
+  bool _isLoading = true;
+  bool _isInit = false;
 
   @override
   void initState() {
-    super.initState();
+    if (!_isInit) {
+      _simulateLoad();
+    }
+    _isInit = true;
     scrollController.addListener(_scrollListener);
-    _fetchAPI();
+    super.initState();
+  }
+
+  Future _simulateLoad() async {
+    Future.delayed(Duration(seconds: 2), () {
+      _fetchAPI();
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   onSearch(String search) {
@@ -198,8 +212,41 @@ class _ListOfEmployeeState extends State<ListOfEmployee> {
                       ),
                     );
                   } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
+                    return SkeletonLoader(
+                      builder: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                        child: Row(
+                          children: <Widget>[
+                            CircleAvatar(
+                              backgroundColor: appWhite,
+                              radius: 30,
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    width: double.infinity,
+                                    height: 10,
+                                    color: appWhite,
+                                  ),
+                                  SizedBox(height: 10),
+                                  Container(
+                                    width: double.infinity,
+                                    height: 12,
+                                    color: appWhite,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      items: 10,
+                      period: Duration(seconds: 2),
+                      highlightColor: sgGold,
+                      direction: SkeletonDirection.ltr,
                     );
                   }
                 },

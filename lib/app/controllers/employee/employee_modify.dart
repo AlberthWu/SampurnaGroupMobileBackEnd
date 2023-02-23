@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:asm/app/constant/color.dart';
 import 'package:asm/app/controllers/employee/employee_image.dart';
@@ -48,7 +49,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
   late String errorMessage = "";
   bool _isEdit = true;
 
-  late File? _image;
+  File _image = new File('assets/images/user.png');
 
   TextEditingController _companyController = TextEditingController();
   TextEditingController _nikController = TextEditingController();
@@ -105,11 +106,13 @@ class _EmployeeModifyState extends State<EmployeeModify>
 
   @override
   void initState() {
-    super.initState();
     _tabController = TabController(vsync: this, length: 4);
     if (widget.id > 0) {
       _getData();
+    } else {
+      writeFile("");
     }
+    super.initState();
   }
 
   _setBank(value) async {
@@ -118,13 +121,22 @@ class _EmployeeModifyState extends State<EmployeeModify>
     _bankNameController.text = value.name;
   }
 
-  void writeFile() async {
-    if (_model.image!.isNotEmpty) {
-      final decodedBytes = base64Decode(_model.image!);
+  Future writeFile(filename) async {
+    imageCache.clear();
+    var rng = new Random();
+    if (filename != "") {
+      final decodedBytes = base64Decode(filename);
       final directory = await getApplicationDocumentsDirectory();
-      final imageName = _model.name.toString() + ".png";
+      final imageName = (rng.nextInt(100)).toString() + ".png";
       _image = File('${directory.path}/${imageName}');
-      _image!.writeAsBytesSync(List.from(decodedBytes));
+      _image.writeAsBytesSync(List.from(decodedBytes));
+    } else {
+      var bytes = await rootBundle.load('assets/images/user.png');
+      String tempPath = (await getTemporaryDirectory()).path;
+      File file = new File('$tempPath/' + rng.nextInt(100).toString() + ".png");
+      await file.writeAsBytes(
+          bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+      _image = file;
     }
   }
 
@@ -141,7 +153,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
         } else {
           _model = response.data;
 
-          writeFile();
+          writeFile(_model.image!);
           _setDataCompany();
           _setDataEmployee();
           _setDataSim();
@@ -273,7 +285,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
     form['license_handover_date'] = _licenseHandOverController.text;
 
     if (isEditing) {
-      final result = await service.PutEmployee(widget.id, form, _image!);
+      final result = await service.PutEmployee(widget.id, form, _image);
 
       final title = 'Information';
       final text = result.message;
@@ -298,7 +310,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
         }
       });
     } else {
-      final result = await service.PostEmployee(form, _image!);
+      final result = await service.PostEmployee(form, _image);
 
       final title = 'Information';
       final text = result.message;
@@ -366,32 +378,19 @@ class _EmployeeModifyState extends State<EmployeeModify>
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) => EmployeeImage(
-                                  image: _image!,
+                                  image: _image,
                                 ),
                               ),
                             );
                           },
-                          child: _model.image!.isNotEmpty
-                              ? Hero(
-                                  tag: 'picture',
-                                  child: CircleAvatar(
-                                    backgroundColor: appWhite,
-                                    maxRadius: size.height * 0.09,
-                                    backgroundImage: FileImage(_image!),
-                                    // backgroundImage: MemoryImage(
-                                    //   base64Decode(dbImage.value),
-                                    // ),
-                                  ),
-                                )
-                              : Hero(
-                                  tag: 'picture',
-                                  child: CircleAvatar(
-                                    backgroundColor: appWhite,
-                                    maxRadius: size.height * 0.09,
-                                    backgroundImage:
-                                        AssetImage("assets/images/user.png"),
-                                  ),
-                                ),
+                          child: Hero(
+                            tag: 'picture',
+                            child: CircleAvatar(
+                              backgroundColor: appWhite,
+                              maxRadius: size.height * 0.09,
+                              backgroundImage: FileImage(_image),
+                            ),
+                          ),
                         ),
                       ),
                       SizedBox(

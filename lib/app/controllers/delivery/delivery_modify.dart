@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/controllers/employee/employee_image.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/autocomplete_model.dart';
 import 'package:asm/app/models/orders/driver.dart';
@@ -479,37 +480,50 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         return Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 5.0),
-                                          child: Stack(
-                                            fit: StackFit.expand,
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(20.0),
-                                                child: Image.file(
-                                                  File(
-                                                    _imageList[index].path,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (_) => EmployeeImage(
+                                                    image: File(
+                                                        _imageList[index].path),
                                                   ),
-                                                  fit: BoxFit.cover,
                                                 ),
-                                              ),
-                                              Positioned(
-                                                top: 4,
-                                                right: 4,
-                                                child: Container(
-                                                  child: IconButton(
-                                                    onPressed: () {
-                                                      _imageList
-                                                          .removeAt(index);
-                                                      setState(() {});
-                                                    },
-                                                    icon: Icon(
-                                                      Icons.delete_outline,
-                                                      color: sgRed,
+                                              );
+                                            },
+                                            child: Stack(
+                                              fit: StackFit.expand,
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          20.0),
+                                                  child: Image.file(
+                                                    File(
+                                                      _imageList[index].path,
+                                                    ),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  top: 4,
+                                                  right: 4,
+                                                  child: Container(
+                                                    child: IconButton(
+                                                      onPressed: () {
+                                                        _imageList
+                                                            .removeAt(index);
+                                                        setState(() {});
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.delete_outline,
+                                                        color: sgRed,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         );
                                       },

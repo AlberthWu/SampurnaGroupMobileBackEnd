@@ -1,5 +1,4 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/delivery/delivery_detail.dart';
 import 'package:asm/app/controllers/delivery/delivery_modify.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/orders/schedule/list.dart';
@@ -33,6 +32,7 @@ class _DeliveryHomeState extends State<DeliveryHome>
 
   late APIResponse<List<deliveryListModel>> _apiDelivery;
   List<deliveryListModel> _modelsDelivery = [];
+  List<deliveryListModel> _modelsDeliveryDay = [];
 
   DateTime currentDateTime = DateTime.now();
   late bool _isLoading = false;
@@ -138,8 +138,11 @@ class _DeliveryHomeState extends State<DeliveryHome>
     setState(() {
       _isLoading = true;
     });
+
     await _getDataDelivery(currentDateTime);
     await _getDataSchedule(currentDateTime);
+    await _getDataDeliveryDay(currentDateTime);
+
     setState(() {
       _isLoading = false;
     });
@@ -254,11 +257,11 @@ class _DeliveryHomeState extends State<DeliveryHome>
                           width: size.width,
                           height: size.height,
                           color: appWhite,
-                          child: _modelsDelivery.length > 0
+                          child: _modelsDeliveryDay.length > 0
                               ? ListView.builder(
                                   shrinkWrap: true,
                                   physics: BouncingScrollPhysics(),
-                                  itemCount: _modelsDelivery.length,
+                                  itemCount: _modelsDeliveryDay.length,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return GestureDetector(
@@ -268,14 +271,15 @@ class _DeliveryHomeState extends State<DeliveryHome>
                                               MaterialPageRoute(
                                                 builder: (_) => DeliveryModify(
                                                   delivery_id:
-                                                      _modelsDelivery[index].id,
+                                                      _modelsDeliveryDay[index]
+                                                          .id,
                                                 ),
                                               ),
                                             )
                                             .then((_) => _initialData);
                                       },
                                       child: DeliveryCardWidget(
-                                        model: _modelsDelivery[index],
+                                        model: _modelsDeliveryDay[index],
                                       ),
                                     );
                                   },
@@ -342,6 +346,20 @@ class _DeliveryHomeState extends State<DeliveryHome>
       _modelsDelivery.clear();
       for (var i = 0; i < _apiDelivery.data.length; i++) {
         _modelsDelivery.add(_apiDelivery.data[i]);
+      }
+    });
+  }
+
+  Future<void> _getDataDeliveryDay(date) async {
+    final DateFormat formatter = DateFormat('yyyy-MM-dd');
+    final String formatted = formatter.format(date);
+
+    _apiDelivery = await serviceDelivery.GetList(formatted, 1, "");
+
+    setState(() {
+      _modelsDeliveryDay.clear();
+      for (var i = 0; i < _apiDelivery.data.length; i++) {
+        _modelsDeliveryDay.add(_apiDelivery.data[i]);
       }
     });
   }

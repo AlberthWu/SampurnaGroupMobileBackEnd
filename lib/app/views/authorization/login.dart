@@ -1,8 +1,12 @@
 import 'package:asm/app/constant/color.dart';
 import 'package:asm/app/controllers/dashboard.dart';
+import 'package:asm/app/models/api_response.dart';
+import 'package:asm/app/service/global.dart';
 import 'package:asm/app/views/authorization/forgot_password.dart';
 import 'package:asm/app/views/widgets/textfield_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:page_transition/page_transition.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,110 +17,201 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  globalService get service => GetIt.I<globalService>();
+  late APIResponse<String> _apiResponse;
+
+  @override
+  void initState() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp,
+    ]);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.asset('assets/icons/signin.png'),
-              const Text(
-                'Sign In',
-                style: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.w700,
-                ),
+      body: Container(
+        width: size.width,
+        height: size.height,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: size.width * .8,
+              height: size.height * .4,
+              child: Image.asset(
+                'assets/icons/signin.png',
               ),
-              const SizedBox(
-                height: 5,
-              ),
-              const SGTextField(
-                obscureText: false,
-                hintText: 'Enter Email',
-                icon: Icons.alternate_email,
-              ),
-              const SGTextField(
-                obscureText: true,
-                hintText: 'Enter Password',
-                icon: Icons.lock,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (_) => DashboardPage(),
+            ),
+            Container(
+              width: size.width * .8,
+              height: size.height * .4,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Sign In',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.w700,
                     ),
-                    ((route) => false),
-                  );
-                },
-                child: Container(
-                  width: size.width,
-                  decoration: BoxDecoration(
-                    color: sgRed,
-                    borderRadius: BorderRadius.circular(10),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: const Center(
-                    child: Text(
-                      'Sign In',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15.0,
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  const SGTextField(
+                    obscureText: false,
+                    hintText: 'Enter Email',
+                    icon: Icons.alternate_email,
+                  ),
+                  const SGTextField(
+                    obscureText: true,
+                    hintText: 'Enter Password',
+                    icon: Icons.lock,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  GestureDetector(
+                    onTap: () async {
+                      var valid = await checkExpired();
+
+                      if (valid) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (_) => DashboardPage(),
+                          ),
+                          ((route) => false),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Masa  berlaku sudah habis, silakan hubungi tim IT.',
+                                  style: TextStyle(
+                                      color: appWhite,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                sgSizedBoxHeight
+                              ],
+                            ),
+                            backgroundColor: sgRed,
+                          ),
+                        );
+                      }
+                    },
+                    child: Container(
+                      width: size.width,
+                      decoration: BoxDecoration(
+                        color: sgRed,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                      child: const Center(
+                        child: Text(
+                          'Sign In',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15.0,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-              const SizedBox(
-                height: 15,
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    PageTransition(
-                      child: const ForgotPasswordScreen(),
-                      type: PageTransitionType.bottomToTop,
-                    ),
-                  );
-                },
-                child: Center(
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'Forgot Password? ',
-                          style: TextStyle(
-                            color: sgBlack,
-                          ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        PageTransition(
+                          child: const ForgotPasswordScreen(),
+                          type: PageTransitionType.bottomToTop,
                         ),
+                      );
+                    },
+                    child: Center(
+                      child: Text.rich(
                         TextSpan(
-                          text: 'Reset Here',
-                          style: TextStyle(
-                            color: sgRed,
-                          ),
+                          children: [
+                            TextSpan(
+                              text: 'Forgot Password? ',
+                              style: TextStyle(
+                                color: sgBlack,
+                              ),
+                            ),
+                            TextSpan(
+                              text: 'Reset Here',
+                              style: TextStyle(
+                                color: sgRed,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(
-                height: 10,
+            ),
+            Container(
+              width: size.width * .8,
+              height: size.height * .2,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Version ",
+                        style: TextStyle(
+                          color: sgGrey,
+                          fontFamily: 'Nexa',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        versionNumber,
+                        style: TextStyle(
+                          color: sgGold,
+                          fontFamily: 'Nexa',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  sgSizedBoxHeight,
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
+  }
+
+  Future<bool> checkExpired() async {
+    _apiResponse = await service.GetServerDatetime();
+
+    var today = DateTime.parse(_apiResponse.data.substring(1, 11));
+    var expired = DateTime.parse("2023-03-01");
+
+    bool valid = today.isBefore(expired);
+
+    return valid;
   }
 }
