@@ -2,6 +2,7 @@ import 'package:asm/app/constant/theme_constant.dart';
 import 'package:asm/app/service/autocomplete_service.dart';
 import 'package:asm/app/service/driver.dart';
 import 'package:asm/app/service/employee.dart';
+import 'package:asm/app/service/global.dart';
 import 'package:asm/app/service/orders/delivery.dart';
 import 'package:asm/app/service/orders/schedule.dart';
 import 'package:asm/app/service/orders/ujt.dart';
@@ -16,6 +17,7 @@ import 'package:month_year_picker/month_year_picker.dart';
 import 'package:workmanager/workmanager.dart';
 
 void setupLocator() {
+  GetIt.I.registerLazySingleton(() => globalService());
   GetIt.I.registerLazySingleton(() => autoCompleteService());
   GetIt.I.registerLazySingleton(() => employeeService());
   GetIt.I.registerLazySingleton(() => scheduleService());
@@ -44,8 +46,8 @@ void callbackDispacther() {
 
 void main() async {
   setupLocator();
-  WidgetsFlutterBinding.ensureInitialized();
-  await Workmanager().initialize(callbackDispacther, isInDebugMode: true);
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Workmanager().initialize(callbackDispacther, isInDebugMode: true);
 
   runApp(const MyApp());
 }

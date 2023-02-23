@@ -208,7 +208,6 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                         ? Container(
                             height: 30,
                             width: 100,
-                            color: sgGrey.withOpacity(0.1),
                           )
                         : Container(
                             height: 30,
