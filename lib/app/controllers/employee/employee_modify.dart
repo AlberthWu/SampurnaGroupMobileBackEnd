@@ -878,9 +878,9 @@ class _EmployeeModifyState extends State<EmployeeModify>
     return OverlayLoaderWithAppIcon(
       isLoading: _isLoading,
       overlayBackgroundColor: sgGrey,
-      circularProgressColor: sgGold,
+      circularProgressColor: appWhite,
       appIcon: Image.asset(
-        'assets/logo/logo.png',
+        'assets/splash/splash_one.gif',
       ),
       child: Scaffold(
         appBar: AppBar(

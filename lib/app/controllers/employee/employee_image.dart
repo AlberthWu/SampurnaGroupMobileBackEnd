@@ -23,8 +23,6 @@ class _EmployeeImageState extends State<EmployeeImage> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
