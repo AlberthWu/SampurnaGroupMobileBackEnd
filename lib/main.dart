@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:asm/app/constant/theme_constant.dart';
 import 'package:asm/app/service/autocomplete_service.dart';
 import 'package:asm/app/service/driver.dart';
@@ -7,6 +9,7 @@ import 'package:asm/app/service/orders/delivery.dart';
 import 'package:asm/app/service/orders/schedule.dart';
 import 'package:asm/app/service/orders/ujt.dart';
 import 'package:asm/app/views/splash/splash.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
@@ -15,6 +18,7 @@ import 'package:asm/app/constant/color.dart';
 import 'package:asm/app/constant/theme_manager.dart';
 import 'package:month_year_picker/month_year_picker.dart';
 import 'package:workmanager/workmanager.dart';
+import 'package:http/http.dart' as http;
 
 void setupLocator() {
   GetIt.I.registerLazySingleton(() => globalService());
@@ -26,28 +30,63 @@ void setupLocator() {
   GetIt.I.registerLazySingleton(() => driverService());
 }
 
-getData() {
-  print("get data from api");
+showNotification(title, body) {
+  AwesomeNotifications().createNotification(
+    content: NotificationContent(
+      id: 10,
+      channelKey: 'basic_channel',
+      title: title,
+      body: body,
+    ),
+  );
 }
 
-const taskName = 'notification';
-
+const simplePeriodicTask = "SGTask";
 void callbackDispacther() {
-  Workmanager().executeTask((taskName, inputData) {
-    switch (taskName) {
-      case 'notification':
-        getData();
-        break;
-      default:
-    }
+  Workmanager().executeTask((taskName, inputData) async {
+    await http.get(Uri.parse(sgBaseURL + 'employee/1'),
+        headers: {'Content-Type': 'application/json'}).then((data) {
+      if (data.statusCode == 200) {
+        final jsonData = json.decode(data.body)['data'];
+        print("data: " + jsonData['name']);
+        showNotification("Informasi Karyawan", jsonData['name']);
+      } else {
+        print("no messgae");
+      }
+    });
+
     return Future.value(true);
   });
 }
 
-void main() async {
+Future<void> main() async {
   setupLocator();
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Workmanager().initialize(callbackDispacther, isInDebugMode: true);
+  AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+        channelKey: 'basic_channel',
+        channelName: 'Basic Notifications',
+        channelDescription: 'Notification channel for basic',
+      ),
+    ],
+    debug: true,
+  );
+  WidgetsFlutterBinding.ensureInitialized();
+  await Workmanager().initialize(callbackDispacther, isInDebugMode: false);
+
+  await Workmanager().registerPeriodicTask(
+    "5",
+    simplePeriodicTask,
+    existingWorkPolicy: ExistingWorkPolicy.append,
+    frequency: Duration(
+      seconds: 30,
+    ),
+    // initialDelay: Duration(
+    //   seconds: 15,
+    // ),
+    constraints: Constraints(networkType: NetworkType.connected),
+  );
 
   runApp(const MyApp());
 }
@@ -68,22 +107,14 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  backgroundProcess() {
-    var uniqueID = DateTime.now().second.toString();
-
-    Workmanager().registerPeriodicTask(
-      uniqueID,
-      taskName,
-      initialDelay: Duration(
-        seconds: 15,
-      ),
-      constraints: Constraints(networkType: NetworkType.connected),
-    );
-  }
-
   @override
   void initState() {
-    // backgroundProcess();
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
+
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.immersiveSticky,
     );
@@ -96,6 +127,17 @@ class _MyAppState extends State<MyApp> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  triggerNotification() {
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 10,
+        channelKey: 'basic_channel',
+        title: 'Simple Notification',
+        body: 'Welcome the jungle',
+      ),
+    );
   }
 
   @override
@@ -114,6 +156,15 @@ class _MyAppState extends State<MyApp> {
       ],
       supportedLocales: [const Locale('en', 'US')],
       title: "Sampurna Group",
+      // home: Container(
+      //   color: appWhite,
+      //   child: Center(
+      //     child: ElevatedButton(
+      //       onPressed: triggerNotification,
+      //       child: Text("Press Me"),
+      //     ),
+      //   ),
+      // ),
       home: SplashScreen(),
     );
   }
