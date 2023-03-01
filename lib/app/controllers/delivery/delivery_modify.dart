@@ -22,6 +22,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:asm/app/views/widgets/checkbox_widget.dart';
 
 enum DriverList { Batang, Serep }
 
@@ -59,6 +60,8 @@ class _DeliveryModifyState extends State<DeliveryModify> {
   List<File> _imageList = [];
 
   TextEditingController _fleetController = TextEditingController();
+  TextEditingController _returnController = TextEditingController();
+
   DriverList? _driver = DriverList.Batang;
 
   Rx<String> dbImageBatang = ''.obs;
@@ -87,6 +90,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
         } else {
           _model = response.data;
 
+          _imageList.clear();
           if (_model.order_image!.length > 0) {
             var id = 1;
             for (var image in _model.order_image!) {
@@ -96,6 +100,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
           }
 
           _fleetController.text = _model.fleet_id.toString();
+          _returnController.text = _model.returned.toString();
 
           if (_model.primary_status == 1) {
             setState(() {
@@ -286,6 +291,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
         _getUJTFlag ? _modelUJT.ujt.toString() : _model.ujt.toString();
     form['primary_status'] = _driver == DriverList.Batang ? "1" : "0";
     form['secondary_status'] = _driver == DriverList.Serep ? "1" : "0";
+    form['returned'] = _returnController.text;
 
     final result = await serviceDelivery.PutDelivery(widget.delivery_id, form);
 
@@ -327,6 +333,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
     setState(() {
       _isLoading = true;
     });
+
     final result =
         await serviceDelivery.UploadImage(widget.delivery_id, _imageList);
 
@@ -352,6 +359,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
         _getDataDelivery();
       });
     });
+
     setState(() {
       _isLoading = false;
     });
@@ -363,7 +371,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
     return SafeArea(
       child: OverlayLoaderWithAppIcon(
         isLoading: _isLoading,
-        overlayBackgroundColor: sgGrey,
+        overlayBackgroundColor: appWhite,
         circularProgressColor: appWhite,
         appIcon: Image.asset(
           'assets/splash/splash_one.gif',
@@ -384,15 +392,15 @@ class _DeliveryModifyState extends State<DeliveryModify> {
               color: sgWhite,
             ),
             actions: <Widget>[
-              _model.assign
-                  ? Text("")
-                  : IconButton(
-                      icon: Icon(
-                        Icons.save_outlined,
-                        color: sgWhite,
-                      ),
-                      onPressed: () => _save(),
-                    ),
+              // _model.assign
+              //     ? Text("")
+              IconButton(
+                icon: Icon(
+                  Icons.save_outlined,
+                  color: sgWhite,
+                ),
+                onPressed: () => _save(),
+              ),
             ],
           ),
           body: Container(
@@ -451,7 +459,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                 _model.assign
                     ? Container(
                         width: size.width,
-                        height: size.height * 0.28,
+                        height: size.height * 0.4,
                         child: Column(
                           children: [
                             Text(
@@ -611,6 +619,19 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                   },
                                 ),
                               ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                bottom: 10,
+                              ),
+                              child: CheckBoxWidget(
+                                title: "SJ Kembali",
+                                controller: _returnController,
+                                icon: Icons.document_scanner_outlined,
+                              ),
                             ),
                           ],
                         ),

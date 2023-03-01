@@ -5,6 +5,7 @@ import 'package:asm/app/models/orders/surat_jalan/get.dart';
 import 'package:asm/app/models/orders/surat_jalan/list.dart';
 import 'package:http/http.dart' as http;
 import 'package:asm/app/models/api_response.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 
 class deliveryService {
@@ -168,12 +169,14 @@ class deliveryService {
     request.headers.addAll(headers);
 
     for (var file in files) {
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat('yyyyMMdd-kk:mm').format(now);
       var bytes = new File(file.path).readAsBytesSync();
 
       var picture = http.MultipartFile.fromBytes(
         'file',
         bytes,
-        filename: basename(file.path),
+        filename: formattedDate + ".jpg",
       );
 
       request.files.addAll([picture]);

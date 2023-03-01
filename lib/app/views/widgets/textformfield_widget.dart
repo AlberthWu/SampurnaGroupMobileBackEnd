@@ -7,7 +7,9 @@ class SGTextFormField extends StatefulWidget {
   final icon;
   final prefixIconColor;
   final bool enabled;
+  final bool obscureText;
   final int maxLines;
+  final bool border;
 
   const SGTextFormField({
     Key? key,
@@ -17,6 +19,8 @@ class SGTextFormField extends StatefulWidget {
     this.prefixIconColor,
     this.enabled = false,
     this.maxLines = 1,
+    this.border = true,
+    this.obscureText = false,
   }) : super(key: key);
 
   @override
@@ -27,6 +31,7 @@ class _SGTextFormFieldState extends State<SGTextFormField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      obscureText: widget.obscureText,
       enabled: widget.enabled,
       controller: widget.controller,
       maxLines: widget.maxLines,
@@ -39,12 +44,15 @@ class _SGTextFormFieldState extends State<SGTextFormField> {
                     ? widget.prefixIconColor
                     : sgGrey,
               ),
-              border: const OutlineInputBorder(),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: sgGold,
-                ),
-              ),
+              border:
+                  widget.border ? const OutlineInputBorder() : InputBorder.none,
+              focusedBorder: widget.border
+                  ? OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: sgGold,
+                      ),
+                    )
+                  : InputBorder.none,
               labelStyle: TextStyle(
                 color: sgRed,
                 fontFamily: "Nexa",

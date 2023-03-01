@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:asm/app/constant/theme_constant.dart';
 import 'package:asm/app/service/autocomplete_service.dart';
 import 'package:asm/app/service/driver.dart';
@@ -16,9 +14,10 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter/services.dart';
 import 'package:asm/app/constant/color.dart';
 import 'package:asm/app/constant/theme_manager.dart';
+import 'package:intl/intl.dart';
 import 'package:month_year_picker/month_year_picker.dart';
 import 'package:workmanager/workmanager.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
 
 void setupLocator() {
   GetIt.I.registerLazySingleton(() => globalService());
@@ -30,10 +29,10 @@ void setupLocator() {
   GetIt.I.registerLazySingleton(() => driverService());
 }
 
-showNotification(title, body) {
+showNotification(id, title, body) {
   AwesomeNotifications().createNotification(
     content: NotificationContent(
-      id: 10,
+      id: id,
       channelKey: 'basic_channel',
       title: title,
       body: body,
@@ -44,16 +43,21 @@ showNotification(title, body) {
 const simplePeriodicTask = "SGTask";
 void callbackDispacther() {
   Workmanager().executeTask((taskName, inputData) async {
-    await http.get(Uri.parse(sgBaseURL + 'employee/1'),
-        headers: {'Content-Type': 'application/json'}).then((data) {
-      if (data.statusCode == 200) {
-        final jsonData = json.decode(data.body)['data'];
-        print("data: " + jsonData['name']);
-        showNotification("Informasi Karyawan", jsonData['name']);
-      } else {
-        print("no messgae");
-      }
-    });
+    // int random = Random().nextInt(500);
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
+    print(formattedDate);
+    // await http.get(Uri.parse(sgBaseURL + 'employee/' + random.toString()),
+    //     headers: {'Content-Type': 'application/json'}).then((data) {
+    //   if (data.statusCode == 200) {
+    //     final jsonData = json.decode(data.body)['data'];
+    //     print("data: " + jsonData['name']);
+    //     showNotification(
+    //         jsonData['id'], "Informasi Karyawan", jsonData['name']);
+    //   } else {
+    //     print("no messgae");
+    //   }
+    // });
 
     return Future.value(true);
   });
@@ -61,6 +65,7 @@ void callbackDispacther() {
 
 Future<void> main() async {
   setupLocator();
+  WidgetsFlutterBinding.ensureInitialized();
   AwesomeNotifications().initialize(
     null,
     [
@@ -72,20 +77,25 @@ Future<void> main() async {
     ],
     debug: true,
   );
-  WidgetsFlutterBinding.ensureInitialized();
-  await Workmanager().initialize(callbackDispacther, isInDebugMode: false);
+  await Workmanager().initialize(callbackDispacther, isInDebugMode: true);
 
-  await Workmanager().registerPeriodicTask(
-    "5",
+  // await Workmanager().registerPeriodicTask(
+  //   "5",
+  //   simplePeriodicTask,
+  //   existingWorkPolicy: ExistingWorkPolicy.replace,
+  //   frequency: Duration(
+  //     minutes: 15,
+  //   ),
+  //   initialDelay: Duration(
+  //     seconds: 1,
+  //   ),
+  //   constraints: Constraints(networkType: NetworkType.connected),
+  // );
+  Workmanager().registerPeriodicTask(
     simplePeriodicTask,
-    existingWorkPolicy: ExistingWorkPolicy.append,
-    frequency: Duration(
-      seconds: 30,
-    ),
-    // initialDelay: Duration(
-    //   seconds: 15,
-    // ),
-    constraints: Constraints(networkType: NetworkType.connected),
+    simplePeriodicTask,
+    frequency: Duration(seconds: 10),
+    // initialDelay: Duration(seconds: 10),
   );
 
   runApp(const MyApp());
@@ -109,11 +119,11 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-      if (!isAllowed) {
-        AwesomeNotifications().requestPermissionToSendNotifications();
-      }
-    });
+    // AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+    //   if (!isAllowed) {
+    //     AwesomeNotifications().requestPermissionToSendNotifications();
+    //   }
+    // });
 
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.immersiveSticky,
@@ -156,15 +166,6 @@ class _MyAppState extends State<MyApp> {
       ],
       supportedLocales: [const Locale('en', 'US')],
       title: "Sampurna Group",
-      // home: Container(
-      //   color: appWhite,
-      //   child: Center(
-      //     child: ElevatedButton(
-      //       onPressed: triggerNotification,
-      //       child: Text("Press Me"),
-      //     ),
-      //   ),
-      // ),
       home: SplashScreen(),
     );
   }

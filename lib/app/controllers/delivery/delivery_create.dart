@@ -212,7 +212,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
     return SafeArea(
       child: OverlayLoaderWithAppIcon(
         isLoading: _isLoading,
-        overlayBackgroundColor: sgGrey,
+        overlayBackgroundColor: appWhite,
         circularProgressColor: appWhite,
         appIcon: Image.asset(
           'assets/splash/splash_one.gif',

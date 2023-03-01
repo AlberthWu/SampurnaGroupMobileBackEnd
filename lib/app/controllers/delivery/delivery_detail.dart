@@ -183,7 +183,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
 
     return OverlayLoaderWithAppIcon(
       isLoading: _isLoading,
-      overlayBackgroundColor: sgGrey,
+      overlayBackgroundColor: appWhite,
       circularProgressColor: appWhite,
       appIcon: Image.asset(
         'assets/splash/splash_one.gif',

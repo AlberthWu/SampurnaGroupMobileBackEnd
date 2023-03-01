@@ -154,7 +154,7 @@ class _DeliveryHomeState extends State<DeliveryHome>
 
     return OverlayLoaderWithAppIcon(
       isLoading: _isLoading,
-      overlayBackgroundColor: sgGrey,
+      overlayBackgroundColor: appWhite,
       circularProgressColor: appWhite,
       appIcon: Image.asset(
         'assets/splash/splash_one.gif',
