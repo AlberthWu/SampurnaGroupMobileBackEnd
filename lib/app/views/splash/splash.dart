@@ -53,6 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   color: sgGrey,
                   fontSize: 16.0,
                   fontWeight: FontWeight.w400,
+                  fontFamily: 'Nexa',
                 ),
               ),
             ),
@@ -204,6 +205,7 @@ class CreatePage extends StatelessWidget {
               color: sgRed,
               fontSize: 20,
               fontWeight: FontWeight.bold,
+              fontFamily: 'Nexa',
             ),
           ),
           const SizedBox(
@@ -216,6 +218,7 @@ class CreatePage extends StatelessWidget {
               fontSize: 15,
               fontWeight: FontWeight.w400,
               color: sgGrey,
+              fontFamily: 'Nexa',
             ),
           ),
           const SizedBox(

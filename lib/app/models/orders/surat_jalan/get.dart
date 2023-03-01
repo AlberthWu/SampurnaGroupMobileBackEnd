@@ -40,6 +40,7 @@ class deliveryGetModel {
   final int secondary_status;
   final employeeGetModel? secondary_driver;
   final List<String>? order_image;
+  final int returned;
 
   deliveryGetModel({
     this.id = 0,
@@ -81,6 +82,7 @@ class deliveryGetModel {
     this.secondary_status = 0,
     this.secondary_driver,
     this.order_image,
+    this.returned = 0,
   });
 
   factory deliveryGetModel.fromJson(Map<String, dynamic> item) {
@@ -169,6 +171,7 @@ class deliveryGetModel {
       secondary_status: item['secondary_status'],
       secondary_driver: _employeeSecondary,
       order_image: _imageOrder,
+      returned: item['returned'] == null ? 0 : item['returned'],
     );
   }
 }

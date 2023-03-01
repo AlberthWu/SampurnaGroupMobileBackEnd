@@ -2,12 +2,14 @@ import 'package:asm/app/constant/color.dart';
 import 'package:flutter/material.dart';
 
 class SGTextField extends StatelessWidget {
+  final TextEditingController controller;
   final IconData icon;
   final bool obscureText;
   final String hintText;
 
   const SGTextField({
     Key? key,
+    required this.controller,
     required this.icon,
     required this.obscureText,
     required this.hintText,
@@ -16,6 +18,7 @@ class SGTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       obscureText: obscureText,
       style: TextStyle(
         fontSize: 15,
