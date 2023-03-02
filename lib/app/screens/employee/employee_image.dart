@@ -4,11 +4,11 @@ import 'package:asm/app/constant/color.dart';
 import 'package:flutter/material.dart';
 
 class EmployeeImage extends StatefulWidget {
-  final File image;
+  final File? image;
 
   EmployeeImage({
     Key? key,
-    required this.image,
+    this.image,
   }) : super(key: key);
 
   @override
@@ -43,7 +43,7 @@ class _EmployeeImageState extends State<EmployeeImage> {
         child: Hero(
             tag: "picture",
             child: Image.file(
-              widget.image,
+              widget.image!,
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               alignment: Alignment.center,

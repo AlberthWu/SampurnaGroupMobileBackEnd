@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/screens/delivery/delivery_modify.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/autocomplete_model.dart';
 import 'package:asm/app/models/orders/driver.dart';
@@ -17,6 +16,7 @@ import 'package:asm/app/views/widgets/information_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 
@@ -191,12 +191,11 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
     ).then((res) {
       print(res);
       if (!result.status) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => DeliveryModify(
-              delivery_id: data.id,
-            ),
-          ),
+        context.goNamed(
+          'delivery_modify',
+          params: {
+            'id': data.id.toString(),
+          },
         );
       }
     });

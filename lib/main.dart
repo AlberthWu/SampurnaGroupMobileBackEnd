@@ -1,7 +1,14 @@
+import 'package:asm/app/bloc/delivery_list_bloc.dart';
+import 'package:asm/app/bloc/employee_list_bloc.dart';
 import 'package:asm/app/bloc/user_bloc.dart';
 import 'package:asm/app/constant/theme_constant.dart';
 import 'package:asm/app/screens/authorization/login.dart';
-import 'package:asm/app/screens/main_page.dart';
+import 'package:asm/app/screens/dashboard.dart';
+import 'package:asm/app/screens/delivery/delivery_create.dart';
+import 'package:asm/app/screens/delivery/delivery_list.dart';
+import 'package:asm/app/screens/delivery/delivery_modify.dart';
+import 'package:asm/app/screens/employee/employee_listing.dart';
+import 'package:asm/app/screens/employee/employee_modify.dart';
 import 'package:asm/app/screens/splash/splash.dart';
 import 'package:asm/app/service/autocomplete_service.dart';
 import 'package:asm/app/service/driver.dart';
@@ -49,6 +56,13 @@ class _MyAppState extends State<MyApp> {
   final GoRouter router = GoRouter(
     routes: [
       GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) {
+          return const SplashScreen();
+        },
+      ),
+      GoRoute(
         path: '/login',
         name: 'login',
         builder: (context, state) {
@@ -59,20 +73,61 @@ class _MyAppState extends State<MyApp> {
         path: '/',
         name: 'main_page',
         builder: (context, state) {
-          return const MainPage();
+          return const DashboardPage();
         },
         routes: [
           GoRoute(
-            path: 'about',
-            name: 'about',
+            path: 'delivery',
+            name: 'delivery_list',
             builder: (context, state) {
-              return const AboutPage();
+              return DeliveryList();
             },
+            routes: [
+              GoRoute(
+                path: 'delivery-create/:id',
+                name: 'delivery_create',
+                builder: (context, state) {
+                  int id = int.parse(state.params['id'].toString());
+                  return DeliveryCreate(
+                    schedule_id: id,
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'delivery-modify/:id',
+                name: 'delivery_modify',
+                builder: (context, state) {
+                  int id = int.parse(state.params['id'].toString());
+                  return DeliveryModify(
+                    delivery_id: id,
+                  );
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'employee',
+            name: 'employee_list',
+            builder: (context, state) {
+              return EmployeeList();
+            },
+            routes: [
+              GoRoute(
+                path: 'employee-create/:id',
+                name: 'employee_create',
+                builder: (context, state) {
+                  int id = int.parse(state.params['id'].toString());
+                  return EmployeeModify(
+                    id: id,
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),
     ],
-    initialLocation: '/login',
+    initialLocation: '/splash',
     debugLogDiagnostics: true,
     routerNeglect: true,
   );
@@ -101,34 +156,36 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => UserBloc(),
+    DateTime now = DateTime.now();
+
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<UserBloc>(
+          create: (context) => UserBloc()..add(CheckSignInStatus()),
+        ),
+        BlocProvider<EmployeeListBloc>(
+          create: (context) => EmployeeListBloc()
+            ..add(
+              GetEmployeeEvent(keyword: ""),
+            ),
+        ),
+        BlocProvider<DeliveryListBloc>(
+          create: (context) =>
+              DeliveryListBloc()..add(GetDeliveryEvent(date: now)),
+        ),
+      ],
       child: BlocListener<UserBloc, UserState>(
         listener: (context, state) {
-          // if (state is UserSignedIn) {
-          //   Navigator.push(
-          //     context,
-          //     PageTransition(
-          //       child: DashboardPage(),
-          //       type: PageTransitionType.bottomToTop,
-          //       duration: Duration(milliseconds: 300),
-          //     ),
-          //   );
-          // } else {
-          //   Navigator.push(
-          //     context,
-          //     PageTransition(
-          //       child: LoginScreen(),
-          //       type: PageTransitionType.bottomToTop,
-          //       duration: Duration(milliseconds: 300),
-          //     ),
-          //   );
-          // }
+          if (state is UserSignedIn) {
+            router.goNamed('main_page');
+          } else {
+            router.goNamed('login');
+          }
         },
-        child: MaterialApp(
-          // routeInformationParser: router.routeInformationParser,
-          // routerDelegate: router.routerDelegate,
-          // routeInformationProvider: router.routeInformationProvider,
+        child: MaterialApp.router(
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate,
+          routeInformationProvider: router.routeInformationProvider,
           debugShowCheckedModeBanner: false,
           color: appWhite,
           theme: lightTheme,
@@ -142,26 +199,6 @@ class _MyAppState extends State<MyApp> {
           ],
           supportedLocales: [const Locale('en', 'US')],
           title: "Sampurna Group",
-          home: const SplashScreen(),
-        ),
-      ),
-    );
-  }
-}
-
-class AboutPage extends StatelessWidget {
-  const AboutPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Sampurna Group"),
-      ),
-      body: Container(
-        color: Colors.white,
-        child: Center(
-          child: Text('About'),
         ),
       ),
     );

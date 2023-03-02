@@ -2,10 +2,16 @@ import 'dart:convert';
 
 import 'package:asm/app/constant/color.dart';
 import 'package:asm/app/models/orders/surat_jalan/list.dart';
+import 'package:asm/app/views/widgets/box/danger_background_widget.dart';
+import 'package:asm/app/views/widgets/box/danger_outlined_widget.dart';
+import 'package:asm/app/views/widgets/box/secondary_outlined_widget.dart';
+import 'package:asm/app/views/widgets/box/success_outlined_widget.dart';
+import 'package:asm/app/views/widgets/box/warning_background_widget.dart';
+import 'package:asm/app/views/widgets/box/warning_outlined_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 
-class DeliveryCardWidget extends StatefulWidget {
+class DeliveryCardWidget extends StatelessWidget {
   final deliveryListModel model;
 
   const DeliveryCardWidget({
@@ -13,22 +19,76 @@ class DeliveryCardWidget extends StatefulWidget {
     required this.model,
   }) : super(key: key);
 
-  @override
-  State<DeliveryCardWidget> createState() => _DeliveryCardWidgetState();
-}
+  Widget _boxWidget(BuildContext context) {
+    switch (model.confirm_ujt!) {
+      case 0:
+        return BoxSecondaryOutlinedWidget(title: model.confirm_status!);
+      case 1:
+        return BoxDangerOutlinedWidget(title: model.confirm_status!);
+      case 2:
+        return BoxDangerOutlinedWidget(title: model.confirm_status!);
+      case 3:
+        return BoxWarningOutlinedWidget(title: model.confirm_status!);
+      case 4:
+        return BoxSuccessOutlinedWidget(title: model.confirm_status!);
+      case 5:
+        return BoxSuccessOutlinedWidget(title: model.confirm_status!);
+      case 6:
+        return BoxSuccessOutlinedWidget(title: model.confirm_status!);
+      case 7:
+        return BoxSuccessOutlinedWidget(title: model.confirm_status!);
+      case 8:
+        return BoxSuccessOutlinedWidget(title: model.confirm_status!);
+      case 9:
+        return BoxSuccessOutlinedWidget(title: model.confirm_status!);
+      case 10:
+        return BoxSuccessOutlinedWidget(title: model.confirm_status!);
+      case 11:
+        return BoxSuccessOutlinedWidget(title: model.confirm_status!);
+      case 12:
+        return BoxWarningBackgroundWidget(title: model.confirm_status!);
+      case 13:
+        return BoxWarningBackgroundWidget(title: model.confirm_status!);
+      case 14:
+        return BoxDangerBackgroundWidget(title: model.confirm_status!);
+      case 15:
+        return BoxDangerBackgroundWidget(title: model.confirm_status!);
+      default:
+        return Text("");
+    }
+  }
 
-class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
-  Rx<String> dbImage = ''.obs;
+  Widget _imageWidget(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    Rx<String> dbImage = ''.obs;
 
-  @override
-  void initState() {
-    super.initState();
+    if (model.image!.isNotEmpty) {
+      dbImage.value = model.image!;
+    }
 
-    setState(() {
-      if (widget.model.image!.isNotEmpty) {
-        dbImage.value = widget.model.image!;
-      }
-    });
+    return Container(
+      width: size.width * .3,
+      child: SizedBox(
+        width: 150.0,
+        height: 150.0,
+        child: dbImage.isNotEmpty
+            ? Hero(
+                tag: 'picture',
+                child: CircleAvatar(
+                  backgroundImage: MemoryImage(
+                    base64Decode(dbImage.value),
+                  ),
+                ),
+              )
+            : Hero(
+                tag: 'picture',
+                child: CircleAvatar(
+                  backgroundColor: appWhite,
+                  backgroundImage: AssetImage("assets/images/user.png"),
+                ),
+              ),
+      ),
+    );
   }
 
   @override
@@ -52,30 +112,7 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: size.width * .3,
-                  child: SizedBox(
-                    width: 150.0,
-                    height: 150.0,
-                    child: dbImage.isNotEmpty
-                        ? Hero(
-                            tag: 'picture',
-                            child: CircleAvatar(
-                              backgroundImage: MemoryImage(
-                                base64Decode(dbImage.value),
-                              ),
-                            ),
-                          )
-                        : Hero(
-                            tag: 'picture',
-                            child: CircleAvatar(
-                              backgroundColor: appWhite,
-                              backgroundImage:
-                                  AssetImage("assets/images/user.png"),
-                            ),
-                          ),
-                  ),
-                ),
+                _imageWidget(context),
                 sgSizedBoxWidth,
                 Expanded(
                   child: Container(
@@ -88,7 +125,7 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              widget.model.delivery_no!,
+                              model.delivery_no!,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
@@ -100,7 +137,7 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
                               width: 5.0,
                             ),
                             Text(
-                              widget.model.delivery_date!,
+                              model.delivery_date!,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: appBlack,
@@ -116,7 +153,7 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              widget.model.plate_no!,
+                              model.plate_no!,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 14,
@@ -128,7 +165,7 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
                               width: 5.0,
                             ),
                             Text(
-                              widget.model.fleet_type_name!,
+                              model.fleet_type_name!,
                               style: TextStyle(
                                 fontSize: 14,
                                 color: appBlack,
@@ -141,7 +178,7 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
                           height: 5.0,
                         ),
                         Text(
-                          widget.model.employee_name!,
+                          model.employee_name!,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -153,7 +190,7 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
                           height: 5.0,
                         ),
                         Text(
-                          widget.model.origin_name!,
+                          model.origin_name!,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -165,7 +202,7 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
                           height: 5.0,
                         ),
                         Text(
-                          widget.model.plant_name!,
+                          model.plant_name!,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14,
@@ -179,28 +216,7 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: sgWhite,
-                                border: Border.all(
-                                  width: 1,
-                                  color: sgGreen,
-                                ),
-                              ),
-                              alignment: Alignment(0, 0),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  widget.model.confirm_status!,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                    color: appBlack,
-                                    fontFamily: 'Nexa',
-                                  ),
-                                ),
-                              ),
-                            ),
+                            _boxWidget(context),
                             SizedBox(
                               width: 5.0,
                             ),
@@ -216,13 +232,11 @@ class _DeliveryCardWidgetState extends State<DeliveryCardWidget> {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  widget.model.urgent_name!,
+                                  model.urgent_name!,
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14,
-                                    color: widget.model.urgent == 1
-                                        ? sgRed
-                                        : appBlack,
+                                    color: model.urgent == 1 ? sgRed : appBlack,
                                     fontFamily: 'Nexa',
                                   ),
                                 ),

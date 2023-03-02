@@ -1,7 +1,7 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/screens/delivery/delivery_create.dart';
 import 'package:asm/app/models/orders/schedule/list.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ScheduleCardWidget extends StatefulWidget {
   final scheduleListModel model;
@@ -217,13 +217,9 @@ class _ScheduleCardWidgetState extends State<ScheduleCardWidget> {
                                 backgroundColor: sgGreen,
                               ),
                               onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => DeliveryCreate(
-                                      schedule_id: widget.model.id,
-                                    ),
-                                  ),
-                                );
+                                context.goNamed('delivery_create', params: {
+                                  'id': widget.model.id.toString(),
+                                });
                               },
                               child: Text(
                                 'Create SJ',
