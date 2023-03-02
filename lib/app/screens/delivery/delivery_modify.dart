@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/employee/employee_image.dart';
+import 'package:asm/app/screens/employee/employee_image.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/autocomplete_model.dart';
 import 'package:asm/app/models/orders/driver.dart';
@@ -23,6 +23,7 @@ import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:asm/app/views/widgets/checkbox_widget.dart';
+import 'package:asm/app/views/widgets/textformfield_widget.dart';
 
 enum DriverList { Batang, Serep }
 
@@ -61,6 +62,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
 
   TextEditingController _fleetController = TextEditingController();
   TextEditingController _returnController = TextEditingController();
+  TextEditingController _sjCustomerController = TextEditingController();
 
   DriverList? _driver = DriverList.Batang;
 
@@ -101,6 +103,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
 
           _fleetController.text = _model.fleet_id.toString();
           _returnController.text = _model.returned.toString();
+          _sjCustomerController.text = _model.sj_customer;
 
           if (_model.primary_status == 1) {
             setState(() {
@@ -292,6 +295,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
     form['primary_status'] = _driver == DriverList.Batang ? "1" : "0";
     form['secondary_status'] = _driver == DriverList.Serep ? "1" : "0";
     form['returned'] = _returnController.text;
+    form['sj_customer'] = _sjCustomerController.text;
 
     final result = await serviceDelivery.PutDelivery(widget.delivery_id, form);
 
@@ -371,10 +375,10 @@ class _DeliveryModifyState extends State<DeliveryModify> {
     return SafeArea(
       child: OverlayLoaderWithAppIcon(
         isLoading: _isLoading,
-        overlayBackgroundColor: appWhite,
-        circularProgressColor: appWhite,
+        overlayBackgroundColor: sgBlack,
+        circularProgressColor: sgGold,
         appIcon: Image.asset(
-          'assets/splash/splash_one.gif',
+          'assets/logo/loading.gif',
         ),
         child: Scaffold(
           appBar: AppBar(
@@ -427,6 +431,16 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                 ),
                 sgSizedBoxHeight,
                 InfoWidget(
+                  field: "Nomor Surat Jalan",
+                  value: _model.delivery_no,
+                ),
+                sgSizedBoxHeight,
+                InfoWidget(
+                  field: "Tanggal Surat Jalan",
+                  value: _model.delivery_date,
+                ),
+                sgSizedBoxHeight,
+                InfoWidget(
                   field: "Jenis Kendaraan",
                   value: _model.fleet_type_name,
                 ),
@@ -454,6 +468,12 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                 InfoWidget(
                   field: "UJT",
                   value: currencyFormatter.format(_model.ujt),
+                ),
+                sgSizedBoxHeight,
+                SGTextFormField(
+                  label: "SJ Customer",
+                  controller: _sjCustomerController,
+                  enabled: true,
                 ),
                 sgSizedBoxHeight,
                 _model.assign

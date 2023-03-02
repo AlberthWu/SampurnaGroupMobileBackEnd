@@ -1,5 +1,5 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/employee/employee_modify.dart';
+import 'package:asm/app/screens/employee/employee_modify.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/employee/list.dart';
 import 'package:asm/app/service/employee.dart';

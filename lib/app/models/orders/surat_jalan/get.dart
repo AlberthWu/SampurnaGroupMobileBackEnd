@@ -22,6 +22,7 @@ class deliveryGetModel {
   final String fleet_type_name;
   final int fleet_id;
   final String plate_no;
+  final String sj_customer;
   final int multi_product;
   final int product_id;
   final String product_name;
@@ -67,6 +68,7 @@ class deliveryGetModel {
     this.product_name = "",
     this.fleet_id = 0,
     this.plate_no = "",
+    this.sj_customer = "",
     this.urgent = 0,
     this.urgent_name = "",
     this.employee_id = 0,
@@ -157,6 +159,7 @@ class deliveryGetModel {
       product_name: item['product_id']['name'],
       fleet_id: item['fleet_id']['id'],
       plate_no: item['fleet_id']['plate_no'],
+      sj_customer: item['sj_customer'],
       employee_name: item['employee_id']['name'],
       rekening_no: item['employee_id']['bank_no'],
       nama_rekening: item['employee_id']['bank_account_name'],

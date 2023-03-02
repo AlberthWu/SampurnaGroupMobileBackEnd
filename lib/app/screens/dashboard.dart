@@ -1,6 +1,6 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/delivery/delivery_home.dart';
-import 'package:asm/app/controllers/employee/employee_list.dart';
+import 'package:asm/app/screens/delivery/delivery_home.dart';
+import 'package:asm/app/screens/employee/employee_list.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatefulWidget {

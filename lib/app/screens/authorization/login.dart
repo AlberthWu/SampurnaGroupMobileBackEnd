@@ -1,15 +1,15 @@
+import 'package:asm/app/bloc/user_bloc.dart';
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/dashboard.dart';
 import 'package:asm/app/models/api_response.dart';
+import 'package:asm/app/screens/dashboard.dart';
 import 'package:asm/app/service/global.dart';
-import 'package:asm/app/views/authorization/forgot_password.dart';
-import 'package:asm/app/views/authorization/login_controller.dart';
-import 'package:asm/app/views/widgets/textfield_widget.dart';
+import 'package:asm/app/screens/authorization/forgot_password.dart';
 import 'package:asm/app/views/widgets/textformfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -21,8 +21,9 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  LoginController loginController = Get.put(LoginController());
   bool _isLoading = false;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   globalService get service => GetIt.I<globalService>();
   late APIResponse<String> _apiResponse;
@@ -41,10 +42,10 @@ class _LoginScreenState extends State<LoginScreen> {
     Size size = MediaQuery.of(context).size;
     return OverlayLoaderWithAppIcon(
       isLoading: _isLoading,
-      overlayBackgroundColor: appWhite,
-      circularProgressColor: appWhite,
+      overlayBackgroundColor: sgBlack,
+      circularProgressColor: sgGold,
       appIcon: Image.asset(
-        'assets/splash/splash_one.gif',
+        'assets/logo/loading.gif',
       ),
       child: Scaffold(
         body: Container(
@@ -83,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       SGTextFormField(
                         icon: Icons.alternate_email,
                         label: "Email",
-                        controller: loginController.emailController,
+                        controller: emailController,
                         enabled: true,
                         border: false,
                       ),
@@ -94,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         icon: Icons.lock,
                         label: "Password",
                         obscureText: true,
-                        controller: loginController.passwordController,
+                        controller: passwordController,
                         enabled: true,
                         border: false,
                       ),
@@ -103,13 +104,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       GestureDetector(
                         onTap: () async {
-                          // setState(() {
-                          //   _isLoading = true;
-                          // });
-                          // await loginController.loginWithEmail();
-                          // setState(() {
-                          //   _isLoading = false;
-                          // });
+                          // context.read<UserBloc>().add(
+                          //       SignIn(
+                          //         email: emailController.text,
+                          //         password: passwordController.text,
+                          //       ),
+                          //     );
+
+                          // context.goNamed('main_page');
+
                           var valid = await checkExpired();
 
                           if (valid) {
@@ -270,7 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _apiResponse = await service.GetServerDatetime();
 
     var today = DateTime.parse(_apiResponse.data.substring(1, 11));
-    var expired = DateTime.parse("2023-03-01");
+    var expired = DateTime.parse("2023-03-03");
 
     bool valid = today.isBefore(expired);
 

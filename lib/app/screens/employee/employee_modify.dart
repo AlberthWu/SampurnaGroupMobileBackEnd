@@ -3,8 +3,8 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/employee/employee_image.dart';
-import 'package:asm/app/controllers/employee/employee_skorsing.dart';
+import 'package:asm/app/screens/employee/employee_image.dart';
+import 'package:asm/app/screens/employee/employee_skorsing.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/autocomplete_model.dart';
 import 'package:asm/app/service/autocomplete_service.dart';
@@ -877,10 +877,10 @@ class _EmployeeModifyState extends State<EmployeeModify>
   Widget build(BuildContext context) {
     return OverlayLoaderWithAppIcon(
       isLoading: _isLoading,
-      overlayBackgroundColor: appWhite,
-      circularProgressColor: appWhite,
+      overlayBackgroundColor: sgBlack,
+      circularProgressColor: sgGold,
       appIcon: Image.asset(
-        'assets/splash/splash_one.gif',
+        'assets/logo/loading.gif',
       ),
       child: Scaffold(
         appBar: AppBar(

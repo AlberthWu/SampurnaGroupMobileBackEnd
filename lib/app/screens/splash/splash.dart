@@ -1,5 +1,5 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/views/authorization/login.dart';
+import 'package:asm/app/screens/authorization/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
@@ -72,7 +72,7 @@ class _SplashScreenState extends State<SplashScreen> {
             controller: _pageController,
             children: [
               CreatePage(
-                image: 'assets/splash/splash_one.gif',
+                image: 'assets/logo/loading.gif',
                 title: titleOne,
                 description: descriptionOne,
               ),

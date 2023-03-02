@@ -1,5 +1,5 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/delivery/delivery_modify.dart';
+import 'package:asm/app/screens/delivery/delivery_modify.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/orders/schedule/list.dart';
 import 'package:asm/app/models/orders/surat_jalan/list.dart';
@@ -154,10 +154,10 @@ class _DeliveryHomeState extends State<DeliveryHome>
 
     return OverlayLoaderWithAppIcon(
       isLoading: _isLoading,
-      overlayBackgroundColor: appWhite,
-      circularProgressColor: appWhite,
+      overlayBackgroundColor: sgBlack,
+      circularProgressColor: sgGold,
       appIcon: Image.asset(
-        'assets/splash/splash_one.gif',
+        'assets/logo/loading.gif',
       ),
       child: Scaffold(
         appBar: AppBar(
