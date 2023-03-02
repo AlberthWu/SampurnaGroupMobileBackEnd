@@ -375,6 +375,10 @@ class _EmployeeModifyState extends State<EmployeeModify>
                       Container(
                         child: InkWell(
                           onTap: () {
+                            // context.goNamed(
+                            //   'employee_image',
+                            //   extra: _image,
+                            // );
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) => EmployeeImage(
@@ -404,7 +408,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                _model == null ? "" : _model.name!,
+                                _model.name!,
                                 style: TextStyle(
                                   color: appBlack,
                                   fontSize: 16,
@@ -415,7 +419,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
                                 height: 5,
                               ),
                               Text(
-                                _model == null ? "" : _model.nik!,
+                                _model.nik!,
                                 style: TextStyle(
                                   color: appBlack,
                                   fontSize: 14,
@@ -426,7 +430,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
                                 height: 5,
                               ),
                               Text(
-                                _model == null ? "" : _model.alias!,
+                                _model.alias!,
                                 style: TextStyle(
                                   color: appBlack,
                                   fontSize: 14,

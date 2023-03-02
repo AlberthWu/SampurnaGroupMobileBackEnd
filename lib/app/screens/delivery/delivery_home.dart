@@ -1,5 +1,4 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/screens/delivery/delivery_modify.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/orders/schedule/list.dart';
 import 'package:asm/app/models/orders/surat_jalan/list.dart';
@@ -11,6 +10,7 @@ import 'package:asm/app/views/cards/schedule_card_widget.dart';
 import 'package:asm/app/views/widgets/date_scroll_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 
@@ -62,15 +62,9 @@ class _DeliveryHomeState extends State<DeliveryHome>
               itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   onTap: () {
-                    Navigator.of(context)
-                        .push(
-                          MaterialPageRoute(
-                            builder: (_) => DeliveryModify(
-                              delivery_id: data.orders![index].id,
-                            ),
-                          ),
-                        )
-                        .then((_) => _initialData);
+                    context.goNamed('delivery_modify', params: {
+                      'id': data.orders![index].id.toString(),
+                    });
                   },
                   child: OrderCardWidget(model: data.orders![index]),
                 );
@@ -232,16 +226,14 @@ class _DeliveryHomeState extends State<DeliveryHome>
                                       (BuildContext context, int index) {
                                     return GestureDetector(
                                       onTap: () {
-                                        Navigator.of(context)
-                                            .push(
-                                              MaterialPageRoute(
-                                                builder: (_) => DeliveryModify(
-                                                  delivery_id:
-                                                      _modelsDelivery[index].id,
-                                                ),
-                                              ),
-                                            )
-                                            .then((_) => _initialData);
+                                        context.goNamed(
+                                          'delivery_modify',
+                                          params: {
+                                            'id': _modelsDelivery[index]
+                                                .id
+                                                .toString(),
+                                          },
+                                        );
                                       },
                                       child: DeliveryCardWidget(
                                         model: _modelsDelivery[index],
@@ -266,17 +258,14 @@ class _DeliveryHomeState extends State<DeliveryHome>
                                       (BuildContext context, int index) {
                                     return GestureDetector(
                                       onTap: () {
-                                        Navigator.of(context)
-                                            .push(
-                                              MaterialPageRoute(
-                                                builder: (_) => DeliveryModify(
-                                                  delivery_id:
-                                                      _modelsDeliveryDay[index]
-                                                          .id,
-                                                ),
-                                              ),
-                                            )
-                                            .then((_) => _initialData);
+                                        context.goNamed(
+                                          'delivery_modify',
+                                          params: {
+                                            'id': _modelsDeliveryDay[index]
+                                                .id
+                                                .toString(),
+                                          },
+                                        );
                                       },
                                       child: DeliveryCardWidget(
                                         model: _modelsDeliveryDay[index],

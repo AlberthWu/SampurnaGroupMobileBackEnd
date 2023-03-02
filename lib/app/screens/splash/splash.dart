@@ -1,8 +1,7 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/screens/authorization/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:go_router/go_router.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -36,14 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
             padding: const EdgeInsets.only(right: 20, top: 20),
             child: InkWell(
               onTap: () {
-                Navigator.push(
-                  context,
-                  PageTransition(
-                    child: LoginScreen(),
-                    type: PageTransitionType.bottomToTop,
-                    duration: Duration(milliseconds: 300),
-                  ),
-                );
+                context.goNamed('login');
               }, //to login screen. We will update later
               hoverColor: Colors.transparent,
               highlightColor: Colors.transparent,
@@ -117,14 +109,7 @@ class _SplashScreenState extends State<SplashScreen> {
                           );
                         }
                       } else {
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            child: LoginScreen(),
-                            type: PageTransitionType.bottomToTop,
-                            duration: Duration(milliseconds: 300),
-                          ),
-                        );
+                        context.goNamed('login');
                       }
                     },
                   );

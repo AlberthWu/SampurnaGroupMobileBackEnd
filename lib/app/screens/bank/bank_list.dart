@@ -25,7 +25,6 @@ class _BankListState extends State<BankList> {
 
   @override
   Widget build(BuildContext context) {
-    TextTheme _textTheme = Theme.of(context).textTheme;
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ListView.builder(
@@ -59,7 +58,7 @@ class _BankListState extends State<BankList> {
                     ),
                     child: Text(
                       name,
-                      style: _textTheme.headline4?.copyWith(
+                      style: TextStyle(
                         color: isDark ? sgWhite : sgBlack,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -74,7 +73,7 @@ class _BankListState extends State<BankList> {
                     ),
                     child: Text(
                       teritory,
-                      style: _textTheme.headline4?.copyWith(
+                      style: TextStyle(
                         color: isDark ? sgWhite : sgBlack,
                         fontSize: 14,
                         fontFamily: "Nexa",

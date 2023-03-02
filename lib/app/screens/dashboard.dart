@@ -1,7 +1,6 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/screens/delivery/delivery_home.dart';
-import 'package:asm/app/screens/employee/employee_list.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -16,41 +15,49 @@ class _DashboardPageState extends State<DashboardPage> {
       'label': 'Sales',
       'icon': 'assets/icons/sales.png',
       'color': Colors.red,
+      'url': 'delivery_list',
     },
     {
       'label': 'Fleet',
       'icon': 'assets/icons/fleet.png',
       'color': Colors.blueGrey,
+      'url': '',
     },
     {
       'label': 'Purchase',
       'icon': 'assets/icons/purchase.png',
-      'color': Colors.green
+      'color': Colors.green,
+      'url': '',
     },
     {
       'label': 'Inventory',
       'icon': 'assets/icons/inventory.png',
-      'color': Colors.red
+      'color': Colors.red,
+      'url': '',
     },
     {
       'label': 'Finance',
       'icon': 'assets/icons/finance.png',
-      'color': Colors.blueGrey
+      'color': Colors.blueGrey,
+      'url': '',
     },
     {
       'label': 'Payroll',
       'icon': 'assets/icons/payroll.png',
-      'color': Colors.green
+      'color': Colors.green,
+      'url': '',
     },
     {
       'label': 'Employee',
       'icon': 'assets/icons/employee.png',
       'color': Colors.blueGrey,
+      'url': 'employee_list',
     },
     {
       'label': 'GPS',
       'icon': 'assets/icons/gps.png',
       'color': Colors.blueGrey,
+      'url': '',
     },
   ];
 
@@ -130,19 +137,9 @@ class _DashboardPageState extends State<DashboardPage> {
                       splashColor: menuFavorite['color'].withOpacity(0.4),
                       highlightColor: menuFavorite['color'].withOpacity(0.2),
                       onTap: () {
-                        switch (menuFavorite['label']) {
-                          case 'Sales':
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => DeliveryHome(),
-                            ));
-                            break;
-                          case 'Employee':
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => ListOfEmployee(),
-                            ));
-                            break;
-                          default:
-                        }
+                        menuFavorite['url'] != ""
+                            ? context.goNamed(menuFavorite['url'])
+                            : null;
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),

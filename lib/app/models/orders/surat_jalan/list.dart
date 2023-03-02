@@ -1,3 +1,8 @@
+import 'dart:convert';
+
+import 'package:asm/app/constant/color.dart';
+import 'package:http/http.dart' as http;
+
 class deliveryListModel {
   final int id;
   final String? company_name;
@@ -136,5 +141,25 @@ class deliveryListModel {
       confirm_ujt: item['confirm_ujt'],
       confirm_status: status,
     );
+  }
+
+  static Future<List<deliveryListModel>> connectToAPI(
+      String date, int page, int limit) async {
+    const API = sgBaseURL;
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    final response = await http.get(
+        Uri.parse(API +
+            'order/cargo/detail?issue_date=$date&page=$page&pagesize=$limit'),
+        headers: headers);
+
+    var jsonData = json.decode(response.body)['data']['list'] as List;
+
+    final models = <deliveryListModel>[];
+    for (var item in jsonData) {
+      models.add(deliveryListModel.fromJson(item));
+    }
+    return models.toList();
   }
 }

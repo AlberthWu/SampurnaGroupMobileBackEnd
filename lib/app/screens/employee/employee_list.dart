@@ -1,11 +1,11 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/screens/employee/employee_modify.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/employee/list.dart';
 import 'package:asm/app/service/employee.dart';
 import 'package:asm/app/views/cards/employee_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:skeleton_loader/skeleton_loader.dart';
 
 class ListOfEmployee extends StatefulWidget {
@@ -68,17 +68,17 @@ class _ListOfEmployeeState extends State<ListOfEmployee> {
     _fetchAPI();
   }
 
-  _fetchBack() async {
-    setState(() {
-      _isLoading = true;
-    });
+  // _fetchBack() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
 
-    await _fetchAPI();
+  //   await _fetchAPI();
 
-    setState(() {
-      _isLoading = false;
-    });
-  }
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  // }
 
   var _controller = TextEditingController();
 
@@ -112,15 +112,12 @@ class _ListOfEmployeeState extends State<ListOfEmployee> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.of(context)
-              .push(
-            MaterialPageRoute(
-              builder: (_) => EmployeeModify(),
-            ),
-          )
-              .then((_) {
-            _fetchBack();
-          });
+          context.goNamed(
+            'employee_create',
+            params: {
+              'id': '0',
+            },
+          );
         },
         backgroundColor: sgRed,
         child: Icon(Icons.add),
@@ -193,17 +190,10 @@ class _ListOfEmployeeState extends State<ListOfEmployee> {
                   if (index < _models.length) {
                     return GestureDetector(
                       onTap: () {
-                        Navigator.of(context)
-                            .push(
-                          MaterialPageRoute(
-                            builder: (_) => EmployeeModify(
-                              id: _models[index].id,
-                            ),
-                          ),
-                        )
-                            .then(
-                          (_) {
-                            _fetchBack();
+                        context.goNamed(
+                          'employee_create',
+                          params: {
+                            'id': _models[index].id.toString(),
                           },
                         );
                       },

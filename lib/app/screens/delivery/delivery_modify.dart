@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
@@ -319,12 +320,11 @@ class _DeliveryModifyState extends State<DeliveryModify> {
       ),
     ).then((res) {
       if (!result.status) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => DeliveryModify(
-              delivery_id: data.id,
-            ),
-          ),
+        context.goNamed(
+          'delivery_modify',
+          params: {
+            'id': data.id.toString(),
+          },
         );
       }
     });

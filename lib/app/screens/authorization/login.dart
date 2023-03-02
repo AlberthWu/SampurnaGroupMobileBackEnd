@@ -1,13 +1,10 @@
-import 'package:asm/app/bloc/user_bloc.dart';
 import 'package:asm/app/constant/color.dart';
 import 'package:asm/app/models/api_response.dart';
-import 'package:asm/app/screens/dashboard.dart';
 import 'package:asm/app/service/global.dart';
 import 'package:asm/app/screens/authorization/forgot_password.dart';
 import 'package:asm/app/views/widgets/textformfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
@@ -111,17 +108,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           //       ),
                           //     );
 
-                          // context.goNamed('main_page');
-
                           var valid = await checkExpired();
 
                           if (valid) {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                builder: (_) => DashboardPage(),
-                              ),
-                              ((route) => false),
-                            );
+                            context.goNamed('main_page');
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
