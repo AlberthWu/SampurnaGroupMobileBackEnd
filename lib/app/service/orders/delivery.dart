@@ -6,7 +6,6 @@ import 'package:asm/app/models/orders/surat_jalan/list.dart';
 import 'package:http/http.dart' as http;
 import 'package:asm/app/models/api_response.dart';
 import 'package:intl/intl.dart';
-import 'package:path/path.dart';
 
 class deliveryService {
   static const API = sgBaseURL;

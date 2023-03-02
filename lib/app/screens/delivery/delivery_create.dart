@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/controllers/delivery/delivery_modify.dart';
+import 'package:asm/app/screens/delivery/delivery_modify.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/autocomplete_model.dart';
 import 'package:asm/app/models/orders/driver.dart';
@@ -212,10 +212,10 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
     return SafeArea(
       child: OverlayLoaderWithAppIcon(
         isLoading: _isLoading,
-        overlayBackgroundColor: appWhite,
-        circularProgressColor: appWhite,
+        overlayBackgroundColor: sgBlack,
+        circularProgressColor: sgGold,
         appIcon: Image.asset(
-          'assets/splash/splash_one.gif',
+          'assets/logo/loading.gif',
         ),
         child: Scaffold(
           appBar: AppBar(

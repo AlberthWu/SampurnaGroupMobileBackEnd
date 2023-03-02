@@ -1,5 +1,5 @@
 import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/views/authorization/login.dart';
+import 'package:asm/app/screens/authorization/login.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 

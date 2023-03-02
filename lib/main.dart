@@ -1,4 +1,8 @@
+import 'package:asm/app/bloc/user_bloc.dart';
 import 'package:asm/app/constant/theme_constant.dart';
+import 'package:asm/app/screens/authorization/login.dart';
+import 'package:asm/app/screens/main_page.dart';
+import 'package:asm/app/screens/splash/splash.dart';
 import 'package:asm/app/service/autocomplete_service.dart';
 import 'package:asm/app/service/driver.dart';
 import 'package:asm/app/service/employee.dart';
@@ -6,18 +10,15 @@ import 'package:asm/app/service/global.dart';
 import 'package:asm/app/service/orders/delivery.dart';
 import 'package:asm/app/service/orders/schedule.dart';
 import 'package:asm/app/service/orders/ujt.dart';
-import 'package:asm/app/views/splash/splash.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/services.dart';
 import 'package:asm/app/constant/color.dart';
 import 'package:asm/app/constant/theme_manager.dart';
-import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 import 'package:month_year_picker/month_year_picker.dart';
-import 'package:workmanager/workmanager.dart';
-// import 'package:http/http.dart' as http;
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void setupLocator() {
   GetIt.I.registerLazySingleton(() => globalService());
@@ -29,74 +30,8 @@ void setupLocator() {
   GetIt.I.registerLazySingleton(() => driverService());
 }
 
-showNotification(id, title, body) {
-  AwesomeNotifications().createNotification(
-    content: NotificationContent(
-      id: id,
-      channelKey: 'basic_channel',
-      title: title,
-      body: body,
-    ),
-  );
-}
-
-const simplePeriodicTask = "SGTask";
-void callbackDispacther() {
-  Workmanager().executeTask((taskName, inputData) async {
-    // int random = Random().nextInt(500);
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
-    print(formattedDate);
-    // await http.get(Uri.parse(sgBaseURL + 'employee/' + random.toString()),
-    //     headers: {'Content-Type': 'application/json'}).then((data) {
-    //   if (data.statusCode == 200) {
-    //     final jsonData = json.decode(data.body)['data'];
-    //     print("data: " + jsonData['name']);
-    //     showNotification(
-    //         jsonData['id'], "Informasi Karyawan", jsonData['name']);
-    //   } else {
-    //     print("no messgae");
-    //   }
-    // });
-
-    return Future.value(true);
-  });
-}
-
 Future<void> main() async {
   setupLocator();
-  WidgetsFlutterBinding.ensureInitialized();
-  AwesomeNotifications().initialize(
-    null,
-    [
-      NotificationChannel(
-        channelKey: 'basic_channel',
-        channelName: 'Basic Notifications',
-        channelDescription: 'Notification channel for basic',
-      ),
-    ],
-    debug: true,
-  );
-  await Workmanager().initialize(callbackDispacther, isInDebugMode: true);
-
-  // await Workmanager().registerPeriodicTask(
-  //   "5",
-  //   simplePeriodicTask,
-  //   existingWorkPolicy: ExistingWorkPolicy.replace,
-  //   frequency: Duration(
-  //     minutes: 15,
-  //   ),
-  //   initialDelay: Duration(
-  //     seconds: 1,
-  //   ),
-  //   constraints: Constraints(networkType: NetworkType.connected),
-  // );
-  Workmanager().registerPeriodicTask(
-    simplePeriodicTask,
-    simplePeriodicTask,
-    frequency: Duration(seconds: 10),
-    // initialDelay: Duration(seconds: 10),
-  );
 
   runApp(const MyApp());
 }
@@ -111,6 +46,37 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final GoRouter router = GoRouter(
+    routes: [
+      GoRoute(
+        path: '/login',
+        name: 'login',
+        builder: (context, state) {
+          return const LoginScreen();
+        },
+      ),
+      GoRoute(
+        path: '/',
+        name: 'main_page',
+        builder: (context, state) {
+          return const MainPage();
+        },
+        routes: [
+          GoRoute(
+            path: 'about',
+            name: 'about',
+            builder: (context, state) {
+              return const AboutPage();
+            },
+          ),
+        ],
+      ),
+    ],
+    initialLocation: '/login',
+    debugLogDiagnostics: true,
+    routerNeglect: true,
+  );
+
   @override
   void dispose() {
     _themeManager.removeListener(themeListener);
@@ -119,12 +85,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    // AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
-    //   if (!isAllowed) {
-    //     AwesomeNotifications().requestPermissionToSendNotifications();
-    //   }
-    // });
-
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.immersiveSticky,
     );
@@ -139,34 +99,71 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  triggerNotification() {
-    AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: 10,
-        channelKey: 'basic_channel',
-        title: 'Simple Notification',
-        body: 'Welcome the jungle',
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => UserBloc(),
+      child: BlocListener<UserBloc, UserState>(
+        listener: (context, state) {
+          // if (state is UserSignedIn) {
+          //   Navigator.push(
+          //     context,
+          //     PageTransition(
+          //       child: DashboardPage(),
+          //       type: PageTransitionType.bottomToTop,
+          //       duration: Duration(milliseconds: 300),
+          //     ),
+          //   );
+          // } else {
+          //   Navigator.push(
+          //     context,
+          //     PageTransition(
+          //       child: LoginScreen(),
+          //       type: PageTransitionType.bottomToTop,
+          //       duration: Duration(milliseconds: 300),
+          //     ),
+          //   );
+          // }
+        },
+        child: MaterialApp(
+          // routeInformationParser: router.routeInformationParser,
+          // routerDelegate: router.routerDelegate,
+          // routeInformationProvider: router.routeInformationProvider,
+          debugShowCheckedModeBanner: false,
+          color: appWhite,
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: _themeManager.themeMode,
+          localizationsDelegates: [
+            GlobalWidgetsLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+            MonthYearPickerLocalizations.delegate,
+          ],
+          supportedLocales: [const Locale('en', 'US')],
+          title: "Sampurna Group",
+          home: const SplashScreen(),
+        ),
       ),
     );
   }
+}
+
+class AboutPage extends StatelessWidget {
+  const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      color: appWhite,
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: _themeManager.themeMode,
-      localizationsDelegates: [
-        GlobalWidgetsLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        MonthYearPickerLocalizations.delegate,
-      ],
-      supportedLocales: [const Locale('en', 'US')],
-      title: "Sampurna Group",
-      home: SplashScreen(),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Sampurna Group"),
+      ),
+      body: Container(
+        color: Colors.white,
+        child: Center(
+          child: Text('About'),
+        ),
+      ),
     );
   }
 }
