@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
+import 'package:asm/app/constant/app_constant.dart';
 import 'package:asm/app/models/orders/surat_jalan/get.dart';
 import 'package:asm/app/service/orders/delivery.dart';
-import 'package:asm/app/views/widgets/information_detail.dart';
+import 'package:asm/app/widget/forms/text_group_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
@@ -219,7 +220,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
           width: size.width,
           height: size.height,
           child: Container(
-            color: appWhite,
+            color: sgWhite,
             child: SingleChildScrollView(
               child: Container(
                 padding: const EdgeInsets.all(12.0),
@@ -231,7 +232,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                     ),
                     Container(
                       width: size.width,
-                      child: InfoWidget(
+                      child: SGTextGroupWidget(
                         field: 'Grup Perusahaan',
                         value: _model.company_name,
                       ),
@@ -246,7 +247,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                             children: [
                               Container(
                                 width: size.width * 0.5,
-                                child: InfoWidget(
+                                child: SGTextGroupWidget(
                                   field: 'Nomor SJ',
                                   value: _model.delivery_no,
                                 ),
@@ -254,7 +255,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                               sgSizedBoxHeight,
                               Container(
                                 width: size.width * 0.5,
-                                child: InfoWidget(
+                                child: SGTextGroupWidget(
                                   field: 'Nomor Polisi',
                                   value: _model.plate_no,
                                 ),
@@ -262,7 +263,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                               sgSizedBoxHeight,
                               Container(
                                 width: size.width * 0.5,
-                                child: InfoWidget(
+                                child: SGTextGroupWidget(
                                   field: 'Nomor Rekening',
                                   value: _model.rekening_no,
                                 ),
@@ -270,7 +271,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                               sgSizedBoxHeight,
                               Container(
                                 width: size.width * 0.5,
-                                child: InfoWidget(
+                                child: SGTextGroupWidget(
                                   field: 'Driver',
                                   value: _model.employee_name,
                                 ),
@@ -282,7 +283,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                           children: [
                             Container(
                               width: size.width * 0.5,
-                              child: InfoWidget(
+                              child: SGTextGroupWidget(
                                 field: 'Tanggal SJ',
                                 value: _model.delivery_date,
                               ),
@@ -290,7 +291,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                             sgSizedBoxHeight,
                             Container(
                               width: size.width * 0.5,
-                              child: InfoWidget(
+                              child: SGTextGroupWidget(
                                 field: 'Jenis',
                                 value: _model.fleet_type_name,
                               ),
@@ -298,7 +299,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                             sgSizedBoxHeight,
                             Container(
                               width: size.width * 0.5,
-                              child: InfoWidget(
+                              child: SGTextGroupWidget(
                                 field: 'Nama Rekening',
                                 value: _model.nama_rekening,
                               ),
@@ -306,7 +307,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                             sgSizedBoxHeight,
                             Container(
                               width: size.width * 0.5,
-                              child: InfoWidget(
+                              child: SGTextGroupWidget(
                                 field: 'UJT',
                                 value: currencyFormatter.format(_model.ujt),
                               ),
@@ -318,7 +319,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                     sgSizedBoxHeight,
                     Container(
                       width: size.width,
-                      child: InfoWidget(
+                      child: SGTextGroupWidget(
                         field: 'Asal',
                         value: _model.origin_name,
                       ),
@@ -326,7 +327,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                     sgSizedBoxHeight,
                     Container(
                       width: size.width,
-                      child: InfoWidget(
+                      child: SGTextGroupWidget(
                         field: 'Tujuan',
                         value: _model.plant_name,
                       ),
@@ -334,13 +335,13 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                     sgSizedBoxHeight,
                     Container(
                       width: size.width,
-                      child: InfoWidget(
+                      child: SGTextGroupWidget(
                         field: 'Material',
                         value: _model.product_name,
                       ),
                     ),
                     sgSizedBoxHeight,
-                    _model.assign
+                    _model.confirm_ujt == 2
                         ? Container(
                             width: size.width,
                             height: size.height * 0.28,
@@ -430,7 +431,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                                       style: ButtonStyle(
                                         side: MaterialStateProperty.all(
                                           BorderSide(
-                                            color: appBlack,
+                                            color: sgBlack,
                                             width: 1.0,
                                             style: BorderStyle.solid,
                                           ),
@@ -439,7 +440,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                                       child: Text(
                                         "Gallery",
                                         style: TextStyle(
-                                          color: appBlack,
+                                          color: sgBlack,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'Nexa',
                                         ),
@@ -452,7 +453,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                                       style: ButtonStyle(
                                         side: MaterialStateProperty.all(
                                           BorderSide(
-                                            color: appBlack,
+                                            color: sgBlack,
                                             width: 1.0,
                                             style: BorderStyle.solid,
                                           ),
@@ -461,7 +462,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                                       child: Text(
                                         "Camera",
                                         style: TextStyle(
-                                          color: appBlack,
+                                          color: sgBlack,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: 'Nexa',
                                         ),
@@ -510,7 +511,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                                   child: Text(
                                     "Terima",
                                     style: TextStyle(
-                                      color: appWhite,
+                                      color: sgWhite,
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Nexa',
@@ -525,7 +526,7 @@ class _DeliveryDetailState extends State<DeliveryDetail> {
                                   child: Text(
                                     "Tolak",
                                     style: TextStyle(
-                                      color: appWhite,
+                                      color: sgWhite,
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Nexa',

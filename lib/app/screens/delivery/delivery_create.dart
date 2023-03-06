@@ -1,8 +1,9 @@
 import 'dart:convert';
 
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
+import 'package:asm/app/constant/app_constant.dart';
 import 'package:asm/app/models/api_response.dart';
-import 'package:asm/app/models/autocomplete_model.dart';
+import 'package:asm/app/models/autocomplete/autocomplete_model.dart';
 import 'package:asm/app/models/orders/driver.dart';
 import 'package:asm/app/models/orders/schedule/get.dart';
 import 'package:asm/app/models/orders/ujt.dart';
@@ -11,8 +12,8 @@ import 'package:asm/app/service/driver.dart';
 import 'package:asm/app/service/orders/delivery.dart';
 import 'package:asm/app/service/orders/schedule.dart';
 import 'package:asm/app/service/orders/ujt.dart';
-import 'package:asm/app/views/widgets/auto_complete_widget.dart';
-import 'package:asm/app/views/widgets/information_detail.dart';
+import 'package:asm/app/widget/forms/auto_complete_widget.dart';
+import 'package:asm/app/widget/forms/text_group_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/state_manager.dart';
 import 'package:get_it/get_it.dart';
@@ -156,7 +157,6 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
     form['plant_id'] = _model.plant_id.toString();
     form['multi_product'] = _model.multi_product.toString();
     form['product_id'] = _model.product_id.toString();
-    form['product_id'] = _model.product_id.toString();
     form['fleet_id'] = _fleetController.text;
     form['employee_id'] = _driver == DriverList.Batang
         ? _modelDriver.primary_driver!.id.toString()
@@ -242,54 +242,54 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
             ],
           ),
           body: Container(
-            color: appWhite,
+            color: sgWhite,
             padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: ListView(
               shrinkWrap: true,
               physics: BouncingScrollPhysics(),
               children: [
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Grup Perusahaan",
                   value: _model.company_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Bisnis Unit",
                   value: _model.bisnis_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Jenis Transaksi",
                   value: _model.order_type_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Jenis Kendaraan",
                   value: _model.fleet_type_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Asal",
                   value: _model.origin_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Pelanggan",
                   value: _model.customer_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Tujuan",
                   value: _model.plant_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Material",
                   value: _model.product_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "UJT",
                   value: currencyFormatter.format(_modelUJT.ujt),
                 ),
@@ -331,7 +331,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                           : Hero(
                               tag: 'picture',
                               child: CircleAvatar(
-                                backgroundColor: appWhite,
+                                backgroundColor: sgWhite,
                                 maxRadius: size.height * 0.09,
                                 backgroundImage:
                                     AssetImage("assets/images/user.png"),
@@ -347,7 +347,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.primary_driver!.name!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Nexa',
@@ -361,7 +361,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.primary_driver!.phone!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontFamily: 'Nexa',
                             fontWeight: FontWeight.w500,
@@ -375,7 +375,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.primary_driver!.bank_name!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontFamily: 'Nexa',
                             fontWeight: FontWeight.w500,
@@ -389,7 +389,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.primary_driver!.bank_no!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontFamily: 'Nexa',
                             fontWeight: FontWeight.w500,
@@ -403,7 +403,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.primary_driver!.license_type!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontFamily: 'Nexa',
                             fontWeight: FontWeight.w500,
@@ -417,7 +417,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.primary_driver!.license_no!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontFamily: 'Nexa',
                             fontWeight: FontWeight.w500,
@@ -431,7 +431,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.primary_driver!.license_exp_date!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontFamily: 'Nexa',
                             fontWeight: FontWeight.w500,
@@ -475,7 +475,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                           : Hero(
                               tag: 'picture',
                               child: CircleAvatar(
-                                backgroundColor: appWhite,
+                                backgroundColor: sgWhite,
                                 maxRadius: size.height * 0.09,
                                 backgroundImage:
                                     AssetImage("assets/images/user.png"),
@@ -492,7 +492,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.secondary_driver!.name!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Nexa',
@@ -506,7 +506,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.secondary_driver!.phone!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontFamily: 'Nexa',
                             fontWeight: FontWeight.w500,
@@ -520,7 +520,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.secondary_driver!.bank_name!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontFamily: 'Nexa',
                             fontWeight: FontWeight.w500,
@@ -534,7 +534,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.secondary_driver!.bank_no!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontFamily: 'Nexa',
                             fontWeight: FontWeight.w500,
@@ -548,7 +548,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.secondary_driver!.license_type!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontFamily: 'Nexa',
                             fontWeight: FontWeight.w500,
@@ -562,7 +562,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               ? ""
                               : _modelDriver.secondary_driver!.license_no!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontFamily: 'Nexa',
                             fontWeight: FontWeight.w500,
@@ -577,7 +577,7 @@ class _DeliveryCreateState extends State<DeliveryCreate> {
                               : _modelDriver
                                   .secondary_driver!.license_exp_date!,
                           style: TextStyle(
-                            color: appBlack,
+                            color: sgBlack,
                             fontSize: 14.0,
                             fontFamily: 'Nexa',
                             fontWeight: FontWeight.w500,

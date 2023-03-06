@@ -1,3 +1,8 @@
+import 'dart:convert';
+
+import 'package:asm/app/constant/app_constant.dart';
+import 'package:http/http.dart' as http;
+
 class scheduleGetModel {
   final int id;
   final int company_id;
@@ -70,5 +75,25 @@ class scheduleGetModel {
       product_id: item['product_id']['id'],
       product_name: item['product_id']['name'],
     );
+  }
+
+  static Future<scheduleGetModel> getAPISchedule(String id) async {
+    const API = sgBaseURL;
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+
+    final scheduleGetModel model = new scheduleGetModel();
+
+    final response =
+        await http.get(Uri.parse(API + 'order/schedule/$id'), headers: headers);
+
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body)['data'];
+
+      return scheduleGetModel.fromJson(jsonData);
+    }
+
+    return model;
   }
 }

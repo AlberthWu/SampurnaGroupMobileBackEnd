@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/app_constant.dart';
 import 'package:http/http.dart' as http;
 import 'package:asm/app/models/api_response.dart';
-import 'package:asm/app/models/autocomplete_model.dart';
+import 'package:asm/app/models/autocomplete/autocomplete_model.dart';
 
 class autoCompleteService {
   static const API = sgBaseURL;

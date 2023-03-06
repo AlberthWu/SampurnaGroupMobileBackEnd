@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:asm/app/constant/app_constant.dart';
 import 'package:asm/app/models/orders/schedule/order.dart';
+import 'package:http/http.dart' as http;
 
 class scheduleListModel {
   final int id;
@@ -60,5 +64,31 @@ class scheduleListModel {
       balance: item['balance'],
       orders: _orders,
     );
+  }
+
+  static Future<List<scheduleListModel>> connectToAPI(
+      String date, int page, int limit) async {
+    const API = sgBaseURL;
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.get(
+        Uri.parse(
+            API + 'order/schedule?issue_date=$date&page=$page&pagesize=$limit'),
+        headers: headers);
+
+    final models = <scheduleListModel>[];
+
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body)['data']['list'] as List;
+      for (var item in jsonData) {
+        models.add(scheduleListModel.fromJson(item));
+      }
+
+      return models.toList();
+    }
+
+    return models;
   }
 }

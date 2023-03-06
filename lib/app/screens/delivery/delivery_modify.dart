@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
+import 'package:asm/app/constant/app_constant.dart';
 import 'package:asm/app/screens/employee/employee_image.dart';
 import 'package:asm/app/models/api_response.dart';
-import 'package:asm/app/models/autocomplete_model.dart';
+import 'package:asm/app/models/autocomplete/autocomplete_model.dart';
 import 'package:asm/app/models/orders/driver.dart';
 import 'package:asm/app/models/orders/surat_jalan/get.dart';
 import 'package:asm/app/models/orders/ujt.dart';
@@ -12,8 +13,8 @@ import 'package:asm/app/service/autocomplete_service.dart';
 import 'package:asm/app/service/driver.dart';
 import 'package:asm/app/service/orders/delivery.dart';
 import 'package:asm/app/service/orders/ujt.dart';
-import 'package:asm/app/views/widgets/auto_complete_widget.dart';
-import 'package:asm/app/views/widgets/information_detail.dart';
+import 'package:asm/app/widget/forms/auto_complete_widget.dart';
+import 'package:asm/app/widget/forms/text_group_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/state_manager.dart';
@@ -23,8 +24,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:asm/app/views/widgets/checkbox_widget.dart';
-import 'package:asm/app/views/widgets/textformfield_widget.dart';
+import 'package:asm/app/widget/forms/checkbox_widget.dart';
+import 'package:asm/app/widget/forms/textformfield_widget.dart';
 
 enum DriverList { Batang, Serep }
 
@@ -408,64 +409,64 @@ class _DeliveryModifyState extends State<DeliveryModify> {
             ],
           ),
           body: Container(
-            color: appWhite,
+            color: sgWhite,
             padding: EdgeInsets.symmetric(horizontal: 10.0),
             child: ListView(
               shrinkWrap: true,
               physics: BouncingScrollPhysics(),
               children: [
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Grup Perusahaan",
                   value: _model.company_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Bisnis Unit",
                   value: _model.bisnis_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Jenis Transaksi",
                   value: _model.order_type_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Nomor Surat Jalan",
                   value: _model.delivery_no,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Tanggal Surat Jalan",
                   value: _model.delivery_date,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Jenis Kendaraan",
                   value: _model.fleet_type_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Asal",
                   value: _model.origin_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Pelanggan",
                   value: _model.customer_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Tujuan",
                   value: _model.plant_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "Material",
                   value: _model.product_name,
                 ),
                 sgSizedBoxHeight,
-                InfoWidget(
+                SGTextGroupWidget(
                   field: "UJT",
                   value: currencyFormatter.format(_model.ujt),
                 ),
@@ -476,7 +477,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                   enabled: true,
                 ),
                 sgSizedBoxHeight,
-                _model.assign
+                _model.confirm_ujt == 2
                     ? Container(
                         width: size.width,
                         height: size.height * 0.4,
@@ -576,7 +577,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                   style: ButtonStyle(
                                     side: MaterialStateProperty.all(
                                       BorderSide(
-                                        color: appBlack,
+                                        color: sgBlack,
                                         width: 1.0,
                                         style: BorderStyle.solid,
                                       ),
@@ -585,7 +586,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                   child: Text(
                                     "Gallery",
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Nexa',
                                     ),
@@ -598,7 +599,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                   style: ButtonStyle(
                                     side: MaterialStateProperty.all(
                                       BorderSide(
-                                        color: appBlack,
+                                        color: sgBlack,
                                         width: 1.0,
                                         style: BorderStyle.solid,
                                       ),
@@ -607,7 +608,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                   child: Text(
                                     "Camera",
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Nexa',
                                     ),
@@ -647,7 +648,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                               padding: const EdgeInsets.only(
                                 bottom: 10,
                               ),
-                              child: CheckBoxWidget(
+                              child: SGCheckBoxWidget(
                                 title: "SJ Kembali",
                                 controller: _returnController,
                                 icon: Icons.document_scanner_outlined,
@@ -678,7 +679,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
-                                    color: appBlack,
+                                    color: sgBlack,
                                     fontFamily: 'Nexa',
                                   ),
                                 ),
@@ -686,7 +687,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                             ),
                           ),
                           sgSizedBoxHeight,
-                          InfoWidget(
+                          SGTextGroupWidget(
                             field: "No Kendaraan",
                             value: _model.plate_no,
                           ),
@@ -728,7 +729,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                     : Hero(
                                         tag: 'picture',
                                         child: CircleAvatar(
-                                          backgroundColor: appWhite,
+                                          backgroundColor: sgWhite,
                                           maxRadius: size.height * 0.09,
                                           backgroundImage: AssetImage(
                                               "assets/images/user.png"),
@@ -744,7 +745,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         ? ""
                                         : _model.primary_driver!.name!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Nexa',
@@ -758,7 +759,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         ? ""
                                         : _model.primary_driver!.phone!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontFamily: 'Nexa',
                                       fontWeight: FontWeight.w500,
@@ -772,7 +773,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         ? ""
                                         : _model.primary_driver!.bank_name!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontFamily: 'Nexa',
                                       fontWeight: FontWeight.w500,
@@ -786,7 +787,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         ? ""
                                         : _model.primary_driver!.bank_no!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontFamily: 'Nexa',
                                       fontWeight: FontWeight.w500,
@@ -800,7 +801,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         ? ""
                                         : _model.primary_driver!.license_type!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontFamily: 'Nexa',
                                       fontWeight: FontWeight.w500,
@@ -814,7 +815,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         ? ""
                                         : _model.primary_driver!.license_no!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontFamily: 'Nexa',
                                       fontWeight: FontWeight.w500,
@@ -829,7 +830,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         : _model
                                             .primary_driver!.license_exp_date!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontFamily: 'Nexa',
                                       fontWeight: FontWeight.w500,
@@ -873,7 +874,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                     : Hero(
                                         tag: 'picture',
                                         child: CircleAvatar(
-                                          backgroundColor: appWhite,
+                                          backgroundColor: sgWhite,
                                           maxRadius: size.height * 0.09,
                                           backgroundImage: AssetImage(
                                               "assets/images/user.png"),
@@ -890,7 +891,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         ? ""
                                         : _model.secondary_driver!.name!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Nexa',
@@ -904,7 +905,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         ? ""
                                         : _model.secondary_driver!.phone!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontFamily: 'Nexa',
                                       fontWeight: FontWeight.w500,
@@ -918,7 +919,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         ? ""
                                         : _model.secondary_driver!.bank_name!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontFamily: 'Nexa',
                                       fontWeight: FontWeight.w500,
@@ -932,7 +933,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         ? ""
                                         : _model.secondary_driver!.bank_no!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontFamily: 'Nexa',
                                       fontWeight: FontWeight.w500,
@@ -947,7 +948,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         : _model
                                             .secondary_driver!.license_type!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontFamily: 'Nexa',
                                       fontWeight: FontWeight.w500,
@@ -961,7 +962,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         ? ""
                                         : _model.secondary_driver!.license_no!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontFamily: 'Nexa',
                                       fontWeight: FontWeight.w500,
@@ -976,7 +977,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                         : _model.secondary_driver!
                                             .license_exp_date!,
                                     style: TextStyle(
-                                      color: appBlack,
+                                      color: sgBlack,
                                       fontSize: 14.0,
                                       fontFamily: 'Nexa',
                                       fontWeight: FontWeight.w500,
@@ -1002,7 +1003,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                   child: Text(
                                     "Terima",
                                     style: TextStyle(
-                                      color: appWhite,
+                                      color: sgWhite,
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Nexa',
@@ -1017,7 +1018,7 @@ class _DeliveryModifyState extends State<DeliveryModify> {
                                   child: Text(
                                     "Tolak",
                                     style: TextStyle(
-                                      color: appWhite,
+                                      color: sgWhite,
                                       fontSize: 16.0,
                                       fontWeight: FontWeight.bold,
                                       fontFamily: 'Nexa',

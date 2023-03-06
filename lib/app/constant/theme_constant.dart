@@ -1,10 +1,10 @@
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
 import 'package:flutter/material.dart';
 
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
   primaryColor: sgRed,
-  scaffoldBackgroundColor: appWhite,
+  scaffoldBackgroundColor: sgWhite,
   // primaryColor: Colors.blue,
   // appBarTheme: AppBarTheme(
   //   backgroundColor: sgBlueVeryLight,
@@ -32,7 +32,7 @@ ThemeData lightTheme = ThemeData(
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   primaryColor: sgRed,
-  scaffoldBackgroundColor: appWhite,
+  scaffoldBackgroundColor: sgWhite,
   // appBarTheme: AppBarTheme(
   //   backgroundColor: sgBlueDark,
   // ),

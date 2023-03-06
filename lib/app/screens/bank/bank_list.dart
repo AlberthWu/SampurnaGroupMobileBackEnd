@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -43,8 +44,6 @@ class _BankListState extends State<BankList> {
 
           return Card(
             elevation: 5,
-            shadowColor: isDark ? sgWhite : sgBlueDark,
-            color: isDark ? sgBlue : sgBlueMuda,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
