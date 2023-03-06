@@ -1,29 +1,152 @@
-import 'package:asm/app/bloc/delivery_list_bloc.dart';
-import 'package:asm/app/constant/color.dart';
-import 'package:asm/app/views/cards/delivery_card_widget.dart';
-import 'package:asm/app/views/widgets/date_scroll_widget.dart';
+// ignore_for_file: must_be_immutable
+
+import 'package:asm/app/bloc/delivery/delivery_running_bloc.dart';
+import 'package:asm/app/bloc/delivery/delivery_today_bloc.dart';
+import 'package:asm/app/bloc/schedule/schedule_list_bloc.dart';
+import 'package:asm/app/constant/color_constant.dart';
+import 'package:asm/app/models/orders/schedule/list.dart';
+import 'package:asm/app/widget/cards/delivery_card_widget.dart';
+import 'package:asm/app/widget/cards/schedule_list_widget.dart';
+import 'package:asm/app/widget/forms/date_scroll_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../widget/cards/order_card_widget.dart';
 
 class DeliveryList extends StatelessWidget {
-  ScrollController deliveryRunningController = ScrollController();
-  DeliveryListBloc bloc = DeliveryListBloc();
   late DateTime currentDate = DateTime.now();
+  ScrollController deliveryRunningController = ScrollController();
+  DeliveryRunningBloc deliveryRunningBloc = DeliveryRunningBloc();
 
-  void onScroll() {
+  ScrollController deliveryTodayController = ScrollController();
+  DeliveryTodayBloc deliveryTodayBloc = DeliveryTodayBloc();
+
+  ScrollController scheduleRunningController = ScrollController();
+  ScheduleListBloc scheduleBloc = ScheduleListBloc();
+
+  void onScrollDeliveryRunning() {
     double maxScroll = deliveryRunningController.position.maxScrollExtent;
     double currentScroll = deliveryRunningController.position.pixels;
 
     if (currentScroll == maxScroll)
-      bloc.add(
-        GetDeliveryEvent(date: currentDate),
+      deliveryRunningBloc.add(
+        GetDeliveryRunningEvent(date: currentDate),
       );
+  }
+
+  void onScrollDeliveryToday() {
+    double maxScroll = deliveryTodayController.position.maxScrollExtent;
+    double currentScroll = deliveryTodayController.position.pixels;
+
+    if (currentScroll == maxScroll)
+      deliveryTodayBloc.add(
+        GetDeliveryTodayEvent(date: currentDate),
+      );
+  }
+
+  void onScrollSchedule() {
+    double maxScroll = scheduleRunningController.position.maxScrollExtent;
+    double currentScroll = scheduleRunningController.position.pixels;
+
+    if (currentScroll == maxScroll)
+      scheduleBloc.add(
+        GetScheduleEvent(date: currentDate),
+      );
+  }
+
+  void showModal(BuildContext context, scheduleListModel data) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: sgWhite,
+      isScrollControlled: true,
+      enableDrag: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16.0),
+          topRight: Radius.circular(16.0),
+        ),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.4,
+        maxChildSize: 0.9,
+        minChildSize: 0.32,
+        expand: false,
+        builder: (context, scrollController) => SingleChildScrollView(
+          controller: scrollController,
+          child: Container(
+            color: sgWhite,
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(top: 8.0),
+                  height: 4,
+                  width: 36,
+                  decoration: BoxDecoration(
+                    color: sgRed,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(2.0),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                bottomWidget(data),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget bottomWidget(scheduleListModel data) {
+    return data.orders!.length > 0
+        ? Container(
+            color: sgWhite,
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              physics: BouncingScrollPhysics(),
+              itemCount: data.orders!.length,
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  onTap: () {
+                    context.goNamed(
+                      'delivery_modify',
+                      params: {
+                        'id': data.orders![index].id.toString(),
+                      },
+                    );
+                  },
+                  child: OrderCardWidget(model: data.orders![index]),
+                );
+              },
+            ),
+          )
+        : Center(
+            child: Container(
+              height: 200,
+              width: double.infinity,
+              child: Center(
+                child: Text('Data not found'),
+              ),
+            ),
+          );
   }
 
   @override
   Widget build(BuildContext context) {
-    bloc = BlocProvider.of<DeliveryListBloc>(context);
-    deliveryRunningController.addListener(onScroll);
+    deliveryRunningBloc = BlocProvider.of<DeliveryRunningBloc>(context);
+    deliveryRunningController.addListener(onScrollDeliveryRunning);
+
+    deliveryTodayBloc = BlocProvider.of<DeliveryTodayBloc>(context);
+    deliveryTodayController.addListener(onScrollDeliveryToday);
+
+    scheduleBloc = BlocProvider.of<ScheduleListBloc>(context);
+    scheduleRunningController.addListener(onScrollSchedule);
 
     return DefaultTabController(
       length: 3,
@@ -49,19 +172,25 @@ class DeliveryList extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DateScrollWidget(
+                SGDateScrollWidget(
                   date: DateTime.now(),
                   setDate: (date) {
                     currentDate = date;
 
-                    bloc.add(
-                      GetDeliveryEvent(date: date, reload: true),
+                    deliveryRunningBloc.add(
+                      GetDeliveryRunningEvent(date: date, reload: true),
+                    );
+                    deliveryTodayBloc.add(
+                      GetDeliveryTodayEvent(date: date, reload: true),
+                    );
+                    scheduleBloc.add(
+                      GetScheduleEvent(date: date, reload: true),
                     );
                   },
                 ),
                 TabBar(
                   indicatorColor: sgBrownLight,
-                  unselectedLabelColor: appBlack,
+                  unselectedLabelColor: sgBlack,
                   labelColor: sgGold,
                   labelStyle: TextStyle(
                     fontSize: 14,
@@ -84,16 +213,16 @@ class DeliveryList extends StatelessWidget {
                 Expanded(
                   child: TabBarView(
                     children: [
-                      BlocBuilder<DeliveryListBloc, DeliveryListState>(
-                        bloc: bloc,
+                      BlocBuilder<DeliveryRunningBloc, DeliveryRunningState>(
+                        bloc: deliveryRunningBloc,
                         builder: (context, state) {
-                          if (state is DeliveryListInitial) {
+                          if (state is DeliveryRunningInitial) {
                             return const Center(
                               child: CircularProgressIndicator(),
                             );
                           } else {
-                            DeliveryListSuccess modelSuccess =
-                                state as DeliveryListSuccess;
+                            DeliveryRunningSuccess modelSuccess =
+                                state as DeliveryRunningSuccess;
 
                             return Container(
                               padding: const EdgeInsets.all(8.0),
@@ -101,8 +230,21 @@ class DeliveryList extends StatelessWidget {
                                 controller: deliveryRunningController,
                                 itemBuilder: (context, index) => (index <
                                         modelSuccess.models.length)
-                                    ? DeliveryCardWidget(
-                                        model: modelSuccess.models[index])
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          context.goNamed(
+                                            'delivery_modify',
+                                            params: {
+                                              'id': modelSuccess
+                                                  .models[index].id
+                                                  .toString(),
+                                            },
+                                          );
+                                        },
+                                        child: DeliveryCardWidget(
+                                          model: modelSuccess.models[index],
+                                        ),
+                                      )
                                     : Container(
                                         child: const Center(
                                           child: SizedBox(
@@ -120,8 +262,92 @@ class DeliveryList extends StatelessWidget {
                           }
                         },
                       ),
-                      Text("SJ Per Hari"),
-                      Text("Daftar Jadwal"),
+                      BlocBuilder<DeliveryTodayBloc, DeliveryTodayState>(
+                        bloc: deliveryTodayBloc,
+                        builder: (context, state) {
+                          if (state is DeliveryTodayInitial) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            DeliveryTodaySuccess modelSuccess =
+                                state as DeliveryTodaySuccess;
+
+                            return Container(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListView.builder(
+                                controller: deliveryRunningController,
+                                itemBuilder: (context, index) => (index <
+                                        modelSuccess.models.length)
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          context.goNamed(
+                                            'delivery_modify',
+                                            params: {
+                                              'id': modelSuccess
+                                                  .models[index].id
+                                                  .toString(),
+                                            },
+                                          );
+                                        },
+                                        child: DeliveryCardWidget(
+                                          model: modelSuccess.models[index],
+                                        ),
+                                      )
+                                    : Container(
+                                        child: const Center(
+                                          child: SizedBox(
+                                            width: 30,
+                                            height: 30,
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        ),
+                                      ),
+                                itemCount: modelSuccess.hasReachedMax
+                                    ? modelSuccess.models.length
+                                    : modelSuccess.models.length + 1,
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      BlocBuilder<ScheduleListBloc, ScheduleListState>(
+                        bloc: scheduleBloc,
+                        builder: (context, state) {
+                          if (state is ScheduleListInitial) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            ScheduleListSuccess modelSuccess =
+                                state as ScheduleListSuccess;
+
+                            return Container(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListView.builder(
+                                controller: scheduleRunningController,
+                                itemBuilder: (context, index) => (index <
+                                        modelSuccess.models.length)
+                                    ? ScheduleListCardWidget(
+                                        model: modelSuccess.models[index],
+                                      )
+                                    : Container(
+                                        child: const Center(
+                                          child: SizedBox(
+                                            width: 30,
+                                            height: 30,
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        ),
+                                      ),
+                                itemCount: modelSuccess.hasReachedMax
+                                    ? modelSuccess.models.length
+                                    : modelSuccess.models.length + 1,
+                              ),
+                            );
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ),

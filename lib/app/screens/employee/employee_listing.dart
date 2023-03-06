@@ -1,9 +1,11 @@
-import 'package:asm/app/bloc/employee_list_bloc.dart';
-import 'package:asm/app/constant/color.dart';
+// ignore_for_file: must_be_immutable
+
+import 'package:asm/app/bloc/employee/employee_list_bloc.dart';
+import 'package:asm/app/constant/color_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:asm/app/views/cards/employee_card_widget.dart';
+import 'package:asm/app/widget/cards/employee_card_widget.dart';
 
 class EmployeeList extends StatelessWidget {
   ScrollController controller = ScrollController();

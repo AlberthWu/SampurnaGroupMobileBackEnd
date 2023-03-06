@@ -1,4 +1,5 @@
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
+import 'package:asm/app/constant/text_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -15,19 +16,19 @@ class IntroPageTwo extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text(
-                "Sampurna Group",
+                companyName,
                 style: TextStyle(
                   fontFamily: 'Nexa',
                 ),
               ),
               const Text(
-                "Mulai dari 3 kendaraan di tahun 2012",
+                introHeading,
                 style: TextStyle(
                   fontFamily: 'Nexa',
                 ),
               ),
               const Text(
-                "hingga kini menjadi ratusan",
+                introDetail,
                 style: TextStyle(
                   fontFamily: 'Nexa',
                 ),

@@ -1,8 +1,9 @@
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
+import 'package:asm/app/constant/app_constant.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/employee/list.dart';
 import 'package:asm/app/service/employee.dart';
-import 'package:asm/app/views/cards/employee_card_widget.dart';
+import 'package:asm/app/widget/cards/employee_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
@@ -209,7 +210,7 @@ class _ListOfEmployeeState extends State<ListOfEmployee> {
                         child: Row(
                           children: <Widget>[
                             CircleAvatar(
-                              backgroundColor: appWhite,
+                              backgroundColor: sgWhite,
                               radius: 30,
                             ),
                             SizedBox(width: 10),
@@ -219,13 +220,13 @@ class _ListOfEmployeeState extends State<ListOfEmployee> {
                                   Container(
                                     width: double.infinity,
                                     height: 10,
-                                    color: appWhite,
+                                    color: sgWhite,
                                   ),
                                   SizedBox(height: 10),
                                   Container(
                                     width: double.infinity,
                                     height: 12,
-                                    color: appWhite,
+                                    color: sgWhite,
                                   ),
                                 ],
                               ),

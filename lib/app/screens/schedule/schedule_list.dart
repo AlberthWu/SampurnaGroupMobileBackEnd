@@ -1,8 +1,9 @@
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
+import 'package:asm/app/constant/app_constant.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/orders/schedule/list.dart';
 import 'package:asm/app/service/orders/schedule.dart';
-import 'package:asm/app/views/cards/schedule_card_widget.dart';
+import 'package:asm/app/widget/cards/schedule_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
@@ -87,7 +88,7 @@ class _ListOfScheduleState extends State<ListOfSchedule> {
             height: 7,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
-              color: appWhite,
+              color: sgWhite,
             ),
           ),
         ),
@@ -102,7 +103,7 @@ class _ListOfScheduleState extends State<ListOfSchedule> {
             //       style: TextStyle(
             //         fontWeight: FontWeight.bold,
             //         fontSize: 14,
-            //         color: appBlack,
+            //         color: sgBlack,
             //         fontFamily: 'Nexa',
             //       ),
             //     );

@@ -1,3 +1,8 @@
+import 'dart:convert';
+
+import 'package:asm/app/constant/app_constant.dart';
+import 'package:http/http.dart' as http;
+
 class ujtGetModel {
   final int id;
   final int ujt;
@@ -15,5 +20,28 @@ class ujtGetModel {
       ujt: item['ujt'],
       ritase: item['ritase'],
     );
+  }
+
+  static Future<ujtGetModel> getAPIUjt(String issueDate, String plantID,
+      String originID, String fleetTypeID, String productID) async {
+    const API = sgBaseURL;
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+
+    final ujtGetModel model = new ujtGetModel();
+
+    final response = await http.get(
+        Uri.parse(API +
+            'ujt/get?issue_date=$issueDate&plant_id=$plantID&origin_id=$originID&fleet_type_id=$fleetTypeID&product_id=$productID'),
+        headers: headers);
+
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body)['data'];
+
+      return ujtGetModel.fromJson(jsonData);
+    }
+
+    return model;
   }
 }

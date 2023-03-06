@@ -2,18 +2,20 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
+import 'package:asm/app/constant/app_constant.dart';
+import 'package:asm/app/constant/value_constant.dart';
 import 'package:asm/app/screens/employee/employee_image.dart';
 import 'package:asm/app/screens/employee/employee_skorsing.dart';
 import 'package:asm/app/models/api_response.dart';
-import 'package:asm/app/models/autocomplete_model.dart';
+import 'package:asm/app/models/autocomplete/autocomplete_model.dart';
 import 'package:asm/app/service/autocomplete_service.dart';
-import 'package:asm/app/views/widgets/auto_complete_widget.dart';
-import 'package:asm/app/views/widgets/checkbox_widget.dart';
-import 'package:asm/app/views/widgets/date_widget.dart';
-import 'package:asm/app/views/widgets/dropdownlist_widget.dart';
-import 'package:asm/app/views/widgets/information_title.dart';
-import 'package:asm/app/views/widgets/textformfield_widget.dart';
+import 'package:asm/app/widget/forms/auto_complete_widget.dart';
+import 'package:asm/app/widget/forms/checkbox_widget.dart';
+import 'package:asm/app/widget/forms/date_widget.dart';
+import 'package:asm/app/widget/forms/dropdownlist_widget.dart';
+import 'package:asm/app/widget/forms/information_title.dart';
+import 'package:asm/app/widget/forms/textformfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
@@ -359,7 +361,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
                 Text(
                   _model.company_name!.isEmpty ? "" : _model.company_name!,
                   style: TextStyle(
-                    color: appBlack,
+                    color: sgBlack,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -390,7 +392,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
                           child: Hero(
                             tag: 'picture',
                             child: CircleAvatar(
-                              backgroundColor: appWhite,
+                              backgroundColor: sgWhite,
                               maxRadius: size.height * 0.09,
                               backgroundImage: FileImage(_image),
                             ),
@@ -410,7 +412,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
                               Text(
                                 _model.name!,
                                 style: TextStyle(
-                                  color: appBlack,
+                                  color: sgBlack,
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -421,7 +423,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
                               Text(
                                 _model.nik!,
                                 style: TextStyle(
-                                  color: appBlack,
+                                  color: sgBlack,
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -432,7 +434,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
                               Text(
                                 _model.alias!,
                                 style: TextStyle(
-                                  color: appBlack,
+                                  color: sgBlack,
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -700,7 +702,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
             enabled: this._isEdit,
           ),
           sgSizedBoxHeight,
-          InfoTitleWidget(value: "Informasi Rekening"),
+          SGInfoTitleWidget(value: "Informasi Rekening"),
           sgSizedBoxHeight,
           SGAutoCompleteWidget(
             controller: _bankController,
@@ -725,13 +727,13 @@ class _EmployeeModifyState extends State<EmployeeModify>
             enabled: this._isEdit,
           ),
           sgSizedBoxHeight,
-          InfoTitleWidget(value: "Informasi Keluarga"),
+          SGInfoTitleWidget(value: "Informasi Keluarga"),
           sgSizedBoxHeight,
           Padding(
             padding: const EdgeInsets.only(
               bottom: 10,
             ),
-            child: CheckBoxWidget(
+            child: SGCheckBoxWidget(
               title: "Menikah",
               controller: _marriageController,
               icon: Icons.family_restroom_outlined,
@@ -751,7 +753,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
             enabled: this._isEdit,
           ),
           sgSizedBoxHeight,
-          InfoTitleWidget(value: "Kontak Darurat Serumah"),
+          SGInfoTitleWidget(value: "Kontak Darurat Serumah"),
           sgSizedBoxHeight,
           SGTextFormField(
             label: "Nama Lengkap",
@@ -771,7 +773,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
             enabled: this._isEdit,
           ),
           sgSizedBoxHeight,
-          InfoTitleWidget(value: "Kontak Darurat Tidak Serumah"),
+          SGInfoTitleWidget(value: "Kontak Darurat Tidak Serumah"),
           sgSizedBoxHeight,
           SGTextFormField(
             label: "Nama Lengkap",
@@ -847,7 +849,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
             padding: const EdgeInsets.only(
               bottom: 10,
             ),
-            child: CheckBoxWidget(
+            child: SGCheckBoxWidget(
               title: "Kartu Lisensi",
               controller: _licenseCardController,
               icon: Icons.card_membership_outlined,
@@ -859,7 +861,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
             padding: const EdgeInsets.only(
               bottom: 10,
             ),
-            child: CheckBoxWidget(
+            child: SGCheckBoxWidget(
               title: "Lisensi Ditahan",
               controller: _licenseHoldController,
               icon: Icons.sim_card_alert_outlined,
@@ -924,7 +926,7 @@ class _EmployeeModifyState extends State<EmployeeModify>
                   TabBar(
                     controller: _tabController,
                     indicatorColor: sgBrownLight,
-                    unselectedLabelColor: appBlack,
+                    unselectedLabelColor: sgBlack,
                     labelColor: sgGold,
                     isScrollable: true,
                     labelStyle: TextStyle(

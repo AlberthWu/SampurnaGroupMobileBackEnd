@@ -1,9 +1,15 @@
-import 'package:asm/app/bloc/delivery_list_bloc.dart';
-import 'package:asm/app/bloc/employee_list_bloc.dart';
+import 'package:asm/app/bloc/delivery/delivery_running_bloc.dart';
+import 'package:asm/app/bloc/delivery/delivery_today_bloc.dart';
+import 'package:asm/app/bloc/driver/driver_get_bloc.dart';
+import 'package:asm/app/bloc/employee/employee_list_bloc.dart';
+import 'package:asm/app/bloc/schedule/schedule_get_bloc.dart';
+import 'package:asm/app/bloc/schedule/schedule_list_bloc.dart';
+import 'package:asm/app/bloc/ujt_bloc.dart';
 import 'package:asm/app/bloc/user_bloc.dart';
 import 'package:asm/app/constant/theme_constant.dart';
 import 'package:asm/app/screens/authorization/login.dart';
 import 'package:asm/app/screens/dashboard.dart';
+import 'package:asm/app/screens/delivery/delivery_add.dart';
 import 'package:asm/app/screens/delivery/delivery_create.dart';
 import 'package:asm/app/screens/delivery/delivery_list.dart';
 import 'package:asm/app/screens/delivery/delivery_modify.dart';
@@ -21,7 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/services.dart';
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
 import 'package:asm/app/constant/theme_manager.dart';
 import 'package:go_router/go_router.dart';
 import 'package:month_year_picker/month_year_picker.dart';
@@ -83,6 +89,16 @@ class _MyAppState extends State<MyApp> {
               return DeliveryList();
             },
             routes: [
+              GoRoute(
+                path: 'delivery-add/:id',
+                name: 'delivery_add',
+                builder: (context, state) {
+                  String id = state.params['id'].toString();
+                  return DeliveryAdd(
+                    schedule_id: id,
+                  );
+                },
+              ),
               GoRoute(
                 path: 'delivery-create/:id',
                 name: 'delivery_create',
@@ -169,9 +185,26 @@ class _MyAppState extends State<MyApp> {
               GetEmployeeEvent(keyword: ""),
             ),
         ),
-        BlocProvider<DeliveryListBloc>(
+        BlocProvider<DeliveryTodayBloc>(
           create: (context) =>
-              DeliveryListBloc()..add(GetDeliveryEvent(date: now)),
+              DeliveryTodayBloc()..add(GetDeliveryTodayEvent(date: now)),
+        ),
+        BlocProvider<DeliveryRunningBloc>(
+          create: (context) =>
+              DeliveryRunningBloc()..add(GetDeliveryRunningEvent(date: now)),
+        ),
+        BlocProvider<ScheduleGetBloc>(
+          create: (context) => ScheduleGetBloc(),
+        ),
+        BlocProvider<DriverGetBloc>(
+          create: (context) => DriverGetBloc(),
+        ),
+        BlocProvider<UjtBloc>(
+          create: (context) => UjtBloc(),
+        ),
+        BlocProvider<ScheduleListBloc>(
+          create: (context) =>
+              ScheduleListBloc()..add(GetScheduleEvent(date: now)),
         ),
       ],
       child: BlocListener<UserBloc, UserState>(
@@ -187,7 +220,7 @@ class _MyAppState extends State<MyApp> {
           routerDelegate: router.routerDelegate,
           routeInformationProvider: router.routeInformationProvider,
           debugShowCheckedModeBanner: false,
-          color: appWhite,
+          color: sgWhite,
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: _themeManager.themeMode,
@@ -199,6 +232,7 @@ class _MyAppState extends State<MyApp> {
           ],
           supportedLocales: [const Locale('en', 'US')],
           title: "Sampurna Group",
+          // home: const MainPage(),
         ),
       ),
     );

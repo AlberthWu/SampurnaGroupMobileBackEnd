@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/app_constant.dart';
 import 'package:http/http.dart' as http;
 
 class deliveryListModel {
@@ -61,48 +61,45 @@ class deliveryListModel {
         status = "Draft";
         break;
       case 1:
-        status = "Assign";
+        status = "Reject";
         break;
       case 2:
-        status = "Deny";
-        break;
-      case 3:
         status = "Open";
         break;
-      case 4:
+      case 3:
         status = "Transfer";
         break;
-      case 5:
+      case 4:
         status = "Transit Origin";
         break;
-      case 6:
+      case 5:
         status = "Loading";
         break;
-      case 7:
+      case 6:
         status = "Transit Destination";
         break;
-      case 8:
+      case 7:
         status = "Unloading";
         break;
-      case 9:
+      case 8:
         status = "Delivered";
         break;
-      case 10:
+      case 9:
         status = "Done";
         break;
-      case 11:
+      case 10:
         status = "Pending";
         break;
-      case 12:
+      case 11:
         status = "Close";
         break;
-      case 13:
+      case 12:
         status = "Posted";
         break;
-      case 14:
+      case 13:
         status = "Void";
         break;
-      case 15:
+      case 14:
         status = "Void Pangkalan";
         break;
       default:
@@ -143,7 +140,7 @@ class deliveryListModel {
     );
   }
 
-  static Future<List<deliveryListModel>> connectToAPI(
+  static Future<List<deliveryListModel>> connectToAPIToday(
       String date, int page, int limit) async {
     const API = sgBaseURL;
     const headers = {
@@ -154,12 +151,42 @@ class deliveryListModel {
             'order/cargo/detail?issue_date=$date&page=$page&pagesize=$limit'),
         headers: headers);
 
-    var jsonData = json.decode(response.body)['data']['list'] as List;
+    final models = <deliveryListModel>[];
+
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body)['data']['list'] as List;
+      for (var item in jsonData) {
+        models.add(deliveryListModel.fromJson(item));
+      }
+
+      return models.toList();
+    }
+
+    return models;
+  }
+
+  static Future<List<deliveryListModel>> connectToAPIRunning(
+      String date, int page, int limit) async {
+    const API = sgBaseURL;
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    final response = await http.get(
+        Uri.parse(API +
+            'order/cargo/detail?issue_date=$date&page=$page&pagesize=$limit'),
+        headers: headers);
 
     final models = <deliveryListModel>[];
-    for (var item in jsonData) {
-      models.add(deliveryListModel.fromJson(item));
+
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body)['data']['list'] as List;
+      for (var item in jsonData) {
+        models.add(deliveryListModel.fromJson(item));
+      }
+
+      return models.toList();
     }
-    return models.toList();
+
+    return models;
   }
 }

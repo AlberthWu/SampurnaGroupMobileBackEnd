@@ -31,7 +31,7 @@ class deliveryGetModel {
   final String rekening_no;
   final String nama_rekening;
   final String image;
-  final bool assign;
+  final int confirm_ujt;
   final int? urgent;
   final String urgent_name;
   final int ujt_id;
@@ -76,7 +76,7 @@ class deliveryGetModel {
     this.rekening_no = "",
     this.nama_rekening = "",
     this.image = "",
-    this.assign = false,
+    this.confirm_ujt = 0,
     this.ujt_id = 0,
     this.ujt = 0,
     this.primary_status = 0,
@@ -164,7 +164,7 @@ class deliveryGetModel {
       rekening_no: item['employee_id']['bank_no'],
       nama_rekening: item['employee_id']['bank_account_name'],
       image: image_data == null ? '' : image,
-      assign: item['confirm_ujt'] == 1 ? true : false,
+      confirm_ujt: item['confirm_ujt'],
       urgent: item['schedule_id']['urgent'],
       urgent_name: urgent,
       ujt_id: item['ujt_id'],

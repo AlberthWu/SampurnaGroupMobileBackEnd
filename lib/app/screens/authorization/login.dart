@@ -1,8 +1,9 @@
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
+import 'package:asm/app/constant/app_constant.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/service/global.dart';
 import 'package:asm/app/screens/authorization/forgot_password.dart';
-import 'package:asm/app/views/widgets/textformfield_widget.dart';
+import 'package:asm/app/widget/forms/textformfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
@@ -122,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     Text(
                                       'Masa  berlaku sudah habis, silakan hubungi tim IT.',
                                       style: TextStyle(
-                                          color: appWhite,
+                                          color: sgWhite,
                                           fontWeight: FontWeight.bold),
                                     ),
                                     sgSizedBoxHeight
@@ -263,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _apiResponse = await service.GetServerDatetime();
 
     var today = DateTime.parse(_apiResponse.data.substring(1, 11));
-    var expired = DateTime.parse("2023-03-03");
+    var expired = DateTime.parse("2023-03-05");
 
     bool valid = today.isBefore(expired);
 

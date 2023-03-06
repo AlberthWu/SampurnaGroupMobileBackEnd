@@ -1,4 +1,5 @@
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
+import 'package:asm/app/constant/text_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -26,10 +27,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: appWhite,
+      backgroundColor: sgWhite,
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: appWhite,
+        backgroundColor: sgWhite,
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 20, top: 20),
@@ -65,18 +66,18 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               CreatePage(
                 image: 'assets/logo/loading.gif',
-                title: titleOne,
-                description: descriptionOne,
+                title: introTitleOne,
+                description: introDescriptionOne,
               ),
               CreatePage(
                 image: 'assets/splash/splash_two.gif',
-                title: titleTwo,
-                description: descriptionTwo,
+                title: introTitleTwo,
+                description: introDescriptionTwo,
               ),
               CreatePage(
                 image: 'assets/splash/splash_three.gif',
-                title: titleThree,
-                description: descriptionThree,
+                title: introTitleThree,
+                description: introDescriptionThree,
               ),
             ],
           ),

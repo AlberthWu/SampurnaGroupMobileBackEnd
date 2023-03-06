@@ -1,18 +1,19 @@
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/color_constant.dart';
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/orders/schedule/list.dart';
 import 'package:asm/app/models/orders/surat_jalan/list.dart';
 import 'package:asm/app/service/orders/delivery.dart';
 import 'package:asm/app/service/orders/schedule.dart';
-import 'package:asm/app/views/cards/delivery_card_widget.dart';
-import 'package:asm/app/views/cards/order_card_widget.dart';
-import 'package:asm/app/views/cards/schedule_card_widget.dart';
-import 'package:asm/app/views/widgets/date_scroll_widget.dart';
+import 'package:asm/app/widget/cards/delivery_card_widget.dart';
+import 'package:asm/app/widget/cards/schedule_card_widget.dart';
+import 'package:asm/app/widget/forms/date_scroll_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+
+import '../../widget/cards/order_card_widget.dart';
 
 class DeliveryHome extends StatefulWidget {
   const DeliveryHome({super.key});
@@ -52,7 +53,7 @@ class _DeliveryHomeState extends State<DeliveryHome>
   Widget bottomWidget(scheduleListModel data) {
     return data.orders!.length > 0
         ? Container(
-            color: appWhite,
+            color: sgWhite,
             padding: EdgeInsets.symmetric(horizontal: 8.0),
             child: ListView.builder(
               scrollDirection: Axis.vertical,
@@ -85,7 +86,7 @@ class _DeliveryHomeState extends State<DeliveryHome>
   void _showModal(BuildContext context, scheduleListModel data) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: appWhite,
+      backgroundColor: sgWhite,
       isScrollControlled: true,
       enableDrag: true,
       shape: const RoundedRectangleBorder(
@@ -102,7 +103,7 @@ class _DeliveryHomeState extends State<DeliveryHome>
         builder: (context, scrollController) => SingleChildScrollView(
           controller: scrollController,
           child: Container(
-            color: appWhite,
+            color: sgWhite,
             child: Column(
               children: [
                 Container(
@@ -175,7 +176,7 @@ class _DeliveryHomeState extends State<DeliveryHome>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DateScrollWidget(
+                SGDateScrollWidget(
                   date: currentDateTime,
                   setDate: (date) {
                     currentDateTime = date;
@@ -187,7 +188,7 @@ class _DeliveryHomeState extends State<DeliveryHome>
                 TabBar(
                   controller: _tabController,
                   indicatorColor: sgBrownLight,
-                  unselectedLabelColor: appBlack,
+                  unselectedLabelColor: sgBlack,
                   labelColor: sgGold,
                   labelStyle: TextStyle(
                     fontSize: 14,
@@ -216,7 +217,7 @@ class _DeliveryHomeState extends State<DeliveryHome>
                         Container(
                           width: size.width,
                           height: size.height,
-                          color: appWhite,
+                          color: sgWhite,
                           child: _modelsDelivery.length > 0
                               ? ListView.builder(
                                   shrinkWrap: true,
@@ -248,7 +249,7 @@ class _DeliveryHomeState extends State<DeliveryHome>
                         Container(
                           width: size.width,
                           height: size.height,
-                          color: appWhite,
+                          color: sgWhite,
                           child: _modelsDeliveryDay.length > 0
                               ? ListView.builder(
                                   shrinkWrap: true,
@@ -280,7 +281,7 @@ class _DeliveryHomeState extends State<DeliveryHome>
                         Container(
                           width: size.width,
                           height: size.height,
-                          color: appWhite,
+                          color: sgWhite,
                           child: _modelsSchedule.length > 0
                               ? ListView.builder(
                                   shrinkWrap: true,

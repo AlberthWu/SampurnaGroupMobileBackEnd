@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:asm/app/constant/color.dart';
+import 'package:asm/app/constant/app_constant.dart';
 import 'package:http/http.dart' as http;
 
 class employeeListModel {
@@ -38,18 +38,17 @@ class employeeListModel {
         Uri.parse(API + 'employee?page=$page&pagesize=$limit&keyword=$keyword'),
         headers: headers);
 
-    var jsonObject = json.decode(response.body)['data']['list'] as List;
+    final models = <employeeListModel>[];
 
-    return jsonObject
-        .map<employeeListModel>(
-          (item) => employeeListModel(
-            id: item['id'],
-            nik: item['nik'],
-            name: item['name'],
-            alias: item['alias'],
-            companyName: item['company_id']['code'],
-          ),
-        )
-        .toList();
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body)['data']['list'] as List;
+      for (var item in jsonData) {
+        models.add(employeeListModel.fromJson(item));
+      }
+
+      return models.toList();
+    }
+
+    return models;
   }
 }

@@ -1,7 +1,6 @@
 import 'package:asm/app/models/auth/user.dart';
 import 'package:asm/app/service/auth/user_auth.dart';
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'user_event.dart';
