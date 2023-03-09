@@ -1,3 +1,4 @@
+import 'package:asm/app/bloc/user_bloc.dart';
 import 'package:asm/app/constant/color_constant.dart';
 import 'package:asm/app/constant/app_constant.dart';
 import 'package:asm/app/models/api_response.dart';
@@ -6,6 +7,7 @@ import 'package:asm/app/screens/authorization/forgot_password.dart';
 import 'package:asm/app/widget/forms/textformfield_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
@@ -109,30 +111,30 @@ class _LoginScreenState extends State<LoginScreen> {
                           //       ),
                           //     );
 
-                          var valid = await checkExpired();
+                          // var valid = await checkExpired();
 
-                          if (valid) {
-                            context.goNamed('main_page');
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Masa  berlaku sudah habis, silakan hubungi tim IT.',
-                                      style: TextStyle(
-                                          color: sgWhite,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    sgSizedBoxHeight
-                                  ],
-                                ),
-                                backgroundColor: sgRed,
-                              ),
-                            );
-                          }
+                          // if (valid) {
+                          context.goNamed('main_page');
+                          // } else {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     SnackBar(
+                          //       content: Column(
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         mainAxisSize: MainAxisSize.min,
+                          //         children: [
+                          //           Text(
+                          //             'Masa  berlaku sudah habis, silakan hubungi tim IT.',
+                          //             style: TextStyle(
+                          //                 color: sgWhite,
+                          //                 fontWeight: FontWeight.bold),
+                          //           ),
+                          //           sgSizedBoxHeight
+                          //         ],
+                          //       ),
+                          //       backgroundColor: sgRed,
+                          //     ),
+                          //   );
+                          // }
                         },
                         child: Container(
                           width: size.width,

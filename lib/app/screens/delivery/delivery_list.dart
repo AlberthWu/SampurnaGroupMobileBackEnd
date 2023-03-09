@@ -6,13 +6,12 @@ import 'package:asm/app/bloc/schedule/schedule_list_bloc.dart';
 import 'package:asm/app/constant/color_constant.dart';
 import 'package:asm/app/models/orders/schedule/list.dart';
 import 'package:asm/app/widget/cards/delivery_card_widget.dart';
+import 'package:asm/app/widget/cards/order_card_widget.dart';
 import 'package:asm/app/widget/cards/schedule_list_widget.dart';
 import 'package:asm/app/widget/forms/date_scroll_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../widget/cards/order_card_widget.dart';
 
 class DeliveryList extends StatelessWidget {
   late DateTime currentDate = DateTime.now();
@@ -141,6 +140,8 @@ class DeliveryList extends StatelessWidget {
   Widget build(BuildContext context) {
     deliveryRunningBloc = BlocProvider.of<DeliveryRunningBloc>(context);
     deliveryRunningController.addListener(onScrollDeliveryRunning);
+
+    deliveryRunningBloc..add(GetDeliveryRunningEvent(date: currentDate));
 
     deliveryTodayBloc = BlocProvider.of<DeliveryTodayBloc>(context);
     deliveryTodayController.addListener(onScrollDeliveryToday);

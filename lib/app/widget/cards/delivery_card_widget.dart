@@ -23,35 +23,35 @@ class DeliveryCardWidget extends StatelessWidget {
   Widget _boxWidget(BuildContext context) {
     switch (model.confirm_ujt!) {
       case 0:
-        return SGBoxSecondaryOutlinedWidget(title: model.confirm_status!);
+        return SGBoxSecondaryOutlinedWidget(title: model.status!);
       case 1:
-        return SGBoxDangerOutlinedWidget(title: model.confirm_status!);
+        return SGBoxDangerOutlinedWidget(title: model.status!);
       case 2:
-        return SGBoxWarningOutlinedWidget(title: model.confirm_status!);
+        return SGBoxWarningOutlinedWidget(title: model.status!);
       case 3:
-        return SGBoxSuccessOutlinedWidget(title: model.confirm_status!);
+        return SGBoxSuccessOutlinedWidget(title: model.status!);
       case 4:
-        return SGBoxSuccessOutlinedWidget(title: model.confirm_status!);
+        return SGBoxSuccessOutlinedWidget(title: model.status!);
       case 5:
-        return SGBoxSuccessOutlinedWidget(title: model.confirm_status!);
+        return SGBoxSuccessOutlinedWidget(title: model.status!);
       case 6:
-        return SGBoxSuccessOutlinedWidget(title: model.confirm_status!);
+        return SGBoxSuccessOutlinedWidget(title: model.status!);
       case 7:
-        return SGBoxSuccessOutlinedWidget(title: model.confirm_status!);
+        return SGBoxSuccessOutlinedWidget(title: model.status!);
       case 8:
-        return SGBoxSuccessOutlinedWidget(title: model.confirm_status!);
+        return SGBoxSuccessOutlinedWidget(title: model.status!);
       case 9:
-        return SGBoxSuccessOutlinedWidget(title: model.confirm_status!);
+        return SGBoxSuccessOutlinedWidget(title: model.status!);
       case 10:
-        return SGBoxSuccessOutlinedWidget(title: model.confirm_status!);
+        return SGBoxSuccessOutlinedWidget(title: model.status!);
       case 11:
-        return SGBoxWarningBackgroundWidget(title: model.confirm_status!);
+        return SGBoxWarningBackgroundWidget(title: model.status!);
       case 12:
-        return SGBoxWarningBackgroundWidget(title: model.confirm_status!);
+        return SGBoxWarningBackgroundWidget(title: model.status!);
       case 13:
-        return SGBoxDangerBackgroundWidget(title: model.confirm_status!);
+        return SGBoxDangerBackgroundWidget(title: model.status!);
       case 14:
-        return SGBoxDangerBackgroundWidget(title: model.confirm_status!);
+        return SGBoxDangerBackgroundWidget(title: model.status!);
       default:
         return Text("");
     }

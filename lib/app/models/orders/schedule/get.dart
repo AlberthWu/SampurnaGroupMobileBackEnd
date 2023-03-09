@@ -24,8 +24,16 @@ class scheduleGetModel {
   final int multi_product;
   final int product_id;
   final String product_name;
-  final int fleet_id;
-  final String plate_no;
+  final int pool_id;
+  final int counter;
+  final String shift;
+  int ujt_id;
+  int ujt;
+  int employee_id;
+  int fleet_id;
+  String plate_no;
+  int primary_status;
+  int secondary_status;
 
   scheduleGetModel({
     this.id = 0,
@@ -50,6 +58,14 @@ class scheduleGetModel {
     this.product_name = "",
     this.fleet_id = 0,
     this.plate_no = "",
+    this.pool_id = 1,
+    this.counter = 1,
+    this.shift = 'A',
+    this.ujt_id = 0,
+    this.ujt = 0,
+    this.employee_id = 0,
+    this.primary_status = 1,
+    this.secondary_status = 0,
   });
 
   factory scheduleGetModel.fromJson(Map<String, dynamic> item) {

@@ -52,7 +52,7 @@ class autocompleteListModel {
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body)['data'] as List;
 
-      if (jsonData == null) {
+      if (jsonData.isEmpty) {
         return models;
       }
 

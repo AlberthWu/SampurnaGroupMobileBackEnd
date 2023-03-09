@@ -5,7 +5,7 @@ abstract class UserState {}
 class UserSignedOut extends UserState {}
 
 class UserSignedIn extends UserState {
-  final User user;
+  final userModel user;
 
   UserSignedIn(this.user);
 }
