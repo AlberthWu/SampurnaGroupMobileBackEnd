@@ -9,19 +9,23 @@ part 'user_state.dart';
 class UserBloc extends Bloc<UserEvent, UserState> {
   UserBloc() : super(UserSignedOut()) {
     on<SignIn>((event, emit) async {
+      userModel model;
+
       if (state is UserSignedOut) {
-        String? token = await UserService.getToken(
-            email: event.email, password: event.password);
+        model = await userModel.loginPost(
+          email: event.email,
+          password: event.password,
+        );
 
-        if (token != null) {
-          User? user = UserService.getUser(email: event.email, token: token);
+        print("token: " + model.toString());
 
-          if (user != null) {
-            SharedPreferences pref = await SharedPreferences.getInstance();
-            pref.setString('email', event.email);
-            pref.setString('token', token);
-            emit(UserSignedIn(user));
-          }
+        String? token = model.token;
+
+        if (token!.isNotEmpty) {
+          SharedPreferences pref = await SharedPreferences.getInstance();
+          pref.setString('email', event.email);
+          pref.setString('token', token);
+          emit(UserSignedIn(model));
         }
       }
     });
@@ -45,11 +49,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         bool tokenValid = UserService.isTokenValid(token);
 
         if (tokenValid) {
-          User? user = UserService.getUser(email: email, token: token);
+          userModel? user = UserService.getUser(email: email, token: token);
           if (user != null) {
             emit(UserSignedIn(user));
           }
         }
+      } else {
+        emit(UserSignedOut());
       }
     });
   }

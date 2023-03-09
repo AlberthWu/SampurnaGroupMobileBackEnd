@@ -1,22 +1,17 @@
-// ignore_for_file: must_be_immutable
-
 import 'dart:convert';
 
 import 'package:asm/app/bloc/driver/driver_get_bloc.dart';
 import 'package:asm/app/bloc/schedule/schedule_get_bloc.dart';
-import 'package:asm/app/bloc/ujt_bloc.dart';
 import 'package:asm/app/constant/app_constant.dart';
 import 'package:asm/app/constant/color_constant.dart';
 import 'package:asm/app/models/autocomplete/autocomplete_model.dart';
 import 'package:asm/app/widget/forms/auto_complete_widget.dart';
+import 'package:asm/app/widget/forms/radio_custom_widget.dart';
 import 'package:asm/app/widget/forms/text_group_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
-import 'package:path_provider/path_provider.dart';
-
-enum DriverList { Batang, Serep }
 
 class DeliveryAdd extends StatelessWidget {
   final String schedule_id;
@@ -32,14 +27,11 @@ class DeliveryAdd extends StatelessWidget {
   TextEditingController fleetController = TextEditingController();
 
   ScheduleGetBloc scheduleBloc = ScheduleGetBloc();
-  UjtBloc ujtBloc = UjtBloc();
   DriverGetBloc driverBloc = DriverGetBloc();
-  DriverList? driverRadio = DriverList.Batang;
 
   @override
   Widget build(BuildContext context) {
     scheduleBloc = BlocProvider.of<ScheduleGetBloc>(context);
-    ujtBloc = BlocProvider.of<UjtBloc>(context);
     driverBloc = BlocProvider.of<DriverGetBloc>(context);
 
     scheduleBloc..add(ScheduleGetDataEvent(schedule_id: schedule_id));
@@ -95,17 +87,6 @@ class DeliveryAdd extends StatelessWidget {
                   ScheduleGetSuccessState modelSchedule =
                       state as ScheduleGetSuccessState;
 
-                  ujtBloc
-                    ..add(
-                      UjtValueEvent(
-                        issueDate: modelSchedule.model.schedule_date,
-                        originID: modelSchedule.model.origin_id.toString(),
-                        plantID: modelSchedule.model.plant_id.toString(),
-                        fleetTypeID:
-                            modelSchedule.model.fleet_type_id.toString(),
-                        productID: modelSchedule.model.product_id.toString(),
-                      ),
-                    );
                   return ListView(
                     shrinkWrap: true,
                     physics: BouncingScrollPhysics(),
@@ -161,22 +142,10 @@ class DeliveryAdd extends StatelessWidget {
                         value: modelSchedule.model.product_name,
                       ),
                       sgSizedBoxHeight,
-                      BlocBuilder<UjtBloc, UjtState>(
-                        builder: (context, state) {
-                          if (state is UjtInitial) {
-                            return SGTextGroupWidget(
-                              field: "UJT",
-                              value: "0",
-                            );
-                          } else {
-                            UjtSuccessState modelUjt = state as UjtSuccessState;
-                            return SGTextGroupWidget(
-                              field: "UJT",
-                              value:
-                                  currencyFormatter.format(modelUjt.model.ujt),
-                            );
-                          }
-                        },
+                      SGTextGroupWidget(
+                        field: "UJT",
+                        value:
+                            currencyFormatter.format(modelSchedule.model.ujt),
                       ),
                       sgSizedBoxHeight,
                       SGAutoCompleteWidget(
@@ -187,10 +156,20 @@ class DeliveryAdd extends StatelessWidget {
                           modelSchedule.model.fleet_type_id.toString(),
                           keyword,
                         ),
-                        setData: (value) => setFleetData(
-                            modelSchedule.model.schedule_date, value),
-                        id: 0,
-                        name: "",
+                        setData: (value) {
+                          autocompleteListModel data = value;
+
+                          setFleetData(modelSchedule.model.schedule_date, data);
+
+                          scheduleBloc.add(
+                            ScheduleGetFleetEvent(
+                              model: modelSchedule.model,
+                              plate: data,
+                            ),
+                          );
+                        },
+                        id: modelSchedule.model.fleet_id,
+                        name: modelSchedule.model.plate_no,
                       ),
                       sgSizedBoxHeight,
                       BlocBuilder<DriverGetBloc, DriverGetState>(
@@ -203,15 +182,29 @@ class DeliveryAdd extends StatelessWidget {
 
                             return Column(
                               children: [
-                                RadioListTile<DriverList>(
-                                  title: Text('Supir Batang'),
-                                  value: DriverList.Batang,
-                                  groupValue: driverRadio,
-                                  onChanged: (DriverList? value) {
-                                    changeRadio(value);
+                                SGRadioCustomWidget(
+                                  title: 'Batang',
+                                  index: 0,
+                                  selected:
+                                      modelSchedule.model.primary_status == 1
+                                          ? true
+                                          : false,
+                                  onPressed: () {
+                                    scheduleBloc.add(
+                                      ScheduleGetStatusEvent(
+                                        model: modelSchedule.model,
+                                        selected: 0,
+                                        employee_id:
+                                            modelDriver.model.primary_driver ==
+                                                    null
+                                                ? 0
+                                                : modelDriver
+                                                    .model.primary_driver!.id,
+                                      ),
+                                    );
                                   },
-                                  activeColor: sgRed,
                                 ),
+                                sgSizedBoxHeight,
                                 Row(
                                   children: [
                                     SizedBox(
@@ -222,6 +215,7 @@ class DeliveryAdd extends StatelessWidget {
                                           ? Hero(
                                               tag: 'picture',
                                               child: CircleAvatar(
+                                                backgroundColor: sgGray,
                                                 backgroundImage: MemoryImage(
                                                   base64Decode(modelDriver.model
                                                       .primary_driver!.image!),
@@ -362,15 +356,29 @@ class DeliveryAdd extends StatelessWidget {
                                 Divider(
                                   thickness: 1,
                                 ),
-                                RadioListTile<DriverList>(
-                                  title: Text('Supir Serep'),
-                                  value: DriverList.Serep,
-                                  groupValue: driverRadio,
-                                  onChanged: (DriverList? value) {
-                                    changeRadio(value);
+                                SGRadioCustomWidget(
+                                  title: 'Serep',
+                                  index: 1,
+                                  selected:
+                                      modelSchedule.model.secondary_status == 1
+                                          ? true
+                                          : false,
+                                  onPressed: () {
+                                    scheduleBloc.add(
+                                      ScheduleGetStatusEvent(
+                                        model: modelSchedule.model,
+                                        selected: 1,
+                                        employee_id: modelDriver
+                                                    .model.secondary_driver ==
+                                                null
+                                            ? 0
+                                            : modelDriver
+                                                .model.secondary_driver!.id,
+                                      ),
+                                    );
                                   },
-                                  activeColor: sgRed,
                                 ),
+                                sgSizedBoxHeight,
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,6 +392,7 @@ class DeliveryAdd extends StatelessWidget {
                                           ? Hero(
                                               tag: 'picture',
                                               child: CircleAvatar(
+                                                backgroundColor: sgGray,
                                                 backgroundImage: MemoryImage(
                                                   base64Decode(modelDriver
                                                       .model
@@ -544,11 +553,6 @@ class DeliveryAdd extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  changeRadio(value) {
-    print(value);
-    driverRadio = value;
   }
 
   Future<List<autocompleteListModel>> fleetData(

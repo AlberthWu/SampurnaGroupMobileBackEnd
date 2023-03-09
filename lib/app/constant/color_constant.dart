@@ -7,6 +7,7 @@ const sgBlackLight = Colors.black12;
 const sgRed = Color.fromARGB(255, 174, 0, 0);
 const sgGrey = Color.fromARGB(255, 187, 187, 187);
 const sgGold = Color.fromARGB(255, 214, 137, 0);
+const sgGoldLight = const Color.fromARGB(255, 255, 195, 0);
 const sgBrownLight = Color(0XFFAB987C);
 const sgGreen = Color.fromARGB(1000, 66, 181, 73);
 

@@ -4,17 +4,16 @@ import 'package:asm/app/bloc/driver/driver_get_bloc.dart';
 import 'package:asm/app/bloc/employee/employee_list_bloc.dart';
 import 'package:asm/app/bloc/schedule/schedule_get_bloc.dart';
 import 'package:asm/app/bloc/schedule/schedule_list_bloc.dart';
-import 'package:asm/app/bloc/ujt_bloc.dart';
 import 'package:asm/app/bloc/user_bloc.dart';
 import 'package:asm/app/constant/theme_constant.dart';
 import 'package:asm/app/screens/authorization/login.dart';
-import 'package:asm/app/screens/dashboard.dart';
 import 'package:asm/app/screens/delivery/delivery_add.dart';
 import 'package:asm/app/screens/delivery/delivery_create.dart';
 import 'package:asm/app/screens/delivery/delivery_list.dart';
 import 'package:asm/app/screens/delivery/delivery_modify.dart';
 import 'package:asm/app/screens/employee/employee_listing.dart';
 import 'package:asm/app/screens/employee/employee_modify.dart';
+import 'package:asm/app/screens/main_screen.dart';
 import 'package:asm/app/screens/splash/splash.dart';
 import 'package:asm/app/service/autocomplete_service.dart';
 import 'package:asm/app/service/driver.dart';
@@ -79,7 +78,7 @@ class _MyAppState extends State<MyApp> {
         path: '/',
         name: 'main_page',
         builder: (context, state) {
-          return const DashboardPage();
+          return MainScreen();
         },
         routes: [
           GoRoute(
@@ -172,7 +171,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: sgGold));
 
     return MultiBlocProvider(
       providers: [
@@ -180,18 +180,13 @@ class _MyAppState extends State<MyApp> {
           create: (context) => UserBloc()..add(CheckSignInStatus()),
         ),
         BlocProvider<EmployeeListBloc>(
-          create: (context) => EmployeeListBloc()
-            ..add(
-              GetEmployeeEvent(keyword: ""),
-            ),
+          create: (context) => EmployeeListBloc(),
         ),
         BlocProvider<DeliveryTodayBloc>(
-          create: (context) =>
-              DeliveryTodayBloc()..add(GetDeliveryTodayEvent(date: now)),
+          create: (context) => DeliveryTodayBloc(),
         ),
         BlocProvider<DeliveryRunningBloc>(
-          create: (context) =>
-              DeliveryRunningBloc()..add(GetDeliveryRunningEvent(date: now)),
+          create: (context) => DeliveryRunningBloc(),
         ),
         BlocProvider<ScheduleGetBloc>(
           create: (context) => ScheduleGetBloc(),
@@ -199,12 +194,8 @@ class _MyAppState extends State<MyApp> {
         BlocProvider<DriverGetBloc>(
           create: (context) => DriverGetBloc(),
         ),
-        BlocProvider<UjtBloc>(
-          create: (context) => UjtBloc(),
-        ),
         BlocProvider<ScheduleListBloc>(
-          create: (context) =>
-              ScheduleListBloc()..add(GetScheduleEvent(date: now)),
+          create: (context) => ScheduleListBloc(),
         ),
       ],
       child: BlocListener<UserBloc, UserState>(

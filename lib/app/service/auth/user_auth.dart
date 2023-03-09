@@ -4,8 +4,9 @@ import 'package:asm/app/models/auth/user.dart';
 import 'package:http/http.dart' as http;
 
 abstract class UserService {
-  static User? getUser({required String email, required String token}) {
-    return User(name: "Firman", email: "fsetiawan8@yahoo.com", token: token);
+  static userModel? getUser({required String email, required String token}) {
+    return userModel(
+        name: "Firman", email: "fsetiawan8@yahoo.com", token: token);
   }
 
   static Future<String?> getToken(
@@ -17,7 +18,6 @@ abstract class UserService {
     };
 
     String jsonBody = json.encode(body);
-    print(jsonBody);
 
     final response = await http.post(
         Uri.parse("http://127.0.0.1:8000/api/login"),

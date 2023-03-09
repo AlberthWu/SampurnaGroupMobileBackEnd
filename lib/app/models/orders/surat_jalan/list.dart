@@ -24,7 +24,8 @@ class deliveryListModel {
   final String? image;
   final int? ujt;
   final int? confirm_ujt;
-  final String? confirm_status;
+  final int? status_id;
+  final String? status;
 
   deliveryListModel({
     this.id = 0,
@@ -47,63 +48,12 @@ class deliveryListModel {
     this.image = "",
     this.ujt = 0,
     this.confirm_ujt = 0,
-    this.confirm_status = "",
+    this.status_id = 0,
+    this.status = "",
   });
 
   factory deliveryListModel.fromJson(Map<String, dynamic> item) {
     var urgent = item['schedule_id']['urgent'] == 1 ? "Urgent" : "Reguler";
-    var confirmUjt = item['confirm_ujt'];
-
-    var status = "";
-
-    switch (confirmUjt) {
-      case 0:
-        status = "Draft";
-        break;
-      case 1:
-        status = "Reject";
-        break;
-      case 2:
-        status = "Open";
-        break;
-      case 3:
-        status = "Transfer";
-        break;
-      case 4:
-        status = "Transit Origin";
-        break;
-      case 5:
-        status = "Loading";
-        break;
-      case 6:
-        status = "Transit Destination";
-        break;
-      case 7:
-        status = "Unloading";
-        break;
-      case 8:
-        status = "Delivered";
-        break;
-      case 9:
-        status = "Done";
-        break;
-      case 10:
-        status = "Pending";
-        break;
-      case 11:
-        status = "Close";
-        break;
-      case 12:
-        status = "Posted";
-        break;
-      case 13:
-        status = "Void";
-        break;
-      case 14:
-        status = "Void Pangkalan";
-        break;
-      default:
-    }
 
     var image_data = item['employee_id']['image_data'];
     var image = '';
@@ -136,7 +86,8 @@ class deliveryListModel {
       image: image_data == null ? '' : image,
       ujt: item['ujt'],
       confirm_ujt: item['confirm_ujt'],
-      confirm_status: status,
+      status_id: item['status_id'],
+      status: item['status'],
     );
   }
 
@@ -171,6 +122,7 @@ class deliveryListModel {
     const headers = {
       'Content-Type': 'application/json',
     };
+
     final response = await http.get(
         Uri.parse(API +
             'order/cargo/detail?issue_date=$date&page=$page&pagesize=$limit'),
@@ -180,6 +132,7 @@ class deliveryListModel {
 
     if (response.statusCode == 200) {
       var jsonData = json.decode(response.body)['data']['list'] as List;
+
       for (var item in jsonData) {
         models.add(deliveryListModel.fromJson(item));
       }
