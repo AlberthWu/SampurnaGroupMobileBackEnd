@@ -14,6 +14,7 @@ import 'package:asm/app/screens/delivery/delivery_modify.dart';
 import 'package:asm/app/screens/employee/employee_listing.dart';
 import 'package:asm/app/screens/employee/employee_modify.dart';
 import 'package:asm/app/screens/main_screen.dart';
+import 'package:asm/app/screens/profile_screen.dart';
 import 'package:asm/app/screens/splash/splash.dart';
 import 'package:asm/app/service/autocomplete_service.dart';
 import 'package:asm/app/service/driver.dart';
@@ -81,6 +82,13 @@ class _MyAppState extends State<MyApp> {
           return MainScreen();
         },
         routes: [
+          GoRoute(
+            path: 'profile',
+            name: 'profile',
+            builder: (context, state) {
+              return const ProfileScreen();
+            },
+          ),
           GoRoute(
             path: 'delivery',
             name: 'delivery_list',
@@ -171,6 +179,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: sgGold));
 
@@ -180,13 +190,18 @@ class _MyAppState extends State<MyApp> {
           create: (context) => UserBloc()..add(CheckSignInStatus()),
         ),
         BlocProvider<EmployeeListBloc>(
-          create: (context) => EmployeeListBloc(),
+          create: (context) => EmployeeListBloc()
+            ..add(
+              GetEmployeeEvent(keyword: ""),
+            ),
         ),
         BlocProvider<DeliveryTodayBloc>(
-          create: (context) => DeliveryTodayBloc(),
+          create: (context) =>
+              DeliveryTodayBloc()..add(GetDeliveryTodayEvent(date: now)),
         ),
         BlocProvider<DeliveryRunningBloc>(
-          create: (context) => DeliveryRunningBloc(),
+          create: (context) =>
+              DeliveryRunningBloc()..add(GetDeliveryRunningEvent(date: now)),
         ),
         BlocProvider<ScheduleGetBloc>(
           create: (context) => ScheduleGetBloc(),
@@ -195,7 +210,8 @@ class _MyAppState extends State<MyApp> {
           create: (context) => DriverGetBloc(),
         ),
         BlocProvider<ScheduleListBloc>(
-          create: (context) => ScheduleListBloc(),
+          create: (context) =>
+              ScheduleListBloc()..add(GetScheduleEvent(date: now)),
         ),
       ],
       child: BlocListener<UserBloc, UserState>(
@@ -203,7 +219,7 @@ class _MyAppState extends State<MyApp> {
           if (state is UserSignedIn) {
             router.goNamed('main_page');
           } else {
-            router.goNamed('login');
+            router.goNamed('splash');
           }
         },
         child: MaterialApp.router(

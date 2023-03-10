@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:asm/app/constant/app_constant.dart';
 import 'package:asm/app/models/employee/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class driverGetModel {
   final employeeGetModel? primary_driver;
@@ -40,9 +41,13 @@ class driverGetModel {
 
   static Future<driverGetModel> getAPIDriver(
       String issueDate, String plateNo) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final String? token = pref.getString('token');
+
     const API = sgBaseURL;
-    const headers = {
+    final headers = {
       'Content-Type': 'application/json',
+      'Authorization': "Bearer " + token.toString(),
     };
 
     final driverGetModel model = new driverGetModel();

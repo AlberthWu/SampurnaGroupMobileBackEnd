@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:asm/app/constant/app_constant.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class scheduleGetModel {
   final int id;
@@ -94,9 +95,13 @@ class scheduleGetModel {
   }
 
   static Future<scheduleGetModel> getAPISchedule(String id) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final String? token = pref.getString('token');
+
     const API = sgBaseURL;
-    const headers = {
+    final headers = {
       'Content-Type': 'application/json',
+      'Authorization': "Bearer " + token.toString(),
     };
 
     final scheduleGetModel model = new scheduleGetModel();

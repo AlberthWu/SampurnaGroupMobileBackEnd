@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:go_router/go_router.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -81,60 +80,139 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(
                         height: 5,
                       ),
-                      SGTextFormField(
-                        icon: Icons.alternate_email,
-                        label: "Email",
-                        controller: emailController,
-                        enabled: true,
-                        border: false,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          BlocBuilder<UserBloc, UserState>(
+                            builder: (context, state) {
+                              if (state is UserErrorState) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 50.0),
+                                  child: Text(
+                                    state.errorMessage,
+                                    style: TextStyle(
+                                      color: sgRed,
+                                      fontSize: 12,
+                                      fontFamily: 'Nexa',
+                                    ),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                );
+                              } else {
+                                return Text("");
+                              }
+                            },
+                          ),
+                          SGTextFormField(
+                            icon: Icons.alternate_email,
+                            label: "Email",
+                            controller: emailController,
+                            enabled: true,
+                            border: false,
+                          ),
+                          BlocBuilder<UserBloc, UserState>(
+                            builder: (context, state) {
+                              if (state is UserErrorState) {
+                                if (state.errors!.isNotEmpty) {
+                                  if (state.errors!.length > 0) {
+                                    if (state.errors![0].field! == 'email') {
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 50.0),
+                                        child: Text(
+                                          state.errors![0].errors!,
+                                          style: TextStyle(
+                                            color: sgRed,
+                                            fontSize: 12,
+                                            fontFamily: 'Nexa',
+                                          ),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      );
+                                    }
+                                  }
+                                }
+                                return Container();
+                              } else {
+                                return Container();
+                              }
+                            },
+                          ),
+                        ],
                       ),
                       const SizedBox(
                         height: 10,
                       ),
-                      SGTextFormField(
-                        icon: Icons.lock,
-                        label: "Password",
-                        obscureText: true,
-                        controller: passwordController,
-                        enabled: true,
-                        border: false,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SGTextFormField(
+                            icon: Icons.lock,
+                            label: "Password",
+                            obscureText: true,
+                            controller: passwordController,
+                            enabled: true,
+                            border: false,
+                          ),
+                          BlocBuilder<UserBloc, UserState>(
+                            builder: (context, state) {
+                              if (state is UserErrorState) {
+                                if (state.errors!.isNotEmpty) {
+                                  if (state.errors!.length == 1) {
+                                    if (state.errors![0].field! == 'password') {
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 50.0),
+                                        child: Text(
+                                          state.errors![0].errors!,
+                                          style: TextStyle(
+                                            color: sgRed,
+                                            fontSize: 12,
+                                            fontFamily: 'Nexa',
+                                          ),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      );
+                                    }
+                                  } else if (state.errors!.length == 2) {
+                                    if (state.errors![1].field! == 'password') {
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 50.0),
+                                        child: Text(
+                                          state.errors![1].errors!,
+                                          style: TextStyle(
+                                            color: sgRed,
+                                            fontSize: 12,
+                                            fontFamily: 'Nexa',
+                                          ),
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      );
+                                    }
+                                  }
+                                }
+                                return Text("");
+                              } else {
+                                return Text("");
+                              }
+                            },
+                          ),
+                        ],
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 15,
                       ),
                       GestureDetector(
                         onTap: () async {
-                          // context.read<UserBloc>().add(
-                          //       SignIn(
-                          //         email: emailController.text,
-                          //         password: passwordController.text,
-                          //       ),
-                          //     );
-
-                          // var valid = await checkExpired();
-
-                          // if (valid) {
-                          context.goNamed('main_page');
-                          // } else {
-                          //   ScaffoldMessenger.of(context).showSnackBar(
-                          //     SnackBar(
-                          //       content: Column(
-                          //         crossAxisAlignment: CrossAxisAlignment.start,
-                          //         mainAxisSize: MainAxisSize.min,
-                          //         children: [
-                          //           Text(
-                          //             'Masa  berlaku sudah habis, silakan hubungi tim IT.',
-                          //             style: TextStyle(
-                          //                 color: sgWhite,
-                          //                 fontWeight: FontWeight.bold),
-                          //           ),
-                          //           sgSizedBoxHeight
-                          //         ],
-                          //       ),
-                          //       backgroundColor: sgRed,
-                          //     ),
-                          //   );
-                          // }
+                          context.read<UserBloc>().add(
+                                SignIn(
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                ),
+                              );
                         },
                         child: Container(
                           width: size.width,
@@ -192,32 +270,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(
                         height: 15,
                       ),
-                      // GestureDetector(
-                      //   onTap: () {
-                      //     Navigator.pushReplacement(
-                      //       context,
-                      //       PageTransition(
-                      //         child: const RegisterScreen(),
-                      //         type: PageTransitionType.bottomToTop,
-                      //       ),
-                      //     );
-                      //   },
-                      //   child: Center(
-                      //     child: Text.rich(
-                      //       TextSpan(
-                      //         children: [
-                      //           TextSpan(
-                      //             text: 'Register',
-                      //             style: TextStyle(
-                      //               color: sgGold,
-                      //               fontWeight: FontWeight.bold,
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),

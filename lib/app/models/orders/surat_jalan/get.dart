@@ -1,4 +1,10 @@
+import 'dart:convert';
+
+import 'package:asm/app/constant/app_constant.dart';
+import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/employee/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class deliveryGetModel {
   final int id;
@@ -175,6 +181,46 @@ class deliveryGetModel {
       secondary_driver: _employeeSecondary,
       order_image: _imageOrder,
       returned: item['returned'] == null ? 0 : item['returned'],
+    );
+  }
+
+  static Future<APIResponse<deliveryGetModel>> postDelivery(
+      Map<String, String> form) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final String? token = pref.getString('token');
+
+    const API = sgBaseURL;
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer " + token.toString(),
+    };
+
+    final model = new deliveryGetModel();
+    var request = new http.MultipartRequest(
+        "POST", Uri.parse(API + 'order/cargo/detail'));
+
+    request.headers.addAll(headers);
+    request.fields.addAll(form);
+
+    http.Response response =
+        await http.Response.fromStream(await request.send());
+
+    final message = json.decode(response.body)['errmsg'];
+    final data = json.decode(response.body)['data'];
+
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(data.body)['data'];
+
+      return APIResponse<deliveryGetModel>(
+        data: deliveryGetModel.fromJson(jsonData),
+        message: message,
+      );
+    }
+
+    return APIResponse<deliveryGetModel>(
+      status: true,
+      data: model,
+      message: message,
     );
   }
 }

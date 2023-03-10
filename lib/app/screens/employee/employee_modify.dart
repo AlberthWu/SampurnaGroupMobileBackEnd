@@ -845,28 +845,18 @@ class _EmployeeModifyState extends State<EmployeeModify>
             enabled: this._isEdit,
           ),
           sgSizedBoxHeight,
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 10,
-            ),
-            child: SGCheckBoxWidget(
-              title: "Kartu Lisensi",
-              controller: _licenseCardController,
-              icon: Icons.card_membership_outlined,
-              enabled: this._isEdit,
-            ),
+          SGCheckBoxWidget(
+            title: "Kartu Lisensi",
+            controller: _licenseCardController,
+            icon: Icons.card_membership_outlined,
+            enabled: this._isEdit,
           ),
           sgSizedBoxHeight,
-          Padding(
-            padding: const EdgeInsets.only(
-              bottom: 10,
-            ),
-            child: SGCheckBoxWidget(
-              title: "Lisensi Ditahan",
-              controller: _licenseHoldController,
-              icon: Icons.sim_card_alert_outlined,
-              enabled: this._isEdit,
-            ),
+          SGCheckBoxWidget(
+            title: "Lisensi Ditahan",
+            controller: _licenseHoldController,
+            icon: Icons.sim_card_alert_outlined,
+            enabled: this._isEdit,
           ),
           sgSizedBoxHeight,
           SGDatePickerWidget(

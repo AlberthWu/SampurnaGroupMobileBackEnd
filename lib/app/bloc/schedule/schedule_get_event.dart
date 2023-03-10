@@ -10,14 +10,6 @@ class ScheduleGetDataEvent extends ScheduleGetEvent {
   });
 }
 
-class ScheduleGetSubmittedEvent extends ScheduleGetEvent {
-  final scheduleGetModel model;
-
-  ScheduleGetSubmittedEvent({
-    required this.model,
-  });
-}
-
 class ScheduleGetFleetEvent extends ScheduleGetEvent {
   final scheduleGetModel model;
   final autocompleteListModel plate;
@@ -37,5 +29,13 @@ class ScheduleGetStatusEvent extends ScheduleGetEvent {
     required this.model,
     required this.selected,
     required this.employee_id,
+  });
+}
+
+class ScheduleGetSubmittedEvent extends ScheduleGetEvent {
+  final scheduleGetModel model;
+
+  ScheduleGetSubmittedEvent({
+    required this.model,
   });
 }

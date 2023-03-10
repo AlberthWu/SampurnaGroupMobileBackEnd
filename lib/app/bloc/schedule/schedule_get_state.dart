@@ -21,3 +21,10 @@ class ScheduleGetSuccessState extends ScheduleGetState {
 
   ScheduleGetSuccessState({required this.model});
 }
+
+class ScheduleGetDeliverySuccessState extends ScheduleGetState {
+  final deliveryGetModel model;
+  final String message;
+
+  ScheduleGetDeliverySuccessState({required this.model, required this.message});
+}

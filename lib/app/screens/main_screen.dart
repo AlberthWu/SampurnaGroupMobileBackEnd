@@ -154,7 +154,7 @@ class MainScreen extends StatelessWidget {
                                   Row(
                                     children: [
                                       const Text(
-                                        "Kencana Alberth",
+                                        "Nurhida Chaniago",
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -197,7 +197,7 @@ class MainScreen extends StatelessWidget {
                                     height: 10,
                                   ),
                                   const Text(
-                                    "Information Technology | Manager",
+                                    "Accounting | Supervisor",
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 12,
@@ -414,9 +414,7 @@ class MainScreen extends StatelessWidget {
             Stack(
               children: [
                 InkWell(
-                  onTap: () {
-                    print(currentIndex);
-                  },
+                  onTap: () {},
                   child: CarouselSlider(
                     items: imageList
                         .map(
@@ -450,7 +448,18 @@ class MainScreen extends StatelessWidget {
         backgroundColor: sgWhite,
         color: sgRed,
         animationDuration: const Duration(milliseconds: 300),
-        onTap: (index) {},
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              break;
+            case 1:
+              break;
+            case 2:
+              context.goNamed('profile');
+              break;
+            default:
+          }
+        },
         items: const [
           Icon(
             Icons.assignment_outlined,
