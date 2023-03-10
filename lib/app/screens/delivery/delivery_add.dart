@@ -60,19 +60,19 @@ class DeliveryAdd extends StatelessWidget {
             iconTheme: IconThemeData(
               color: sgWhite,
             ),
-            actions: <Widget>[
-              BlocBuilder<ScheduleGetBloc, ScheduleGetState>(
-                builder: (context, state) {
-                  return IconButton(
-                    icon: Icon(
-                      Icons.save_outlined,
-                      color: sgWhite,
-                    ),
-                    onPressed: () {},
-                  );
-                },
-              ),
-            ],
+            // actions: <Widget>[
+            //   BlocBuilder<ScheduleGetBloc, ScheduleGetState>(
+            //     builder: (context, state) {
+            //       return IconButton(
+            //         icon: Icon(
+            //           Icons.save_outlined,
+            //           color: sgWhite,
+            //         ),
+            //         onPressed: () {},
+            //       );
+            //     },
+            //   ),
+            // ],
           ),
           body: Container(
             color: sgWhite,
@@ -544,6 +544,35 @@ class DeliveryAdd extends StatelessWidget {
                         thickness: 1,
                       ),
                       sgSizedBoxHeight,
+                      MaterialButton(
+                        onPressed: () {
+                          scheduleBloc.add(
+                            ScheduleGetSubmittedEvent(
+                                model: modelSchedule.model),
+                          );
+                        },
+                        color: sgGold,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.save_outlined,
+                              color: sgWhite,
+                            ),
+                            Text(
+                              "Simpan Data",
+                              style: TextStyle(
+                                color: sgWhite,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Nexa',
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ],
                   );
                 }

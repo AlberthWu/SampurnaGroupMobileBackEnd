@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:asm/app/constant/app_constant.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class deliveryListModel {
   final int id;
@@ -93,10 +94,15 @@ class deliveryListModel {
 
   static Future<List<deliveryListModel>> connectToAPIToday(
       String date, int page, int limit) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final String? token = pref.getString('token');
+
     const API = sgBaseURL;
-    const headers = {
+    final headers = {
       'Content-Type': 'application/json',
+      'Authorization': "Bearer " + token.toString(),
     };
+
     final response = await http.get(
         Uri.parse(API +
             'order/cargo/detail?issue_date=$date&page=$page&pagesize=$limit'),
@@ -118,9 +124,13 @@ class deliveryListModel {
 
   static Future<List<deliveryListModel>> connectToAPIRunning(
       String date, int page, int limit) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final String? token = pref.getString('token');
+
     const API = sgBaseURL;
-    const headers = {
+    final headers = {
       'Content-Type': 'application/json',
+      'Authorization': "Bearer " + token.toString(),
     };
 
     final response = await http.get(

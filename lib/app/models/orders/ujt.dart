@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:asm/app/constant/app_constant.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ujtGetModel {
   final int id;
@@ -24,9 +25,13 @@ class ujtGetModel {
 
   static Future<ujtGetModel> getAPIUjt(String issueDate, String plantID,
       String originID, String fleetTypeID, String productID) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final String? token = pref.getString('token');
+
     const API = sgBaseURL;
-    const headers = {
+    final headers = {
       'Content-Type': 'application/json',
+      'Authorization': "Bearer " + token.toString(),
     };
 
     final ujtGetModel model = new ujtGetModel();

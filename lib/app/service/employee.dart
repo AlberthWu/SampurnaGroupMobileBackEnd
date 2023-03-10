@@ -5,15 +5,21 @@ import 'package:http/http.dart' as http;
 import 'package:asm/app/models/api_response.dart';
 import 'package:asm/app/models/employee/get.dart';
 import 'package:asm/app/models/employee/list.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class employeeService {
-  static const API = sgBaseURL;
-  static const headers = {
-    'Content-Type': 'application/json',
-  };
-
-  Future<APIResponse<List<employeeListModel>>> GetEmployeeList(page, keyword) {
+  Future<APIResponse<List<employeeListModel>>> GetEmployeeList(
+      page, keyword) async {
     final models = <employeeListModel>[];
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final String? token = pref.getString('token');
+
+    const API = sgBaseURL;
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer " + token.toString(),
+    };
+
     return http
         .get(
             Uri.parse(API + 'employee?pagesize=20&page=$page&keyword=$keyword'),
@@ -40,7 +46,16 @@ class employeeService {
     );
   }
 
-  Future<APIResponse<employeeGetModel>> GetEmployee(int id) {
+  Future<APIResponse<employeeGetModel>> GetEmployee(int id) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final String? token = pref.getString('token');
+
+    const API = sgBaseURL;
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer " + token.toString(),
+    };
+
     final model = employeeGetModel();
     return http
         .get(Uri.parse(API + 'employee/' + id.toString()), headers: headers)
@@ -98,6 +113,15 @@ class employeeService {
 
   Future<APIResponse<employeeGetModel>> PostEmployee(
       Map<String, String> form, File image) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final String? token = pref.getString('token');
+
+    const API = sgBaseURL;
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer " + token.toString(),
+    };
+
     final model = employeeGetModel();
     var request =
         new http.MultipartRequest("POST", Uri.parse(API + 'employee'));
@@ -137,6 +161,15 @@ class employeeService {
 
   Future<APIResponse<employeeGetModel>> PutEmployee(
       int id, Map<String, String> form, File image) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    final String? token = pref.getString('token');
+
+    const API = sgBaseURL;
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer " + token.toString(),
+    };
+
     final model = employeeGetModel();
     var request = new http.MultipartRequest(
         "PUT", Uri.parse(API + 'employee/' + id.toString()));

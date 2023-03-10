@@ -9,3 +9,10 @@ class UserSignedIn extends UserState {
 
   UserSignedIn(this.user);
 }
+
+class UserErrorState extends UserState {
+  final String errorMessage;
+  final List<errorsModel>? errors;
+
+  UserErrorState({required this.errorMessage, this.errors});
+}

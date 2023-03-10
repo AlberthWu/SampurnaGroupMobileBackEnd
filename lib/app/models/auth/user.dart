@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import 'package:asm/app/constant/app_constant.dart';
-import 'package:flutter/material.dart';
+import 'package:asm/app/models/errors_model.dart';
+import 'package:asm/app/models/http_response.dart';
 import 'package:http/http.dart' as http;
 
 class userModel {
@@ -26,7 +27,7 @@ class userModel {
     );
   }
 
-  static Future<userModel> loginPost({
+  static Future<restResponse<userModel>> loginPost({
     required String email,
     required String password,
   }) async {
@@ -41,9 +42,6 @@ class userModel {
 
     final userModel model = new userModel();
 
-    print("token " + map.toString());
-    print("token " + Uri.parse(API + "users/login").toString());
-
     var request =
         new http.MultipartRequest("POST", Uri.parse(API + 'users/login'));
 
@@ -55,35 +53,35 @@ class userModel {
     http.Response response =
         await http.Response.fromStream(await request.send());
 
-    final message = json.decode(response.body);
+    final message = json.decode(response.body)['errmsg'];
+
     if (response.statusCode == 200) {
-      print("token berhasil: " + message.toString());
-    } else {
-      print("token gagal: " + message.toString());
+      final jsonData = json.decode(response.body)['data'];
+
+      return restResponse<userModel>(
+        data: userModel.fromJson(jsonData),
+        message: message,
+      );
+    } else if (response.statusCode == 400) {
+      final List<errorsModel> models = [];
+
+      final data = json.decode(response.body)['data'] as List;
+      for (var item in data) {
+        models.add(errorsModel.fromJson(item));
+      }
+
+      return restResponse<userModel>(
+        status: true,
+        data: model,
+        message: message,
+        errors: models,
+      );
     }
 
-    return model;
-    // await http
-    //     .post(
-    //   Uri.parse(API + "users/login"),
-    //   body: map,
-    // )
-    //     .then((data) {
-    //   final message = json.decode(data.body);
-
-    //   print("token: berhasil " + message);
-    // }).catchError(
-    //   (e) {
-    //     print("token: error " + e.toString());
-    //   },
-    // );
-
-    // print('token ' + response.toString());
-    // print('token ' + response.statusCode.toString());
-    // if (response.statusCode == 200) {
-    //   var jsonData = json.decode(response.body)['data'];
-
-    //   return userModel.fromJson(jsonData);
-    // }
+    return restResponse<userModel>(
+      status: true,
+      data: model,
+      message: message,
+    );
   }
 }
